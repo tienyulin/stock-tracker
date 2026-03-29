@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from app.schemas import StockHistoryResponse, StockQuoteResponse
 from app.services.yfinance_service import YFinanceService
+from app.services.indicators_service import TechnicalIndicatorsService
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 
@@ -111,3 +112,49 @@ async def search_stocks(q: str = Query(..., min_length=1, description="Search qu
         if q.upper() in k or q.upper() in v.upper()
     ]
     return {"results": results}
+
+
+@router.get("/{symbol}/indicators")
+async def get_stock_indicators(
+    symbol: str,
+    period: str = Query(
+        "3mo", description="Time period for calculation: 1d, 5d, 1mo, 3mo, 6mo, 1y"
+    ),
+    interval: str = Query("1d", description="Data interval: 1d, 1wk"),
+) -> dict:
+    """
+    Get technical indicators for a stock (RSI, MACD, MA).
+
+    Args:
+        symbol: Stock symbol
+        period: Time period for calculation
+        interval: Data interval
+
+    Returns:
+        Dict with RSI, MACD, SMA, EMA values
+    """
+    service = YFinanceService()
+    try:
+        async with service:
+            history = await service.get_history(symbol.upper(), period=period, interval=interval)
+            if history is None:
+                raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found")
+            
+            if len(history.closes) < 26:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Insufficient data for indicators calculation"
+                )
+
+            indicators = TechnicalIndicatorsService.calculate_all_indicators(history.closes)
+            
+            return {
+                "symbol": symbol.upper(),
+                "period": period,
+                "interval": interval,
+                "indicators": indicators,
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to calculate indicators: {str(e)}")
