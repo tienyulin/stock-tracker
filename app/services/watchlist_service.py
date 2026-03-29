@@ -3,6 +3,7 @@ Watchlist Service - Personal Watchlist Feature
 
 Provides watchlist management for users to track stocks.
 """
+
 import uuid
 from dataclasses import dataclass
 
@@ -13,6 +14,7 @@ from app.exceptions import ValidationError
 @dataclass
 class WatchlistItem:
     """Watchlist item data model."""
+
     id: str
     user_id: str
     symbol: str
@@ -49,12 +51,7 @@ class WatchlistService:
             self._watchlists[user_id] = []
         return self._watchlists[user_id]
 
-    async def add_stock(
-        self,
-        user_id: str,
-        symbol: str,
-        name: str
-    ) -> WatchlistItem:
+    async def add_stock(self, user_id: str, symbol: str, name: str) -> WatchlistItem:
         """
         Add a stock to user's watchlist.
 
@@ -83,24 +80,22 @@ class WatchlistService:
 
         # Check limit
         if len(watchlist) >= self.MAX_WATCHLIST_SIZE:
-            raise Exception(f"Watchlist maximum limit ({self.MAX_WATCHLIST_SIZE}) reached")
+            raise Exception(
+                f"Watchlist maximum limit ({self.MAX_WATCHLIST_SIZE}) reached"
+            )
 
         item = WatchlistItem(
             id=str(uuid.uuid4()),
             user_id=user_id,
             symbol=symbol.upper(),
             name=name,
-            added_at=0  # Would normally be timestamp
+            added_at=0,  # Would normally be timestamp
         )
 
         watchlist.append(item)
         return item
 
-    async def remove_stock(
-        self,
-        user_id: str,
-        symbol: str
-    ) -> bool:
+    async def remove_stock(self, user_id: str, symbol: str) -> bool:
         """
         Remove a stock from user's watchlist.
 
@@ -138,11 +133,7 @@ class WatchlistService:
         await self._validate_user(user_id)
         return self._get_watchlist(user_id).copy()
 
-    async def is_tracking(
-        self,
-        user_id: str,
-        symbol: str
-    ) -> bool:
+    async def is_tracking(self, user_id: str, symbol: str) -> bool:
         """
         Check if stock is in user's watchlist.
 

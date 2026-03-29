@@ -3,6 +3,7 @@ Stock Service - Basic Stock Price Query
 
 Provides stock information and price data retrieval.
 """
+
 from dataclasses import dataclass
 from typing import Optional
 
@@ -12,6 +13,7 @@ from app.exceptions import ValidationError
 @dataclass
 class StockInfo:
     """Stock basic information model."""
+
     symbol: str
     name: str
     exchange: str
@@ -21,6 +23,7 @@ class StockInfo:
 @dataclass
 class PriceData:
     """Stock price data model."""
+
     symbol: str
     current_price: float
     open_price: float
@@ -57,7 +60,9 @@ class StockService:
         if not symbol or len(symbol) > 10:
             return False
 
-        valid_chars = set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-")
+        valid_chars = set(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-"
+        )
         return all(c in valid_chars for c in symbol)
 
     async def _fetch_quote(self, symbol: str) -> Optional[dict]:
@@ -108,7 +113,7 @@ class StockService:
             symbol=quote.get("symbol", symbol),
             name=quote.get("shortName", quote.get("symbol", symbol)),
             exchange=quote.get("exchange", "UNKNOWN"),
-            currency=quote.get("currency", "USD")
+            currency=quote.get("currency", "USD"),
         )
 
     async def get_price_data(self, symbol: str) -> Optional[PriceData]:
@@ -138,7 +143,7 @@ class StockService:
             high_price=quote.get("regularMarketDayHigh", 0.0),
             low_price=quote.get("regularMarketDayLow", 0.0),
             previous_close=quote.get("regularMarketPreviousClose", 0.0),
-            volume=quote.get("regularMarketVolume", 0)
+            volume=quote.get("regularMarketVolume", 0),
         )
 
     async def get_multiple_quotes(self, symbols: list[str]) -> dict[str, PriceData]:

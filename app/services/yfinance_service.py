@@ -3,6 +3,7 @@ Yahoo Finance API Service
 
 Provides stock data retrieval from Yahoo Finance API.
 """
+
 import asyncio
 from dataclasses import dataclass
 from typing import Optional
@@ -20,6 +21,7 @@ from app.exceptions import (
 @dataclass
 class StockQuote:
     """Stock quote data model."""
+
     symbol: str
     price: float
     volume: int
@@ -30,6 +32,7 @@ class StockQuote:
 @dataclass
 class StockHistory:
     """Stock historical data model."""
+
     symbol: str
     timestamps: list[int]
     opens: list[float]
@@ -61,9 +64,7 @@ class YFinanceService:
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
                 timeout=self.timeout,
-                headers={
-                    "User-Agent": "Mozilla/5.0 (compatible; StockTracker/1.0)"
-                }
+                headers={"User-Agent": "Mozilla/5.0 (compatible; StockTracker/1.0)"},
             )
         return self._client
 
@@ -98,7 +99,9 @@ class YFinanceService:
 
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 404:
-                    raise SymbolNotFoundError(f"Symbol not found: {params.get('symbol', 'unknown')}")
+                    raise SymbolNotFoundError(
+                        f"Symbol not found: {params.get('symbol', 'unknown')}"
+                    )
                 elif e.response.status_code == 429:
                     raise RateLimitError("Yahoo Finance rate limit exceeded")
                 else:
@@ -127,7 +130,9 @@ class YFinanceService:
             return False
 
         # Allow alphanumeric, dots (for yahoo finance format), and dashes
-        valid_chars = set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-")
+        valid_chars = set(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-"
+        )
         return all(c in valid_chars for c in symbol)
 
     async def get_quote(self, symbol: str) -> Optional[StockQuote]:
@@ -149,11 +154,7 @@ class YFinanceService:
             raise ValidationError(f"Invalid symbol format: {symbol}")
 
         url = f"{self.BASE_URL}/chart/{symbol}"
-        params = {
-            "interval": "1d",
-            "range": "1d",
-            "symbol": symbol
-        }
+        params = {"interval": "1d", "range": "1d", "symbol": symbol}
 
         data = await self._fetch(url, params)
 
@@ -170,14 +171,11 @@ class YFinanceService:
             price=meta.get("regularMarketPrice", 0.0),
             volume=meta.get("regularMarketVolume", 0),
             timestamp=int(meta.get("regularMarketTime", 0)),
-            market_state=meta.get("marketState", "UNKNOWN")
+            market_state=meta.get("marketState", "UNKNOWN"),
         )
 
     async def get_history(
-        self,
-        symbol: str,
-        period: str = "1mo",
-        interval: str = "1d"
+        self, symbol: str, period: str = "1mo", interval: str = "1d"
     ) -> Optional[StockHistory]:
         """
         Get historical stock data.
@@ -199,11 +197,7 @@ class YFinanceService:
             raise ValidationError(f"Invalid symbol format: {symbol}")
 
         url = f"{self.BASE_URL}/chart/{symbol}"
-        params = {
-            "interval": interval,
-            "range": period,
-            "symbol": symbol
-        }
+        params = {"interval": interval, "range": period, "symbol": symbol}
 
         data = await self._fetch(url, params)
 
@@ -223,7 +217,7 @@ class YFinanceService:
             highs=quote.get("high", []),
             lows=quote.get("low", []),
             closes=quote.get("close", []),
-            volumes=quote.get("volume", [])
+            volumes=quote.get("volume", []),
         )
 
     async def __aenter__(self):

@@ -1,6 +1,7 @@
 """
 Tests for Watchlist Service - Personal Watchlist Feature
 """
+
 import pytest
 from unittest.mock import AsyncMock, patch
 from app.services.watchlist_service import WatchlistService, WatchlistItem
@@ -15,7 +16,7 @@ class TestWatchlistItem:
             user_id="user-1",
             symbol="AAPL",
             name="Apple Inc.",
-            added_at=1700000000
+            added_at=1700000000,
         )
         assert item.symbol == "AAPL"
         assert item.name == "Apple Inc."
@@ -36,7 +37,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_add_stock_to_watchlist(self, service, mock_user_id):
         """Test adding a stock to watchlist."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
 
             item = await service.add_stock(mock_user_id, "AAPL", "Apple Inc.")
@@ -48,7 +51,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_add_duplicate_stock(self, service, mock_user_id):
         """Test adding duplicate stock to watchlist raises error."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
             await service.add_stock(mock_user_id, "AAPL", "Apple Inc.")
 
@@ -58,7 +63,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_remove_stock_from_watchlist(self, service, mock_user_id):
         """Test removing a stock from watchlist."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
             await service.add_stock(mock_user_id, "AAPL", "Apple Inc.")
 
@@ -69,7 +76,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_remove_nonexistent_stock(self, service, mock_user_id):
         """Test removing non-existent stock raises error."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
 
             with pytest.raises(Exception, match="not found in watchlist"):
@@ -78,7 +87,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_get_watchlist(self, service, mock_user_id):
         """Test getting user's watchlist."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
             await service.add_stock(mock_user_id, "AAPL", "Apple Inc.")
             await service.add_stock(mock_user_id, "GOOGL", "Alphabet Inc.")
@@ -92,7 +103,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_get_watchlist_empty(self, service, mock_user_id):
         """Test getting empty watchlist."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
 
             watchlist = await service.get_watchlist(mock_user_id)
@@ -102,7 +115,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_is_tracking_stock(self, service, mock_user_id):
         """Test checking if stock is in watchlist."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
             await service.add_stock(mock_user_id, "AAPL", "Apple Inc.")
 
@@ -112,7 +127,9 @@ class TestWatchlistService:
     @pytest.mark.asyncio
     async def test_watchlist_limit(self, service, mock_user_id):
         """Test watchlist has maximum limit."""
-        with patch.object(service, '_validate_user', new_callable=AsyncMock) as mock_validate:
+        with patch.object(
+            service, "_validate_user", new_callable=AsyncMock
+        ) as mock_validate:
             mock_validate.return_value = True
 
             # Add 50 stocks (max limit)
