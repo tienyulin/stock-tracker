@@ -1,6 +1,7 @@
 """
 Watchlist API routes.
 """
+
 from typing import List
 from uuid import UUID
 
@@ -27,9 +28,7 @@ async def list_watchlists(
     db: AsyncSession = Depends(get_db),
 ) -> List[WatchlistResponse]:
     """List all watchlists for a user."""
-    result = await db.execute(
-        select(Watchlist).where(Watchlist.user_id == user_id)
-    )
+    result = await db.execute(select(Watchlist).where(Watchlist.user_id == user_id))
     watchlists = result.scalars().all()
 
     response_list = []
@@ -75,7 +74,7 @@ async def create_watchlist(
         result = await db.execute(
             select(Watchlist).where(
                 Watchlist.user_id == user_id,
-                Watchlist.is_default == True,
+                Watchlist.is_default,
             )
         )
         for existing in result.scalars().all():
@@ -106,9 +105,7 @@ async def get_watchlist(
     db: AsyncSession = Depends(get_db),
 ) -> WatchlistResponse:
     """Get a specific watchlist with items."""
-    result = await db.execute(
-        select(Watchlist).where(Watchlist.id == watchlist_id)
-    )
+    result = await db.execute(select(Watchlist).where(Watchlist.id == watchlist_id))
     watchlist = result.scalar_one_or_none()
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
@@ -145,9 +142,7 @@ async def update_watchlist(
     db: AsyncSession = Depends(get_db),
 ) -> WatchlistResponse:
     """Update a watchlist."""
-    result = await db.execute(
-        select(Watchlist).where(Watchlist.id == watchlist_id)
-    )
+    result = await db.execute(select(Watchlist).where(Watchlist.id == watchlist_id))
     watchlist = result.scalar_one_or_none()
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
@@ -161,7 +156,7 @@ async def update_watchlist(
                 select(Watchlist).where(
                     Watchlist.user_id == watchlist.user_id,
                     Watchlist.id != watchlist_id,
-                    Watchlist.is_default == True,
+                    Watchlist.is_default,
                 )
             )
             for other in other_result.scalars().all():
@@ -187,9 +182,7 @@ async def delete_watchlist(
     db: AsyncSession = Depends(get_db),
 ):
     """Delete a watchlist."""
-    result = await db.execute(
-        select(Watchlist).where(Watchlist.id == watchlist_id)
-    )
+    result = await db.execute(select(Watchlist).where(Watchlist.id == watchlist_id))
     watchlist = result.scalar_one_or_none()
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
@@ -198,16 +191,18 @@ async def delete_watchlist(
     await db.commit()
 
 
-@router.post("/{watchlist_id}/items", response_model=WatchlistItemResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{watchlist_id}/items",
+    response_model=WatchlistItemResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def add_item_to_watchlist(
     watchlist_id: UUID,
     item_data: WatchlistItemCreate,
     db: AsyncSession = Depends(get_db),
 ) -> WatchlistItemResponse:
     """Add a stock to a watchlist."""
-    result = await db.execute(
-        select(Watchlist).where(Watchlist.id == watchlist_id)
-    )
+    result = await db.execute(select(Watchlist).where(Watchlist.id == watchlist_id))
     watchlist = result.scalar_one_or_none()
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
@@ -229,7 +224,9 @@ async def add_item_to_watchlist(
     )
 
 
-@router.delete("/{watchlist_id}/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{watchlist_id}/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT
+)
 async def remove_item_from_watchlist(
     watchlist_id: UUID,
     item_id: UUID,

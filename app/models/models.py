@@ -1,6 +1,7 @@
 """
 SQLAlchemy models for Stock Tracker.
 """
+
 import uuid
 from datetime import datetime
 from typing import Optional
@@ -14,9 +15,9 @@ from app.core.database import Base
 
 class User(Base):
     """User model."""
-    
+
     __tablename__ = "users"
-    
+
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
@@ -28,7 +29,7 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    
+
     # Relationships
     watchlists: Mapped[list["Watchlist"]] = relationship(
         "Watchlist", back_populates="user", cascade="all, delete-orphan"
@@ -40,9 +41,9 @@ class User(Base):
 
 class Watchlist(Base):
     """Watchlist model."""
-    
+
     __tablename__ = "watchlists"
-    
+
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
@@ -57,7 +58,7 @@ class Watchlist(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    
+
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="watchlists")
     items: Mapped[list["WatchlistItem"]] = relationship(
@@ -67,30 +68,32 @@ class Watchlist(Base):
 
 class WatchlistItem(Base):
     """Watchlist item model."""
-    
+
     __tablename__ = "watchlist_items"
-    
+
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     watchlist_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("watchlists.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=True),
+        ForeignKey("watchlists.id", ondelete="CASCADE"),
+        nullable=False,
     )
     symbol: Mapped[str] = mapped_column(String(20), nullable=False)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     added_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    
+
     # Relationships
     watchlist: Mapped["Watchlist"] = relationship("Watchlist", back_populates="items")
 
 
 class Alert(Base):
     """Alert model."""
-    
+
     __tablename__ = "alerts"
-    
+
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
@@ -98,17 +101,21 @@ class Alert(Base):
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     symbol: Mapped[str] = mapped_column(String(20), nullable=False)
-    condition_type: Mapped[str] = mapped_column(String(20), nullable=False)  # 'above', 'below', 'change_pct'
+    condition_type: Mapped[str] = mapped_column(
+        String(20), nullable=False
+    )  # 'above', 'below', 'change_pct'
     threshold: Mapped[float] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    triggered_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    triggered_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    
+
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="alerts")
     notifications: Mapped[list["AlertNotification"]] = relationship(
@@ -118,19 +125,25 @@ class Alert(Base):
 
 class AlertNotification(Base):
     """Alert notification model."""
-    
+
     __tablename__ = "alert_notifications"
-    
+
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     alert_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("alerts.id", ondelete="CASCADE"), nullable=False
     )
-    channel: Mapped[str] = mapped_column(String(20), nullable=False)  # 'telegram', 'email', 'push'
-    status: Mapped[str] = mapped_column(String(20), default="pending")  # 'pending', 'sent', 'failed'
-    sent_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    channel: Mapped[str] = mapped_column(
+        String(20), nullable=False
+    )  # 'telegram', 'email', 'push'
+    status: Mapped[str] = mapped_column(
+        String(20), default="pending"
+    )  # 'pending', 'sent', 'failed'
+    sent_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    
+
     # Relationships
     alert: Mapped["Alert"] = relationship("Alert", back_populates="notifications")

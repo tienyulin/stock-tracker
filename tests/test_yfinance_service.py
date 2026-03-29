@@ -9,10 +9,7 @@ class TestStockQuote:
 
     def test_stock_quote_creation(self):
         quote = StockQuote(
-            symbol="AAPL",
-            price=150.25,
-            volume=1000000,
-            timestamp=1609459200
+            symbol="AAPL", price=150.25, volume=1000000, timestamp=1609459200
         )
         assert quote.symbol == "AAPL"
         assert quote.price == 150.25
@@ -30,7 +27,7 @@ class TestStockHistory:
             highs=[152.0, 153.0],
             lows=[149.0, 150.0],
             closes=[151.0, 152.0],
-            volumes=[1000000, 1100000]
+            volumes=[1000000, 1100000],
         )
         assert history.symbol == "AAPL"
         assert len(history.closes) == 2
@@ -47,20 +44,22 @@ class TestYFinanceService:
     def mock_quote_response(self):
         return {
             "chart": {
-                "result": [{
-                    "meta": {
-                        "symbol": "AAPL",
-                        "regularMarketPrice": 150.25,
-                        "regularMarketVolume": 1000000
+                "result": [
+                    {
+                        "meta": {
+                            "symbol": "AAPL",
+                            "regularMarketPrice": 150.25,
+                            "regularMarketVolume": 1000000,
+                        }
                     }
-                }]
+                ]
             }
         }
 
     @pytest.mark.asyncio
     async def test_get_quote_success(self, service, mock_quote_response):
         """Test successful quote retrieval."""
-        with patch.object(service, '_fetch', new_callable=AsyncMock) as mock_fetch:
+        with patch.object(service, "_fetch", new_callable=AsyncMock) as mock_fetch:
             mock_fetch.return_value = mock_quote_response
 
             quote = await service.get_quote("AAPL")
@@ -73,7 +72,7 @@ class TestYFinanceService:
     @pytest.mark.asyncio
     async def test_get_quote_not_found(self, service):
         """Test quote retrieval for non-existent symbol."""
-        with patch.object(service, '_fetch', new_callable=AsyncMock) as mock_fetch:
+        with patch.object(service, "_fetch", new_callable=AsyncMock) as mock_fetch:
             mock_fetch.return_value = {"chart": {"result": None}}
 
             quote = await service.get_quote("INVALID")
@@ -83,7 +82,7 @@ class TestYFinanceService:
     @pytest.mark.asyncio
     async def test_get_quote_network_error(self, service):
         """Test quote retrieval with network error."""
-        with patch.object(service, '_fetch', new_callable=AsyncMock) as mock_fetch:
+        with patch.object(service, "_fetch", new_callable=AsyncMock) as mock_fetch:
             mock_fetch.side_effect = Exception("Network error")
 
             with pytest.raises(Exception, match="Network error"):
@@ -94,22 +93,26 @@ class TestYFinanceService:
         """Test successful history retrieval."""
         mock_history_response = {
             "chart": {
-                "result": [{
-                    "timestamp": [1609459200, 1609545600],
-                    "indicators": {
-                        "quote": [{
-                            "open": [150.0, 151.0],
-                            "high": [152.0, 153.0],
-                            "low": [149.0, 150.0],
-                            "close": [151.0, 152.0],
-                            "volume": [1000000, 1100000]
-                        }]
+                "result": [
+                    {
+                        "timestamp": [1609459200, 1609545600],
+                        "indicators": {
+                            "quote": [
+                                {
+                                    "open": [150.0, 151.0],
+                                    "high": [152.0, 153.0],
+                                    "low": [149.0, 150.0],
+                                    "close": [151.0, 152.0],
+                                    "volume": [1000000, 1100000],
+                                }
+                            ]
+                        },
                     }
-                }]
+                ]
             }
         }
 
-        with patch.object(service, '_fetch', new_callable=AsyncMock) as mock_fetch:
+        with patch.object(service, "_fetch", new_callable=AsyncMock) as mock_fetch:
             mock_fetch.return_value = mock_history_response
 
             history = await service.get_history("AAPL", period="1mo")
@@ -131,13 +134,15 @@ class TestYFinanceService:
                 raise httpx.ConnectError("Temporary connection error")
             return {
                 "chart": {
-                    "result": [{
-                        "meta": {
-                            "symbol": "AAPL",
-                            "regularMarketPrice": 150.0,
-                            "regularMarketVolume": 1000
+                    "result": [
+                        {
+                            "meta": {
+                                "symbol": "AAPL",
+                                "regularMarketPrice": 150.0,
+                                "regularMarketVolume": 1000,
+                            }
                         }
-                    }]
+                    ]
                 }
             }
 
@@ -145,21 +150,26 @@ class TestYFinanceService:
         mock_response = MagicMock()
         mock_response.json.return_value = {
             "chart": {
-                "result": [{
-                    "meta": {
-                        "symbol": "AAPL",
-                        "regularMarketPrice": 150.0,
-                        "regularMarketVolume": 1000
+                "result": [
+                    {
+                        "meta": {
+                            "symbol": "AAPL",
+                            "regularMarketPrice": 150.0,
+                            "regularMarketVolume": 1000,
+                        }
                     }
-                }]
+                ]
             }
         }
 
-        with patch('httpx.AsyncClient.get', side_effect=[
-            httpx.ConnectError("Temporary error"),
-            httpx.ConnectError("Temporary error"),
-            mock_response
-        ]):
+        with patch(
+            "httpx.AsyncClient.get",
+            side_effect=[
+                httpx.ConnectError("Temporary error"),
+                httpx.ConnectError("Temporary error"),
+                mock_response,
+            ],
+        ):
             quote = await service.get_quote("AAPL")
 
             assert quote is not None

@@ -3,6 +3,7 @@ Alert Service - Price Alert Feature
 
 Provides price alert management for users to monitor stock prices.
 """
+
 import uuid
 from dataclasses import dataclass
 from enum import Enum
@@ -12,6 +13,7 @@ from app.exceptions import ValidationError
 
 class AlertType(Enum):
     """Alert type enum."""
+
     PRICE_ABOVE = "PRICE_ABOVE"
     PRICE_BELOW = "PRICE_BELOW"
     PRICE_CHANGE_PERCENT = "PRICE_CHANGE_PERCENT"
@@ -20,6 +22,7 @@ class AlertType(Enum):
 @dataclass
 class AlertRule:
     """Alert rule data model."""
+
     id: str
     user_id: str
     symbol: str
@@ -32,6 +35,7 @@ class AlertRule:
 @dataclass
 class PriceAlert:
     """Price alert data model (alias for AlertRule)."""
+
     id: str
     user_id: str
     symbol: str
@@ -63,11 +67,7 @@ class AlertService:
         return self._alerts[user_id]
 
     async def create_alert(
-        self,
-        user_id: str,
-        symbol: str,
-        alert_type: AlertType,
-        threshold: float
+        self, user_id: str, symbol: str, alert_type: AlertType, threshold: float
     ) -> PriceAlert:
         """
         Create a price alert.
@@ -93,7 +93,9 @@ class AlertService:
         alerts = self._get_user_alerts(user_id)
 
         if len(alerts) >= self.MAX_ALERTS_PER_USER:
-            raise Exception(f"Maximum alerts per user ({self.MAX_ALERTS_PER_USER}) reached")
+            raise Exception(
+                f"Maximum alerts per user ({self.MAX_ALERTS_PER_USER}) reached"
+            )
 
         alert = AlertRule(
             id=str(uuid.uuid4()),
@@ -101,7 +103,7 @@ class AlertService:
             symbol=symbol.upper(),
             alert_type=alert_type,
             threshold=threshold,
-            enabled=True
+            enabled=True,
         )
 
         alerts.append(alert)
@@ -147,10 +149,7 @@ class AlertService:
         return [PriceAlert(**a.__dict__) for a in alerts]
 
     async def toggle_alert(
-        self,
-        user_id: str,
-        alert_id: str,
-        enabled: bool
+        self, user_id: str, alert_id: str, enabled: bool
     ) -> PriceAlert:
         """
         Enable or disable an alert.

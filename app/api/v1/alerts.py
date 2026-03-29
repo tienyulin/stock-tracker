@@ -1,6 +1,7 @@
 """
 Alert API routes.
 """
+
 from typing import List
 from uuid import UUID
 
@@ -77,9 +78,7 @@ async def get_alert(
     db: AsyncSession = Depends(get_db),
 ) -> AlertResponse:
     """Get a specific alert."""
-    result = await db.execute(
-        select(Alert).where(Alert.id == alert_id)
-    )
+    result = await db.execute(select(Alert).where(Alert.id == alert_id))
     alert = result.scalar_one_or_none()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
@@ -103,9 +102,7 @@ async def update_alert(
     db: AsyncSession = Depends(get_db),
 ) -> AlertResponse:
     """Update an alert."""
-    result = await db.execute(
-        select(Alert).where(Alert.id == alert_id)
-    )
+    result = await db.execute(select(Alert).where(Alert.id == alert_id))
     alert = result.scalar_one_or_none()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
@@ -138,9 +135,7 @@ async def delete_alert(
     db: AsyncSession = Depends(get_db),
 ):
     """Delete an alert."""
-    result = await db.execute(
-        select(Alert).where(Alert.id == alert_id)
-    )
+    result = await db.execute(select(Alert).where(Alert.id == alert_id))
     alert = result.scalar_one_or_none()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
@@ -155,14 +150,13 @@ async def trigger_alert(
     db: AsyncSession = Depends(get_db),
 ) -> AlertResponse:
     """Manually trigger an alert (for testing)."""
-    result = await db.execute(
-        select(Alert).where(Alert.id == alert_id)
-    )
+    result = await db.execute(select(Alert).where(Alert.id == alert_id))
     alert = result.scalar_one_or_none()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
 
     from datetime import datetime
+
     alert.triggered_at = datetime.utcnow()
     alert.is_active = False
 

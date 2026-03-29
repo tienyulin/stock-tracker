@@ -1,6 +1,7 @@
 """
 Tests for Alert Service - Price Alert Feature
 """
+
 import pytest
 
 from app.services.alert_service import AlertService, AlertRule, AlertType
@@ -16,7 +17,7 @@ class TestAlertRule:
             symbol="AAPL",
             alert_type=AlertType.PRICE_ABOVE,
             threshold=150.0,
-            enabled=True
+            enabled=True,
         )
         assert rule.symbol == "AAPL"
         assert rule.alert_type == AlertType.PRICE_ABOVE
@@ -50,7 +51,7 @@ class TestAlertService:
             user_id=mock_user_id,
             symbol="AAPL",
             alert_type=AlertType.PRICE_ABOVE,
-            threshold=150.0
+            threshold=150.0,
         )
 
         assert alert.symbol == "AAPL"
@@ -65,7 +66,7 @@ class TestAlertService:
             user_id=mock_user_id,
             symbol="AAPL",
             alert_type=AlertType.PRICE_BELOW,
-            threshold=140.0
+            threshold=140.0,
         )
 
         assert alert.alert_type == AlertType.PRICE_BELOW
@@ -78,7 +79,7 @@ class TestAlertService:
             user_id=mock_user_id,
             symbol="AAPL",
             alert_type=AlertType.PRICE_CHANGE_PERCENT,
-            threshold=5.0
+            threshold=5.0,
         )
 
         assert alert.alert_type == AlertType.PRICE_CHANGE_PERCENT
@@ -91,7 +92,7 @@ class TestAlertService:
             user_id=mock_user_id,
             symbol="AAPL",
             alert_type=AlertType.PRICE_ABOVE,
-            threshold=150.0
+            threshold=150.0,
         )
 
         result = await service.delete_alert(mock_user_id, alert.id)
@@ -110,13 +111,13 @@ class TestAlertService:
             user_id=mock_user_id,
             symbol="AAPL",
             alert_type=AlertType.PRICE_ABOVE,
-            threshold=150.0
+            threshold=150.0,
         )
         await service.create_alert(
             user_id=mock_user_id,
             symbol="GOOGL",
             alert_type=AlertType.PRICE_BELOW,
-            threshold=140.0
+            threshold=140.0,
         )
 
         alerts = await service.get_user_alerts(mock_user_id)
@@ -129,7 +130,7 @@ class TestAlertService:
             user_id=mock_user_id,
             symbol="AAPL",
             alert_type=AlertType.PRICE_ABOVE,
-            threshold=150.0
+            threshold=150.0,
         )
 
         assert alert.enabled is True
@@ -145,7 +146,7 @@ class TestAlertService:
                 user_id=mock_user_id,
                 symbol=f"STOCK{i}",
                 alert_type=AlertType.PRICE_ABOVE,
-                threshold=100.0 + i
+                threshold=100.0 + i,
             )
 
         with pytest.raises(Exception, match="[Mm]aximum.*alerts"):
@@ -153,5 +154,5 @@ class TestAlertService:
                 user_id=mock_user_id,
                 symbol="STOCK999",
                 alert_type=AlertType.PRICE_ABOVE,
-                threshold=200.0
+                threshold=200.0,
             )

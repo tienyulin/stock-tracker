@@ -2,7 +2,6 @@
 Stock API routes.
 """
 
-
 from fastapi import APIRouter, HTTPException, Query
 
 from app.schemas import StockHistoryResponse, StockQuoteResponse
@@ -27,7 +26,9 @@ async def get_stock_quote(symbol: str) -> StockQuoteResponse:
         async with service:
             quote = await service.get_quote(symbol.upper())
             if quote is None:
-                raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found")
+                raise HTTPException(
+                    status_code=404, detail=f"Symbol {symbol} not found"
+                )
             return StockQuoteResponse(
                 symbol=quote.symbol,
                 price=quote.price,
@@ -42,7 +43,9 @@ async def get_stock_quote(symbol: str) -> StockQuoteResponse:
 @router.get("/{symbol}/history", response_model=StockHistoryResponse)
 async def get_stock_history(
     symbol: str,
-    period: str = Query("1mo", description="Time period: 1d, 5d, 1mo, 3mo, 6mo, 1y, 5y, 10y, ytd, max"),
+    period: str = Query(
+        "1mo", description="Time period: 1d, 5d, 1mo, 3mo, 6mo, 1y, 5y, 10y, ytd, max"
+    ),
     interval: str = Query("1d", description="Interval: 1d, 1wk, 1mo"),
 ) -> StockHistoryResponse:
     """
@@ -59,9 +62,13 @@ async def get_stock_history(
     service = YFinanceService()
     try:
         async with service:
-            history = await service.get_history(symbol.upper(), period=period, interval=interval)
+            history = await service.get_history(
+                symbol.upper(), period=period, interval=interval
+            )
             if history is None:
-                raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found")
+                raise HTTPException(
+                    status_code=404, detail=f"Symbol {symbol} not found"
+                )
             return StockHistoryResponse(
                 symbol=history.symbol,
                 timestamps=history.timestamps,
@@ -72,7 +79,9 @@ async def get_stock_history(
                 volumes=history.volumes,
             )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch history: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch history: {str(e)}"
+        )
 
 
 @router.get("/search")

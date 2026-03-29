@@ -1,6 +1,7 @@
 """
 Stock Tracker API - Main Application
 """
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
