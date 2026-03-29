@@ -1,0 +1,48 @@
+.watchlist h2 {
+  margin-bottom: 1.5rem;
+}
+
+.empty-message {
+  color: #666;
+  font-style: italic;
+}
+
+.watchlist-items {
+  list-style: none;
+}
+
+.watchlist-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.watchlist-item .symbol {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1a1a2e;
+}
+
+.watchlist-item .name {
+  flex: 1;
+  color: #666;
+}
+
+.remove-btn {
+  padding: 0.5rem 1rem;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  background: #c62828;
+}

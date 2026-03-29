@@ -2,9 +2,10 @@
   "name": "Stock Tracker Dev",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
   },
-  "forwardPorts": [8000],
+  "forwardPorts": [8000, 3000],
   "postCreateCommand": "pip install -r requirements.txt",
   "customizations": {
     "vscode": {
@@ -12,7 +13,15 @@
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.linting.enabled": true,
         "python.linting.ruffEnabled": true
-      }
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "charliermarsh.ruff",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
     }
   }
 }
