@@ -14,37 +14,46 @@
 ## Issue #5: Web Frontend UI - API Routes Implementation
 
 **Branch:** `feature/api-routes`
+**PR:** #14
 
 **Completed:**
 - [x] SQLAlchemy models (User, Watchlist, WatchlistItem, Alert, AlertNotification)
 - [x] Pydantic schemas (request/response validation)
 - [x] Core config (settings, database)
 - [x] Database async setup (SQLAlchemy 2.0)
+- [x] FastAPI routes (stocks, watchlists, alerts) — FULL CRUD
+- [x] Frontend api.ts updated to match backend
+- [x] Committed & pushed
 
 **In Progress:**
-- [ ] FastAPI routes (stocks, watchlists, alerts)
-- [ ] Service layer integration
-- [ ] Tests (TDD)
-- [ ] QA validation
+- [ ] CI runs on PR #14
+- [ ] QA validation in DevContainer
+- [ ] Merge to develop
 
-**Files Created:**
+**API Endpoints:**
 ```
-app/
-├── core/
-│   ├── config.py
-│   └── database.py
-├── models/
-│   └── models.py
-├── schemas/
-│   └── schemas.py
-└── api/v1/
-    └── (routes pending)
+GET  /api/v1/stocks/{symbol}/quote
+GET  /api/v1/stocks/{symbol}/history
+GET  /api/v1/stocks/search
+GET  /api/v1/watchlists
+POST /api/v1/watchlists
+GET  /api/v1/watchlists/{id}
+PUT  /api/v1/watchlists/{id}
+DELETE /api/v1/watchlists/{id}
+POST /api/v1/watchlists/{id}/items
+DELETE /api/v1/watchlists/{id}/items/{item_id}
+GET  /api/v1/alerts
+POST /api/v1/alerts
+GET  /api/v1/alerts/{id}
+PUT  /api/v1/alerts/{id}
+DELETE /api/v1/alerts/{id}
+POST /api/v1/alerts/{id}/trigger
 ```
 
 **Next Action:**
-- Implement stock API route (GET /stocks/{symbol}/quote)
-- Implement watchlist CRUD routes
-- Implement alert CRUD routes
+- Monitor CI on PR #14
+- Test in DevContainer
+- Merge when CI passes
 
 ---
 
