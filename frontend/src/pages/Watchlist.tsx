@@ -41,23 +41,6 @@ function Watchlist() {
     }
   }
 
-  const _handleAddSymbol = async (symbol: string) => {
-    try {
-      if (watchlists.length === 0) {
-        // Create a default watchlist
-        const newWl = await watchlistService.createWatchlist(DEMO_USER_ID, 'My Watchlist', true)
-        setWatchlists([newWl])
-        await watchlistService.addItemToWatchlist(DEMO_USER_ID, newWl.id, symbol)
-      } else {
-        const defaultWl = watchlists.find(wl => wl.is_default) || watchlists[0]
-        await watchlistService.addItemToWatchlist(DEMO_USER_ID, defaultWl.id, symbol)
-      }
-      await loadWatchlists()
-    } catch (err) {
-      console.error('Failed to add symbol:', err)
-    }
-  }
-
   const handleRemoveItem = async (watchlistId: string, itemId: string) => {
     try {
       await watchlistService.removeItemFromWatchlist(DEMO_USER_ID, watchlistId, itemId)
