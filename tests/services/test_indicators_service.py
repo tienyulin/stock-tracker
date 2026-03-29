@@ -1,7 +1,6 @@
 """
 Tests for Technical Indicators Service.
 """
-import pytest
 from app.services.indicators_service import TechnicalIndicatorsService
 
 

@@ -5,7 +5,6 @@ Calculates RSI, MACD, and Moving Averages for stock analysis.
 """
 from typing import Optional
 import pandas as pd
-import numpy as np
 
 
 class TechnicalIndicatorsService:
