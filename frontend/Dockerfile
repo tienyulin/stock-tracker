@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files from frontend directory
+# Copy package files
 COPY frontend/package*.json ./
 
 # Install dependencies
@@ -11,7 +11,6 @@ RUN npm install
 
 # Copy source code
 COPY frontend/src ./src
-COPY frontend/public ./public
 COPY frontend/index.html ./
 COPY frontend/tsconfig.json ./
 COPY frontend/vite.config.ts ./
