@@ -11,10 +11,9 @@
 
 ---
 
-## Issue #5: Web Frontend UI - API Routes Implementation
+## Issue #5: Web Frontend UI - Completed ✅
 
-**Branch:** `feature/api-routes`
-**PR:** #14
+**Merged:** PRs #14, #15
 
 **Completed:**
 - [x] SQLAlchemy models (User, Watchlist, WatchlistItem, Alert, AlertNotification)
