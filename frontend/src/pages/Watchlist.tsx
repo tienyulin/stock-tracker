@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { watchlistService, stockService } from '../services/api'
-import type { Watchlist, WatchlistItem, StockQuote } from '../services/api'
+import type { Watchlist, StockQuote } from '../services/api'
 import './Watchlist.css'
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
@@ -41,7 +41,7 @@ function Watchlist() {
     }
   }
 
-  const handleAddSymbol = async (symbol: string) => {
+  const _handleAddSymbol = async (symbol: string) => {
     try {
       if (watchlists.length === 0) {
         // Create a default watchlist
