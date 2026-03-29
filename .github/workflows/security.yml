@@ -16,12 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Bandit security scanner
-        uses: ~/actions-cache@master
-        with:
-          args: -r . -f json -o bandit-results.json
-        continue-on-error: true
-
       - name: Install Bandit
         run: pip install bandit
 
