@@ -25,7 +25,9 @@ jobs:
           pip install pytest pytest-asyncio httpx
 
       - name: Run tests
-        run: pytest --verbose --tb=short
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          pytest --verbose --tb=short
 
   lint:
     runs-on: ubuntu-latest
