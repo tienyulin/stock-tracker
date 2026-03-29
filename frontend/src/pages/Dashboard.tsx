@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { stockService } from '../services/api'
-import type { StockInfo } from '../types'
+import type { StockQuote } from '../services/api'
 import './Dashboard.css'
 
 function Dashboard() {
-  const [stocks, setStocks] = useState<StockInfo[]>([])
+  const [quotes, setQuotes] = useState<StockQuote[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -16,12 +16,17 @@ function Dashboard() {
     try {
       setLoading(true)
       setError(null)
-      // For demo, show some default stocks
-      const demoSymbols = ['AAPL', 'GOOGL', 'MSFT']
-      const stockInfos = await Promise.all(
-        demoSymbols.map(symbol => stockService.getStockInfo(symbol))
+      // Demo stocks - in production would come from user's watchlist
+      const demoSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA']
+      
+      const results = await Promise.all(
+        demoSymbols.map(async (symbol) => {
+          const quote = await stockService.getStockQuote(symbol)
+          return quote
+        })
       )
-      setStocks(stockInfos.filter((s): s is StockInfo => s !== null))
+      
+      setQuotes(results.filter((q): q is StockQuote => q !== null))
     } catch (err) {
       setError('Failed to load stocks')
     } finally {
@@ -40,20 +45,22 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <h2>Dashboard</h2>
-      <div className="stock-grid">
-        {stocks.map(stock => (
-          <div key={stock.symbol} className="stock-card">
-            <div className="stock-header">
-              <span className="stock-symbol">{stock.symbol}</span>
-              <span className="stock-exchange">{stock.exchange}</span>
+      {quotes.length === 0 ? (
+        <p className="empty-state">No stocks to display. Add stocks to your watchlist.</p>
+      ) : (
+        <div className="stock-grid">
+          {quotes.map(quote => (
+            <div key={quote.symbol} className="stock-card">
+              <div className="stock-header">
+                <span className="stock-symbol">{quote.symbol}</span>
+                <span className="stock-market-state">{quote.market_state || 'Unknown'}</span>
+              </div>
+              <div className="stock-price">${quote.price.toFixed(2)}</div>
+              <div className="stock-volume">Vol: {quote.volume.toLocaleString()}</div>
             </div>
-            <div className="stock-name">{stock.name}</div>
-            <div className="stock-info">
-              <span className="stock-currency">{stock.currency}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
