@@ -9,29 +9,33 @@ on:
 jobs:
   security-scan:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: read
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Bandit
-        run: pip install bandit
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-      - name: Run Bandit
-        run: bandit -r . -f json -o bandit-results.json || true
+      - name: Run Bandit security scanner
+        run: |
+          pip install bandit
+          bandit -r . -f txt -o bandit-report.txt || true
 
-      - name: Upload Bandit results
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Check for known vulnerabilities
+        run: |
+          pip install safety
+          safety check --json --output vulnerability-report.json || true
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          sarif_file: bandit-results.json
-          category: bandit
+          name: bandit-report
+          path: bandit-report.txt
 
   dependency-check:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -61,6 +65,5 @@ jobs:
 
       - name: Scan for secrets
         run: |
-          pip install git-strip
           # Basic check for secrets in code
           grep -rE "(password|secret|api_key|token)\s*=\s*['\"][a-zA-Z0-9]{20,}['\"]" . --include="*.py" || true
