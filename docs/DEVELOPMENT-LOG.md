@@ -1,55 +1,68 @@
 # Stock Tracker Development Log
 
-## Development Rules (MUST FOLLOW)
+## Team
 
-1. **Dev Container** — All development must use Dev Container
-2. **TDD** — Write tests first, then code
-3. **Feature Branches** — All work from `develop` branch, create new branch named `feature/description`
-4. **Issue First** — Create issue on GitHub BEFORE starting work
-5. **Update Project Board** — Move issue to correct status (Todo → In Progress → Done)
-6. **PR Process** — Create PR, CI must pass, then merge back to `develop`
-7. **Report** — Report progress after completing each task
+- **Tony** — CEO (Final Decision Maker)
+- **Athena** — CTO & Full-Stack Engineer
 
-## Correct Workflow
+## Development Workflow
 
 ```
 1. Create Issue on GitHub
-2. Add Issue to Project Board (move to correct column)
+2. Update Project Board (Todo → In Progress)
 3. Create feature branch from develop: git checkout -b feature/description
-4. Write tests (TDD)
+4. Write tests FIRST (TDD)
 5. Implement code
-6. Commit and push
-7. Create PR
-8. CI must pass
-9. Merge to develop
-10. Update Project Board (move issue to Done)
-11. Report completion
+6. Commit: git add -A && git commit -m "type: description"
+7. Push: git push origin feature/description
+8. Create PR: gh pr create --base develop --head feature/description
+9. CI must pass (test, lint, security)
+10. Merge PR
+11. Update Project Board (In Progress → Done)
+12. Report to Tony
 ```
 
-## Issue #6: Docker Compose Deployment Fixes
+## Naming Conventions
 
-**Branch:** `fix/follow-development-rules`
-**Status:** In Progress
+### Branches
+- Feature: `feature/功能描述` (e.g., `feature/user-auth`)
+- Bug Fix: `fix/問題描述` (e.g., `fix/login-error`)
+- Documentation: `docs/項目` (e.g., `docs/api-doc`)
 
-**Issue Created:** Yes
-**Project Board Updated:** Yes (In Progress)
+### Commits
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation
+- `chore:` Maintenance
+- `refactor:` Code refactoring
+- `test:` Tests
 
-**Changes Made:**
-- Fixed Dockerfile COPY paths for frontend
-- Fixed TypeScript unused variable errors
-- Fixed Docker DATABASE_URL (added +asyncpg)
-- Fixed models/schemas __init__.py imports
-- All services now running successfully
+## Project Status
 
-**Completed:**
-- ✅ Backend API running on port 8000
-- ✅ Frontend running on port 3000
-- ✅ PostgreSQL on port 5432
-- ✅ Redis on port 6379
-- ✅ API test successful (AAPL quote: $248.80)
+### Completed Issues
+| # | Title | Status |
+|---|-------|--------|
+| 1 | Data Source Integration (Yahoo Finance) | Done |
+| 2 | Basic Stock Price Query | Done |
+| 3 | Personal Watchlist | Done |
+| 4 | Price Alerts | Done |
+| 5 | Web Frontend UI | Done |
 
-## Issue #5: Web Frontend UI - Completed
+### System Status
+- **Backend:** http://localhost:8000 ✅
+- **Frontend:** http://localhost:3000 ✅
+- **PostgreSQL:** localhost:5432 ✅
+- **Redis:** localhost:6379 ✅
 
-**Issues Completed:** #1, #2, #3, #4, #5
+## Issues Completed Today (2026-03-29)
 
-All 5 core issues are done. System is functional.
+- All 5 core issues completed
+- Docker Compose deployment working
+- API integration verified (AAPL quote: $248.80)
+
+## Next Steps
+
+1. Set up GitHub branch protection for `develop`
+2. Set up proper CI/CD pipeline
+3. Implement user authentication (future)
+4. Add more features (see Hermes for strategy)
