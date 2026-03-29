@@ -1,16 +1,19 @@
 import { useState } from 'react'
 import { stockService, watchlistService, alertService } from '../services/api'
-import type { StockInfo, PriceAlert } from '../types'
+import type { StockQuote, AlertConditionType } from '../services/api'
 import './StockSearch.css'
+
+const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 function StockSearch() {
   const [symbol, setSymbol] = useState('')
-  const [stock, setStock] = useState<StockInfo | null>(null)
+  const [quote, setQuote] = useState<StockQuote | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [addedToWatchlist, setAddedToWatchlist] = useState(false)
-  const [alertType, setAlertType] = useState('PRICE_ABOVE')
+  const [alertType, setAlertType] = useState<AlertConditionType>('above')
   const [alertThreshold, setAlertThreshold] = useState('')
+  const [message, setMessage] = useState<string | null>(null)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,41 +23,57 @@ function StockSearch() {
       setLoading(true)
       setError(null)
       setAddedToWatchlist(false)
-      const result = await stockService.getStockInfo(symbol.toUpperCase())
+      setMessage(null)
+      const result = await stockService.getStockQuote(symbol.toUpperCase())
       if (result) {
-        setStock(result)
-        setAlertThreshold('')
+        setQuote(result)
+        setAlertThreshold(result.price.toString())
       } else {
         setError('Stock not found')
-        setStock(null)
+        setQuote(null)
       }
     } catch (err) {
       setError('Failed to search stock')
-      setStock(null)
+      setQuote(null)
     } finally {
       setLoading(false)
     }
   }
 
   const handleAddToWatchlist = async () => {
-    if (!stock) return
+    if (!quote) return
     try {
-      await watchlistService.addStock('demo-user', stock.symbol, stock.name)
+      // Get or create default watchlist
+      const watchlists = await watchlistService.getWatchlists(DEMO_USER_ID)
+      let targetWatchlist = watchlists.find(wl => wl.is_default) || watchlists[0]
+      
+      if (!targetWatchlist) {
+        targetWatchlist = await watchlistService.createWatchlist(DEMO_USER_ID, 'My Watchlist', true)
+      }
+      
+      await watchlistService.addItemToWatchlist(DEMO_USER_ID, targetWatchlist.id, quote.symbol)
       setAddedToWatchlist(true)
+      setMessage('Added to watchlist!')
     } catch (err) {
       console.error('Failed to add to watchlist:', err)
+      setMessage('Failed to add to watchlist')
     }
   }
 
   const handleCreateAlert = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!stock || !alertThreshold) return
+    if (!quote || !alertThreshold) return
     try {
-      await alertService.createAlert('demo-user', stock.symbol, alertType, parseFloat(alertThreshold))
-      alert('Alert created successfully!')
-      setAlertThreshold('')
+      await alertService.createAlert(
+        DEMO_USER_ID,
+        quote.symbol,
+        alertType,
+        parseFloat(alertThreshold)
+      )
+      setMessage('Alert created successfully!')
     } catch (err) {
       console.error('Failed to create alert:', err)
+      setMessage('Failed to create alert')
     }
   }
 
@@ -75,15 +94,16 @@ function StockSearch() {
       </form>
 
       {error && <div className="error-message">{error}</div>}
+      {message && <div className="success-message">{message}</div>}
 
-      {stock && (
+      {quote && (
         <div className="stock-details">
           <div className="stock-header">
-            <span className="symbol">{stock.symbol}</span>
-            <span className="exchange">{stock.exchange}</span>
+            <span className="symbol">{quote.symbol}</span>
+            <span className="market-state">{quote.market_state || 'Unknown'}</span>
           </div>
-          <div className="stock-name">{stock.name}</div>
-          <div className="stock-currency">Currency: {stock.currency}</div>
+          <div className="stock-price">${quote.price.toFixed(2)}</div>
+          <div className="stock-volume">Volume: {quote.volume.toLocaleString()}</div>
 
           <div className="stock-actions">
             <button
@@ -100,12 +120,12 @@ function StockSearch() {
             <div className="alert-inputs">
               <select
                 value={alertType}
-                onChange={(e) => setAlertType(e.target.value)}
+                onChange={(e) => setAlertType(e.target.value as AlertConditionType)}
                 className="alert-select"
               >
-                <option value="PRICE_ABOVE">Price Above</option>
-                <option value="PRICE_BELOW">Price Below</option>
-                <option value="PRICE_CHANGE_PERCENT">Change %</option>
+                <option value="above">Price Above</option>
+                <option value="below">Price Below</option>
+                <option value="change_pct">Change %</option>
               </select>
               <input
                 type="number"

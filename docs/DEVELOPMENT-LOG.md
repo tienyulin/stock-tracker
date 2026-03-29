@@ -50,10 +50,20 @@ DELETE /api/v1/alerts/{id}
 POST /api/v1/alerts/{id}/trigger
 ```
 
+**PR:** #15
+
+## Self-Check Reminder
+
+If unresponsive, review:
+1. What was the last task?
+2. Is CI passing on current PR?
+3. What needs to be done next?
+4. Continue immediately without waiting.
+
 **Next Action:**
-- Monitor CI on PR #14
-- Test in DevContainer
+- Monitor CI on PR #15
 - Merge when CI passes
+- Continue with more integration improvements
 
 ---
 
