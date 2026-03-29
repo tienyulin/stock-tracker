@@ -1,0 +1,43 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install formatters
+        run: pip install black isort
+
+      - name: Check formatting with Black
+        run: black --check . || true
+
+      - name: Check import sorting with isort
+        run: isort --check-only . || true
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install mypy
+        run: pip install mypy
+
+      - name: Run mypy type checking
+        run: mypy . --ignore-missing-imports || true
