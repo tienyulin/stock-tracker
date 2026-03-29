@@ -38,16 +38,17 @@ A web-based stock tracking system for Taiwan market with:
 ## 🔄 Phase 2 - Technical & Features (Current)
 
 ### Task 1: Technical Indicators
-**Status:** IN PROGRESS
+**Status:** CI PASSED - MERGE BLOCKED (GitHub branch protection sync issue)
 **Issue:** #20 (Implement Technical Indicators)
-**Branch:** feature/rsi-indicator (from develop)
+**PR:** #22 (awaiting merge - CLI blocked by branch protection)
+**Branch:** feature/technical-indicators (from develop)
 **Description:** Implement RSI, MACD, MA calculations for Taiwan stocks
 **Acceptance Criteria:**
-- RSI calculation with period=14
-- MACD calculation (12, 26, 9 standard)
-- MA calculation (5, 10, 20, 60 day moving averages)
-- API endpoint to fetch indicators for any stock symbol
-- Frontend chart display
+- [x] RSI calculation with period=14
+- [x] MACD calculation (12, 26, 9 standard)
+- [x] MA calculation (5, 10, 20, 60 day moving averages)
+- [x] API endpoint to fetch indicators for any stock symbol
+- [x] Frontend chart display
 
 **Subtasks:**
 - [ ] Create Python utility for RSI formula
