@@ -4,8 +4,8 @@ Watchlist Service - Personal Watchlist Feature
 Provides watchlist management for users to track stocks.
 """
 import uuid
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
+
 
 from app.exceptions import ValidationError
 

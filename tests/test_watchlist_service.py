@@ -2,7 +2,7 @@
 Tests for Watchlist Service - Personal Watchlist Feature
 """
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from app.services.watchlist_service import WatchlistService, WatchlistItem
 
 
