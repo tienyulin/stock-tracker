@@ -3,7 +3,6 @@
 Tests for RSI, MACD, and Moving Average calculations.
 """
 import pytest
-from datetime import datetime, timedelta
 import sys
 import os
 
