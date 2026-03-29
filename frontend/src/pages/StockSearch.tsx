@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { stockService, watchlistService, alertService } from '../services/api'
 import type { StockQuote, AlertConditionType } from '../services/api'
+import StockIndicators from '../components/StockIndicators'
 import './StockSearch.css'
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
@@ -140,6 +141,8 @@ function StockSearch() {
               </button>
             </div>
           </form>
+
+          <StockIndicators symbol={quote.symbol} />
         </div>
       )}
     </div>

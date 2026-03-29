@@ -26,6 +26,20 @@ export interface StockHistory {
   volumes: number[]
 }
 
+// Indicator types
+export interface StockIndicators {
+  symbol: string
+  rsi: number | null
+  macd: {
+    macd_line: number
+    signal_line: number
+    histogram: number
+  } | null
+  sma: Record<string, number>
+  ema: Record<string, number>
+  timestamp: string
+}
+
 // Watchlist types
 export interface WatchlistItem {
   id: string
@@ -91,6 +105,22 @@ export const stockService = {
     } catch (err) {
       console.error('Failed to search stocks:', err)
       return { results: [] }
+    }
+  },
+
+  async getStockIndicators(
+    symbol: string,
+    period: string = '3mo',
+    interval: string = '1d'
+  ): Promise<StockIndicators | null> {
+    try {
+      const response = await apiClient.get(`/stocks/${symbol}/indicators`, {
+        params: { period, interval },
+      })
+      return response.data
+    } catch (err) {
+      console.error('Failed to get stock indicators:', err)
+      return null
     }
   },
 }
