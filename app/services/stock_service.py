@@ -6,7 +6,7 @@ Provides stock information and price data retrieval.
 from dataclasses import dataclass
 from typing import Optional
 
-from app.exceptions import ValidationError, DataSourceError
+from app.exceptions import ValidationError
 
 
 @dataclass

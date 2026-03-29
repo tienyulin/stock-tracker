@@ -2,7 +2,7 @@
 Tests for Stock Service - Basic Stock Price Query
 """
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from app.services.stock_service import StockService, StockInfo, PriceData
 
 
