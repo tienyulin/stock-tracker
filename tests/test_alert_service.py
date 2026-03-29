@@ -2,8 +2,8 @@
 Tests for Alert Service - Price Alert Feature
 """
 import pytest
-from unittest.mock import AsyncMock, patch
-from app.services.alert_service import AlertService, AlertRule, AlertType, PriceAlert
+from unittest.mock import AsyncMock
+from app.services.alert_service import AlertService, AlertRule, AlertType
 
 
 class TestAlertRule:
