@@ -1,4 +1,7 @@
-import { useState, useRef } from 'react'
+import {
+  useState,
+  useRef,
+} from 'react'
 import { stockService, watchlistService, alertService } from '../services/api'
 import type { StockQuote, StockHistory, AlertConditionType } from '../services/api'
 import StockIndicators from '../components/StockIndicators'
@@ -21,17 +24,28 @@ const POPULAR_STOCKS = [
   { symbol: 'JNJ', name: 'Johnson & Johnson' },
 ]
 
+type Period = '1W' | '1M' | '3M' | '6M'
+
+const PERIOD_MAP: Record<Period, { period: string; interval: string }> = {
+  '1W': { period: '5d', interval: '30m' },
+  '1M': { period: '1mo', interval: '1d' },
+  '3M': { period: '3mo', interval: '1d' },
+  '6M': { period: '6mo', interval: '1d' },
+}
+
 function StockSearch() {
   const [symbol, setSymbol] = useState('')
   const [quote, setQuote] = useState<StockQuote | null>(null)
   const [history, setHistory] = useState<StockHistory | null>(null)
   const [loading, setLoading] = useState(false)
+  const [chartLoading, setChartLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [addedToWatchlist, setAddedToWatchlist] = useState(false)
   const [alertType, setAlertType] = useState<AlertConditionType>('above')
   const [alertThreshold, setAlertThreshold] = useState('')
   const [message, setMessage] = useState<string | null>(null)
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [period, setPeriod] = useState<Period>('1M')
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Filter suggestions based on input
@@ -51,6 +65,17 @@ function StockSearch() {
     form?.requestSubmit()
   }
 
+  const fetchHistory = async (sym: string, p: Period) => {
+    const { period: pPeriod, interval: pInterval } = PERIOD_MAP[p]
+    setChartLoading(true)
+    try {
+      const historyData = await stockService.getStockHistory(sym, pPeriod, pInterval)
+      setHistory(historyData)
+    } finally {
+      setChartLoading(false)
+    }
+  }
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!symbol.trim()) return
@@ -65,8 +90,7 @@ function StockSearch() {
       if (result) {
         setQuote(result)
         setAlertThreshold(result.price.toString())
-        const historyData = await stockService.getStockHistory(symbol.toUpperCase(), '1mo', '1d')
-        setHistory(historyData)
+        await fetchHistory(symbol.toUpperCase(), period)
       } else {
         setError('Stock not found')
         setQuote(null)
@@ -76,6 +100,13 @@ function StockSearch() {
       setQuote(null)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handlePeriodChange = async (p: Period) => {
+    setPeriod(p)
+    if (quote) {
+      await fetchHistory(quote.symbol, p)
     }
   }
 
@@ -209,7 +240,30 @@ function StockSearch() {
 
           <StockIndicators symbol={quote.symbol} />
 
-          {history && <StockChart data={history} symbol={quote.symbol} />}
+          {history && (
+            <div className="chart-section">
+              <div className="chart-header">
+                <h4>Price Chart</h4>
+                <div className="period-selector">
+                  {(['1W', '1M', '3M', '6M'] as Period[]).map(p => (
+                    <button
+                      key={p}
+                      className={`period-btn ${period === p ? 'active' : ''}`}
+                      onClick={() => handlePeriodChange(p)}
+                      disabled={chartLoading}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {chartLoading ? (
+                <div className="chart-loading">Loading chart...</div>
+              ) : (
+                <StockChart data={history} symbol={quote.symbol} />
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -206,3 +206,61 @@
 .create-alert-btn:hover {
   background: #43a047;
 }
+
+/* Chart section */
+.chart-section {
+  margin-top: 1.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.chart-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.period-selector {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.period-btn {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.period-btn:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.period-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.period-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chart-loading {
+  padding: 3rem;
+  text-align: center;
+  color: #9ca3af;
+  background: #f9fafb;
+  border-radius: 8px;
+}

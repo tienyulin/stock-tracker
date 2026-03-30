@@ -85,6 +85,11 @@ A web-based stock tracking system for Taiwan market with:
 | Python 3.9 Fix | #33 | `from __future__ import annotations` for union types |
 | Structured Logging | #34 | JSON-like logging format + enhanced /health |
 | Plugin Fix | #32 | `@vitejs/plugin-react` 5.x for vite 8 |
+| Price Change + Skeletons | #43 | Real-time price change display + loading skeletons |
+| Search Autocomplete | #41 | Search with autocomplete + popular stocks suggestions |
+| ErrorBoundary | #42 | React ErrorBoundary to prevent page crashes |
+
+**develop branch: CLEAN ✅ | CI: ALL GREEN ✅** |
 
 ---
 
