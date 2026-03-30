@@ -79,16 +79,69 @@ A web-based stock tracking system for Taiwan market with:
 
 ---
 
-## 🔲 Phase 3 - Next Steps (Pending)
+## 🚀 Phase 3 - Deployment & Growth (Active)
 
-To be determined by Tony and Hermes. Potential areas:
-- [ ] Dependabot PRs review (2 open: black-26.3.1, npm_and_yarn)
-- [ ] `feature/stock-price-query` review (adds stock service tests + CodeQL workflow)
-- [ ] `feature/web-frontend` review (frontend Docker setup)
-- [ ] `feature/integration-testing` review
-- [ ] Deployment automation (CI/CD to cloud)
-- [ ] User authentication
+**CEO Decision (Hermes):** Product is MVP-complete. Priority is NOW making it accessible to users.
+
+### 🚨 Top Priority - IN PROGRESS
+
+**Task: Deploy to Production**
+**Owner:** Athena (executing) | Hermes (oversight)
+**Target:** 3 days (by 2026-04-02)
+**Status:** IN PROGRESS
+
+**Decision:**
+- Platform: Railway (free tier sufficient)
+- Architecture: Separate Frontend + Backend deployments
+- Database: Railway PostgreSQL + Redis plugin
+- Analytics: Plausible (privacy-first, GDPR-compliant)
+
+**Subtasks:**
+- [ ] Athena: Set up Railway project
+- [ ] Athena: Deploy Backend (FastAPI) → report API URL
+- [ ] Athena: Deploy Frontend (React) → report public URL
+- [ ] Hermes: Verify deployment, add to docs
+
+---
+
+### 📋 Pending PRs (Review Queue)
+
+- [ ] Dependabot PR: black-26.3.1 (low risk, merge)
+- [ ] Dependabot PR: npm_and_yarn (low risk, merge)
+- [ ] `feature/stock-price-query` — stock service tests + CodeQL workflow
+- [ ] `feature/web-frontend` — frontend Docker setup
+- [ ] `feature/integration-testing` — integration tests
+
+---
+
+### 📋 Future Phases
+
+- [ ] User authentication (Auth0 or custom JWT)
 - [ ] Real-time price updates (WebSocket)
+- [ ] Mobile app (PWA first, React Native later)
+- [ ] Premium tier implementation
+- [ ] LINE/LINE@ integration for alerts
+
+---
+
+## 📊 Growth Metrics (Track Once Deployed)
+
+| Metric | Target (30 days) |
+|--------|------------------|
+| Unique visitors | 100 |
+| Sign-ups | 20 |
+| Active watchlists | 15 |
+| Alerts created | 30 |
+
+---
+
+## 📝 Docs Delivered by Hermes
+
+| Document | Status |
+|----------|--------|
+| `docs/SPEC-Watchlist.md` | ✅ Complete |
+| `docs/SPEC-PriceAlerts.md` | ✅ Complete |
+| `docs/STRATEGY.md` | ✅ Complete |
 
 ---
 
