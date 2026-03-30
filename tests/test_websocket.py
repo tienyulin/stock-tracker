@@ -74,7 +74,6 @@ class TestWebSocketReconnection:
     def test_max_reconnection_attempts(self):
         """Should have a maximum number of reconnection attempts."""
         max_retries = 5
-        current_attempt = 0
         
         def should_reconnect(attempt):
             return attempt < max_retries
