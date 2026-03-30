@@ -5,9 +5,6 @@ Tests WebSocket connection, message format,
 and reconnection logic.
 """
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
-
 
 class TestWebSocketConnection:
     """Test WebSocket connection functionality."""
