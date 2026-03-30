@@ -6,7 +6,6 @@ both US and Taiwan (TWSE) stocks via Yahoo Finance.
 """
 
 import pytest
-from unittest.mock import AsyncMock, patch
 from app.services.yfinance_service import YFinanceService
 
 

@@ -1,6 +1,6 @@
 # Stock Tracker Project - Task Board
 
-**Last Updated:** 2026-03-30
+**Last Updated:** 2026-03-31
 **Status:** Phase 1 ✅ → Phase 2 ✅ → **Phase 3 Active (Deployment)**
 **Project Lead:** Hermes (CSO/PM)
 **Tech Lead:** Athena (CTO)
@@ -90,6 +90,22 @@ A web-based stock tracking system for Taiwan market with:
 | ErrorBoundary | #42 | React ErrorBoundary to prevent page crashes |
 
 **develop branch: CLEAN ✅ | CI: ALL GREEN ✅** |
+
+---
+
+## 🐛 Bug Fixes (Active)
+
+### Bug #52: SPA Routing 404 on Vercel
+**Status:** ✅ FIXED & MERGED (PR #53)
+**Issue:** `/search`, `/watchlist`, `/alerts` all returned 404 on Vercel
+**Root Cause:** Missing `rewrites` config in `vercel.json` for client-side routing
+**Fix:** Added `"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]`
+**Verification:** Awaiting Vercel redeploy (takes ~1-2 min after merge)
+
+### Bug: Stock Name Shows "UNKNOWN"
+**Status:** 🔍 INVESTIGATING
+**Issue:** Dashboard shows stock symbols (AAPL, GOOGL) but name shows as "UNKNOWN"
+**Root Cause:** Likely API response doesn't include `name` field or frontend doesn't parse it
 
 ---
 
