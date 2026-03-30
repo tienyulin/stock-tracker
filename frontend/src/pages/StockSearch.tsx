@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { stockService, watchlistService, alertService } from '../services/api'
 import type { StockQuote, StockHistory, AlertConditionType } from '../services/api'
 import StockIndicators from '../components/StockIndicators'
@@ -6,6 +6,20 @@ import StockChart from '../components/StockChart'
 import './StockSearch.css'
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
+
+// Popular US stocks for suggestions
+const POPULAR_STOCKS = [
+  { symbol: 'AAPL', name: 'Apple Inc.' },
+  { symbol: 'GOOGL', name: 'Alphabet Inc.' },
+  { symbol: 'MSFT', name: 'Microsoft Corp.' },
+  { symbol: 'AMZN', name: 'Amazon.com Inc.' },
+  { symbol: 'TSLA', name: 'Tesla Inc.' },
+  { symbol: 'META', name: 'Meta Platforms' },
+  { symbol: 'NVDA', name: 'NVIDIA Corp.' },
+  { symbol: 'JPM', name: 'JPMorgan Chase' },
+  { symbol: 'V', name: 'Visa Inc.' },
+  { symbol: 'JNJ', name: 'Johnson & Johnson' },
+]
 
 function StockSearch() {
   const [symbol, setSymbol] = useState('')
@@ -17,6 +31,25 @@ function StockSearch() {
   const [alertType, setAlertType] = useState<AlertConditionType>('above')
   const [alertThreshold, setAlertThreshold] = useState('')
   const [message, setMessage] = useState<string | null>(null)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Filter suggestions based on input
+  const suggestions = symbol.length > 0
+    ? POPULAR_STOCKS.filter(s =>
+        s.symbol.toLowerCase().includes(symbol.toLowerCase()) ||
+        s.name.toLowerCase().includes(symbol.toLowerCase())
+      ).slice(0, 5)
+    : POPULAR_STOCKS.slice(0, 8)
+
+  const handleSelectSuggestion = (sym: string) => {
+    setSymbol(sym)
+    setShowSuggestions(false)
+    inputRef.current?.blur()
+    // Trigger search
+    const form = document.querySelector('.search-form') as HTMLFormElement
+    form?.requestSubmit()
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,11 +60,11 @@ function StockSearch() {
       setError(null)
       setAddedToWatchlist(false)
       setMessage(null)
+      setShowSuggestions(false)
       const result = await stockService.getStockQuote(symbol.toUpperCase())
       if (result) {
         setQuote(result)
         setAlertThreshold(result.price.toString())
-        // Fetch history for chart
         const historyData = await stockService.getStockHistory(symbol.toUpperCase(), '1mo', '1d')
         setHistory(historyData)
       } else {
@@ -49,14 +82,13 @@ function StockSearch() {
   const handleAddToWatchlist = async () => {
     if (!quote) return
     try {
-      // Get or create default watchlist
       const watchlists = await watchlistService.getWatchlists(DEMO_USER_ID)
       let targetWatchlist = watchlists.find(wl => wl.is_default) || watchlists[0]
-      
+
       if (!targetWatchlist) {
         targetWatchlist = await watchlistService.createWatchlist(DEMO_USER_ID, 'My Watchlist', true)
       }
-      
+
       await watchlistService.addItemToWatchlist(DEMO_USER_ID, targetWatchlist.id, quote.symbol)
       setAddedToWatchlist(true)
       setMessage('Added to watchlist!')
@@ -86,18 +118,46 @@ function StockSearch() {
   return (
     <div className="stock-search">
       <h2>Search Stocks</h2>
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          value={symbol}
-          onChange={(e) => setSymbol(e.target.value)}
-          placeholder="Enter stock symbol (e.g., AAPL)"
-          className="search-input"
-        />
-        <button type="submit" className="search-btn" disabled={loading}>
-          {loading ? 'Searching...' : 'Search'}
-        </button>
-      </form>
+      <div className="search-wrapper">
+        <form onSubmit={handleSearch} className="search-form">
+          <input
+            ref={inputRef}
+            type="text"
+            value={symbol}
+            onChange={(e) => {
+              setSymbol(e.target.value)
+              setShowSuggestions(true)
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            placeholder="Enter stock symbol (e.g., AAPL)"
+            className="search-input"
+            autoComplete="off"
+          />
+          <button type="submit" className="search-btn" disabled={loading}>
+            {loading ? 'Searching...' : 'Search'}
+          </button>
+        </form>
+
+        {/* Suggestions dropdown */}
+        {showSuggestions && (
+          <div className="suggestions-dropdown">
+            {suggestions.length > 0 ? (
+              suggestions.map(stock => (
+                <button
+                  key={stock.symbol}
+                  className="suggestion-item"
+                  onClick={() => handleSelectSuggestion(stock.symbol)}
+                >
+                  <span className="suggestion-symbol">{stock.symbol}</span>
+                  <span className="suggestion-name">{stock.name}</span>
+                </button>
+              ))
+            ) : (
+              <div className="suggestion-empty">No matches</div>
+            )}
+          </div>
+        )}
+      </div>
 
       {error && <div className="error-message">{error}</div>}
       {message && <div className="success-message">{message}</div>}
