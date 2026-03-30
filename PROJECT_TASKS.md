@@ -120,9 +120,13 @@ A web-based stock tracking system for Taiwan market with:
 - [x] Tony: Created accounts (Neon, Upstash, Render, Vercel) ✅
 - [x] Tony: Shared credentials with Athena ✅
 - [x] Tony: Set DATABASE_URL + REDIS_URL in Render Dashboard ✅
-- [ ] Athena: pydantic upgraded to 2.10.6 + python 3.12 — rebuilding
-- [ ] Backend: Build in progress (dep-d7583me97pvs73c71lg) — awaiting completion
-- [ ] Athena: Verify API health after rebuild
+- [x] Backend: Deployed and verified ✅ (dep-d759nptipkoc7393vdr0 live)
+  - URL: https://stock-tracker-api-5ht7.onrender.com ✅
+  - Python 3.12.3 + pydantic 2.10.6 + asyncpg driver ✅
+  - Health: `{"status":"healthy","version":"1.0.0"}` ✅
+  - Stock API: `/api/v1/stocks/AAPL/quote` → `{"symbol":"AAPL","price":246.595,...}` ✅
+  - Docs: `/docs` (Swagger UI) ✅
+- [ ] Frontend: Verify correct API URL and CORS (next step)
 - [ ] Tony: Configure DNS (stock-tracker.tienyulin.com)
 
 ---
