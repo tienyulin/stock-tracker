@@ -113,6 +113,8 @@ async def update_alert(
         alert.condition_type = alert_data.condition_type
     if alert_data.threshold is not None:
         alert.threshold = alert_data.threshold
+    if alert_data.triggered_at is not None:
+        alert.triggered_at = alert_data.triggered_at  # None = reset
 
     await db.commit()
     await db.refresh(alert)
