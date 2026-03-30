@@ -7,7 +7,6 @@ Provides WebSocket connections for live price streaming.
 import asyncio
 import json
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
