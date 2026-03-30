@@ -2,6 +2,8 @@
 Stock API routes.
 """
 
+import logging
+
 from fastapi import APIRouter, HTTPException, Query
 
 from app.schemas import StockHistoryResponse, StockQuoteResponse
@@ -9,6 +11,7 @@ from app.services.yfinance_service import YFinanceService
 from app.services.indicators_service import TechnicalIndicatorsService
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
+logger = logging.getLogger(__name__)
 
 
 @router.get("/{symbol}/quote", response_model=StockQuoteResponse)
