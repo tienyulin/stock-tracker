@@ -1,7 +1,7 @@
 # Stock Tracker Project - Task Board
 
 **Last Updated:** 2026-03-30
-**Status:** Phase 1 Complete → **Phase 2 Complete** → Phase 3 Planning
+**Status:** Phase 1 ✅ → Phase 2 ✅ → **Phase 3 Active (Deployment)**
 **Project Lead:** Hermes (CSO/PM)
 **Tech Lead:** Athena (CTO)
 
@@ -12,14 +12,17 @@
 A web-based stock tracking system for Taiwan market with:
 - Real-time price tracking
 - Technical analysis indicators (RSI, MACD, MA)
-- Personalized watchlist
-- Price alert notifications
+- Personalized watchlist with multi-list support
+- Price alert notifications with reset capability
+- Market overview (S&P 500, Nasdaq, Dow Jones, Treasury)
+- Interactive stock charts
 
 **Tech Stack:**
-- Frontend: React + TypeScript
+- Frontend: React + TypeScript + Vite
 - Backend: FastAPI (Python)
-- Database: PostgreSQL + Redis
-- Deployment: Docker Compose
+- Database: PostgreSQL (Neon free tier)
+- Redis: Upstash (free tier)
+- Deployment: Vercel (Frontend) + Render (Backend)
 
 **Repo:** https://github.com/tienyulin/stock-tracker
 
@@ -34,20 +37,169 @@ A web-based stock tracking system for Taiwan market with:
 
 ---
 
-## ✅ Phase 2 - Technical & Features Completed
+## ✅ Phase 2 - Features Completed
 
 ### Task 1: Technical Indicators
-**Status:** ✅ COMPLETED
-**PR:** #22 (merged via develop after workflow fix)
-**Branch:** feature/technical-indicators → develop
-**Completed:** 2026-03-30
+**Status:** ✅ COMPLETED (2026-03-30)
+**PR:** #22
 
 **Implementation:**
 - Backend: `app/services/indicators_service.py` - RSI, MACD, SMA, EMA calculations
 - API: `GET /api/v1/stocks/{symbol}/indicators`
-- Frontend: `StockIndicators.tsx` component integrated in StockSearch page
+- Frontend: `StockIndicators.tsx` component in StockSearch page
 - Tests: `tests/services/test_indicators_service.py`
-- CI: All 10 checks passing
+
+---
+
+### Task 2: Watchlist Feature
+**Status:** ✅ COMPLETED (2026-03-29)
+**PR:** #10
+
+**Implementation:**
+- Backend: `app/api/v1/watchlists.py`, `app/services/watchlist_service.py`
+- Models: `Watchlist`, `WatchlistItem` with PostgreSQL
+- Frontend: `Watchlist.tsx` with sort, create, parallel loading
+
+---
+
+### Task 3: Price Alerts
+**Status:** ✅ COMPLETED (2026-03-29)
+**PR:** #11
+
+**Implementation:**
+- Backend: `app/api/v1/alerts.py`, `app/services/alert_service.py`
+- Models: `Alert` with condition types (above/below/change_pct)
+- Frontend: `Alerts.tsx` with filter tabs, notifications, reset
+
+---
+
+## ✅ Phase 2 Enhancements (Completed Today)
+
+| Feature | PR | Description |
+|---------|-----|-------------|
+| Stock Chart | #35 | Line chart with 1mo history (recharts) |
+| Market Overview | #36 | S&P 500, Nasdaq, Dow Jones, 10Y Treasury |
+| Alerts Enhancement | #37 | Filter tabs, toast notifications, reset button |
+| Watchlist Enhancement | #38 | Sort by symbol/price, create list, parallel loading |
+| Mobile Responsive | #39 | Responsive navbar, stock grids, active link highlight |
+| Python 3.9 Fix | #33 | `from __future__ import annotations` for union types |
+| Structured Logging | #34 | JSON-like logging format + enhanced /health |
+| Plugin Fix | #32 | `@vitejs/plugin-react` 5.x for vite 8 |
+
+---
+
+## 🚀 Phase 3 - Deployment (Active)
+
+**Status:** Awaiting Tony's deployment account setup
+
+**Decision (Tony approved):**
+- Deploy externally (public URL, accessible beyond localhost)
+- 100% free — no paid components whatsoever
+- Internal team testing only — no public promotion
+- Domain: **tienyulin.com** (Tony's existing domain)
+
+**Stack (all free + Tony's GitHub Student Pack):**
+- Frontend: **Vercel Pro** ✅ (GitHub Student Pack — unlimited bandwidth)
+- Backend: **Render.com** (free tier, FastAPI compatible)
+- Database: **Neon** (free PostgreSQL tier)
+- Redis: **Upstash** (free serverless Redis)
+
+**Files Ready for Deployment:**
+- ✅ `DEPLOY.md` - Complete deployment guide
+- ✅ `frontend/vercel.json` - Vercel config (SIN1 region)
+- ✅ `.env.example` - Environment variable template
+- ✅ `render.yaml` - Render Blueprint
+- ✅ FastAPI CORS middleware configured
+
+**Pending (needs Tony's accounts):**
+- [ ] Tony: Create Neon PostgreSQL → share DATABASE_URL
+- [ ] Tony: Create Upstash Redis → share REDIS_URL
+- [ ] Tony: Connect Render to GitHub repo → deploy backend
+- [ ] Tony: Connect Vercel to GitHub repo → deploy frontend
+- [ ] Tony: Configure DNS for tienyulin.com
+
+---
+
+## 📋 Future Phases (Backlog)
+
+| Priority | Feature | Notes |
+|----------|---------|-------|
+| High | User authentication | JWT or Auth0 |
+| Medium | Real-time price updates | WebSocket |
+| Medium | Taiwan market support | TWSE stocks |
+| Low | Mobile app | PWA first |
+| Low | LINE integration | Alert notifications |
+
+---
+
+## 📐 Development Rules
+
+1. **Branch Strategy:**
+   - All work from `develop` branch
+   - Create feature branch: `feature/[feature-name]`
+   - Merge back to `develop` when complete
+
+2. **Workflow:**
+   - Open Issue → Update Project Board → Branch → TDD → Implement → Test → Commit → PR → CI → Merge
+
+3. **Naming Convention:**
+   - Branch: `feature/`, `bugfix/`, `hotfix/`
+   - Commit: descriptive, English, imperative mood
+   - PR: clear title with issue number
+
+4. **CI Requirements:**
+   - Workflow files must use uppercase scope prefix: `CI.yml`, `Code Quality.yml`, `Security.yml`
+   - Branch protection requires: `CI/test`, `CI/lint`, `Code Quality/format-check`, `Code Quality/type-check`, `Security/security-scan`, `Security/dependency-check`
+
+---
+
+## 📊 CI/CD Status
+
+**All 61 tests passing ✅**
+**All CI checks passing ✅**
+
+| Check | Status |
+|-------|--------|
+| CI/test | ✅ |
+| CI/lint | ✅ |
+| Code Quality/format-check | ✅ |
+| Code Quality/type-check | ✅ |
+| Security/security-scan | ✅ |
+| Security/dependency-check | ✅ |
+
+---
+
+## 📁 Project Structure
+
+```
+stock-tracker/
+├── backend/
+│   ├── app/
+│   │   ├── api/v1/        # FastAPI routes
+│   │   ├── core/           # Config, database
+│   │   ├── models/         # SQLAlchemy models
+│   │   ├── schemas/        # Pydantic schemas
+│   │   └── services/       # Business logic
+│   └── tests/
+├── frontend/
+│   ├── src/
+│   │   ├── components/     # React components
+│   │   ├── pages/          # Page components
+│   │   └── services/       # API client
+│   └── tests/
+├── docker-compose.yml
+├── DEPLOY.md
+└── .github/workflows/
+```
+
+---
+
+## 🔗 Links
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+- GitHub Repo: https://github.com/tienyulin/stock-tracker
 
 ---
 
