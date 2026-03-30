@@ -116,12 +116,14 @@ A web-based stock tracking system for Taiwan market with:
 - ✅ `render.yaml` - Render Blueprint
 - ✅ FastAPI CORS middleware configured
 
-**Pending (needs Tony's accounts):**
-- [ ] Tony: Create Neon PostgreSQL → share DATABASE_URL
-- [ ] Tony: Create Upstash Redis → share REDIS_URL
-- [ ] Tony: Connect Render to GitHub repo → deploy backend
-- [ ] Tony: Connect Vercel to GitHub repo → deploy frontend
-- [ ] Tony: Configure DNS for tienyulin.com
+**Deployment Progress:**
+- [x] Tony: Created accounts (Neon, Upstash, Render, Vercel) ✅
+- [x] Tony: Shared credentials with Athena ✅
+- [x] Tony: Set DATABASE_URL + REDIS_URL in Render Dashboard ✅
+- [ ] Athena: pydantic upgraded to 2.10.6 + python 3.12 — rebuilding
+- [ ] Backend: Build in progress (dep-d7583me97pvs73c71lg) — awaiting completion
+- [ ] Athena: Verify API health after rebuild
+- [ ] Tony: Configure DNS (stock-tracker.tienyulin.com)
 
 ---
 
