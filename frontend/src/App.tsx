@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import ErrorBoundary from './components/ErrorBoundary'
 import Dashboard from './pages/Dashboard'
 import Watchlist from './pages/Watchlist'
 import Alerts from './pages/Alerts'
@@ -19,12 +20,14 @@ function App() {
           </ul>
         </nav>
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/search" element={<StockSearch />} />
-            <Route path="/watchlist" element={<Watchlist />} />
-            <Route path="/alerts" element={<Alerts />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/search" element={<StockSearch />} />
+              <Route path="/watchlist" element={<Watchlist />} />
+              <Route path="/alerts" element={<Alerts />} />
+            </Routes>
+          </ErrorBoundary>
         </main>
       </div>
     </BrowserRouter>
