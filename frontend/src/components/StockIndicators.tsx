@@ -44,15 +44,15 @@ function StockIndicators({ symbol, period = '3mo', interval = '1d' }: StockIndic
     return <div className="indicators-error">{error || 'No data'}</div>
   }
 
-  const getRsiColor = (rsi: number | null) => {
-    if (rsi === null) return ''
+  const getRsiColor = (rsi: number | null | undefined) => {
+    if (rsi == null) return ''
     if (rsi >= 70) return 'overbought'
     if (rsi <= 30) return 'oversold'
     return ''
   }
 
-  const getRsiLabel = (rsi: number | null) => {
-    if (rsi === null) return 'N/A'
+  const getRsiLabel = (rsi: number | null | undefined) => {
+    if (rsi == null) return 'N/A'
     if (rsi >= 70) return 'Overbought'
     if (rsi <= 30) return 'Oversold'
     return 'Neutral'
@@ -67,7 +67,7 @@ function StockIndicators({ symbol, period = '3mo', interval = '1d' }: StockIndic
         <div className={`indicator-card ${getRsiColor(indicators.rsi)}`}>
           <div className="indicator-label">RSI (14)</div>
           <div className="indicator-value">
-            {indicators.rsi !== null ? indicators.rsi.toFixed(2) : 'N/A'}
+            {indicators.rsi != null ? indicators.rsi.toFixed(2) : 'N/A'}
           </div>
           <div className="indicator-status">
             {getRsiLabel(indicators.rsi)}

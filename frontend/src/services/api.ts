@@ -31,7 +31,7 @@ export interface StockHistory {
 // Indicator types
 export interface StockIndicators {
   symbol: string
-  rsi: number | null
+  rsi: number | null | undefined
   macd: {
     macd_line: number
     signal_line: number
