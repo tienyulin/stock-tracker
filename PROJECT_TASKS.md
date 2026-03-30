@@ -101,8 +101,11 @@ A web-based stock tracking system for Taiwan market with:
 - Backend: Render.com (free tier, FastAPI compatible)
 - Database: Supabase free PostgreSQL OR Neon free tier
 - Redis: Upstash free (serverless Redis)
-- Domain: Namecheap free .tw/.com (GitHub Student Pack — pending)
-- Bonus: GitHub Copilot for development speed
+- Domain: **tienyulin.com** ✅ (Tony's existing domain)
+
+**Domain Plan:**
+- `stock-tracker.tienyulin.com` → Frontend (Vercel)
+- `api.stock-tracker.tienyulin.com` → Backend API (Render)
 
 **Subtasks:**
 - [ ] Athena: Deploy Backend (FastAPI) → report API URL
