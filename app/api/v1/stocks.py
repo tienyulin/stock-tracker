@@ -39,6 +39,8 @@ async def get_stock_quote(symbol: str) -> StockQuoteResponse:
                 volume=quote.volume,
                 timestamp=quote.timestamp,
                 market_state=quote.market_state,
+                change=quote.change,
+                change_percent=quote.change_percent,
             )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch quote: {str(e)}")

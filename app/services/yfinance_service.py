@@ -27,6 +27,8 @@ class StockQuote:
     volume: int
     timestamp: Optional[int] = None
     market_state: Optional[str] = None
+    change: Optional[float] = None
+    change_percent: Optional[float] = None
 
 
 @dataclass
@@ -172,6 +174,8 @@ class YFinanceService:
             volume=meta.get("regularMarketVolume", 0),
             timestamp=int(meta.get("regularMarketTime", 0)),
             market_state=meta.get("marketState", "UNKNOWN"),
+            change=meta.get("regularMarketChange", None),
+            change_percent=meta.get("regularMarketChangePercent", None),
         )
 
     async def get_history(

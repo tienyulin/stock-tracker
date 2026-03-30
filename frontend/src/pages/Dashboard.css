@@ -97,6 +97,20 @@
   font-size: 1.25rem;
 }
 
+.stock-change {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.stock-change.up {
+  color: #10b981;
+}
+
+.stock-change.down {
+  color: #ef4444;
+}
+
 .stock-volume {
   font-size: 0.85rem;
   color: #6b7280;
