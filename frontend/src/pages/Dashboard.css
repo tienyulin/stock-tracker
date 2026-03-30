@@ -9,24 +9,43 @@
   color: #e53935;
 }
 
+.dashboard h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.dashboard section:first-of-type h3 {
+  margin-top: 0;
+}
+
 .stock-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.indices-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
 
 .stock-card {
   background: white;
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stock-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.index-card {
+  border-left: 3px solid #2563eb;
 }
 
 .stock-header {
@@ -37,9 +56,51 @@
 }
 
 .stock-symbol {
-  font-size: 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.market-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.market-badge.premarket,
+.market-badge.extendedhours {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.market-badge.regular {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.stock-market-state {
+  font-size: 0.75rem;
+  color: #666;
+  background: #f3f4f6;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.stock-price {
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a2e;
+}
+
+.index-card .stock-price {
+  font-size: 1.25rem;
+}
+
+.stock-volume {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
 }
 
 .stock-exchange {
