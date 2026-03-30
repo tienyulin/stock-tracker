@@ -90,14 +90,21 @@ A web-based stock tracking system for Taiwan market with:
 **Target:** 3 days (by 2026-04-02)
 **Status:** IN PROGRESS
 
-**Decision:**
-- Platform: Railway (free tier sufficient)
-- Architecture: Separate Frontend + Backend deployments
-- Database: Railway PostgreSQL + Redis plugin
-- Analytics: Plausible (privacy-first, GDPR-compliant)
+**Decision (Tony approved):**
+- Deploy externally (public URL, accessible beyond localhost)
+- 100% free — no paid components whatsoever
+- Internal team testing only — no public promotion
+- URL shared only within Pantheon team
+
+**Stack (all free + Tony's GitHub Student Pack):**
+- Frontend: **Vercel Pro** ✅ (GitHub Student Pack — unlimited bandwidth, no hobby limits)
+- Backend: Render.com (free tier, FastAPI compatible)
+- Database: Supabase free PostgreSQL OR Neon free tier
+- Redis: Upstash free (serverless Redis)
+- Domain: Namecheap free .tw/.com (GitHub Student Pack — pending)
+- Bonus: GitHub Copilot for development speed
 
 **Subtasks:**
-- [ ] Athena: Set up Railway project
 - [ ] Athena: Deploy Backend (FastAPI) → report API URL
 - [ ] Athena: Deploy Frontend (React) → report public URL
 - [ ] Hermes: Verify deployment, add to docs

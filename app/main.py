@@ -5,6 +5,7 @@ Stock Tracker API - Main Application
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import router as api_v1_router
 
@@ -24,6 +25,15 @@ app = FastAPI(
     description="API for tracking stock prices, managing watchlists and alerts",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+# CORS middleware for frontend-backend separation
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include API v1 routes
