@@ -101,16 +101,33 @@ async def search_stocks(q: str = Query(..., min_length=1, description="Search qu
     Returns:
         List of matching symbols
     """
-    # Basic search - in production would call a search API
+    # US Stocks
     common_symbols = {
         "AAPL": "Apple Inc.",
         "GOOGL": "Alphabet Inc.",
         "MSFT": "Microsoft Corporation",
         "AMZN": "Amazon.com Inc.",
         "TSLA": "Tesla Inc.",
-        "2330.TW": "Taiwan Semiconductor",
-        "2454.TW": "MediaTek Inc.",
+        "NVDA": "NVIDIA Corporation",
+        "META": "Meta Platforms Inc.",
+        "NFLX": "Netflix Inc.",
     }
+    # Taiwan Stocks (TWSE) - supported via Yahoo Finance .TW suffix
+    twse_symbols = {
+        "2330.TW": "Taiwan Semiconductor (TSMC)",
+        "2317.TW": "Hon Hai Precision (Foxconn)",
+        "2454.TW": "MediaTek Inc.",
+        "2308.TW": "Delta Electronics",
+        "2371.TW": "Acer Inc.",
+        "2498.TW": "HTC Corporation",
+        "2609.TW": "Yang Ming Marine",
+        "2618.TW": "Evergreen Marine",
+        "2891.TW": "Cathay Financial",
+        "0050.TW": "Yuanta/P-Shares Taiwan Top 50 ETF",
+        "0056.TW": "Yuanta MSCI Taiwan ETF",
+    }
+    # Merge both dicts
+    common_symbols.update(twse_symbols)
     results = [
         {"symbol": k, "name": v}
         for k, v in common_symbols.items()
