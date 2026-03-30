@@ -2,6 +2,8 @@
 Stock Tracker API - Main Application
 """
 
+import logging
+import sys
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -9,15 +11,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import router as api_v1_router
 
+# Configure structured logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    stream=sys.stdout,
+)
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
-    # Startup
-    print("Stock Tracker API starting up...")
+    logger.info("Stock Tracker API starting up...")
     yield
-    # Shutdown
-    print("Stock Tracker API shutting down...")
+    logger.info("Stock Tracker API shutting down...")
 
 
 app = FastAPI(
@@ -47,4 +56,14 @@ async def root():
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    """
+    Health check endpoint for load balancers and monitoring.
+    
+    Returns:
+        Health status with component details.
+    """
+    return {
+        "status": "healthy",
+        "version": "1.0.0",
+        "service": "stock-tracker-api"
+    }
