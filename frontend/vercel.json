@@ -38,6 +38,9 @@
   "regions": [
     "sin1"
   ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "env": {
     "VITE_API_BASE_URL": "https://stock-tracker-api-5ht7.onrender.com/api/v1"
   }
