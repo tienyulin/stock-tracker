@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import router as api_v1_router
+from app.api.v1 import websocket
 
 # Configure structured logging
 logging.basicConfig(
@@ -47,6 +48,9 @@ app.add_middleware(
 
 # Include API v1 routes
 app.include_router(api_v1_router)
+
+# WebSocket routes at root level
+app.include_router(websocket.router)
 
 
 @app.get("/")
