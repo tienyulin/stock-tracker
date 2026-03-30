@@ -12,6 +12,15 @@ const MARKET_INDICES = [
   { symbol: '^TNX', name: '10Y Treasury' },
 ]
 
+function getMarketStatus(indices: StockQuote[]) {
+  if (indices.length === 0) return null
+  const states = indices.map(q => q.market_state?.toLowerCase())
+  if (states.every(s => s === 'regular')) return 'open'
+  if (states.some(s => s === 'pre')) return 'pre'
+  if (states.some(s => s === 'post')) return 'after'
+  return 'closed'
+}
+
 function formatChange(change: number | undefined, percent: number | undefined) {
   if (change === undefined || change === null) return null
   const sign = change >= 0 ? '+' : ''
@@ -77,6 +86,23 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <h2>Dashboard</h2>
+
+      {/* Market status banner */}
+      {indices.length > 0 && (() => {
+        const status = getMarketStatus(indices)
+        const statusConfig = {
+          open: { label: 'Market Open', class: 'market-open' },
+          pre: { label: 'Pre-Market', class: 'market-pre' },
+          after: { label: 'After Hours', class: 'market-after' },
+          closed: { label: 'Market Closed', class: 'market-closed' },
+        }[status ?? 'closed']
+        return (
+          <div className={`market-status-banner ${statusConfig.class}`}>
+            <span className="market-status-dot" />
+            {statusConfig.label} — Prices may be delayed
+          </div>
+        )
+      })()}
 
       {/* Market Overview */}
       {indices.length > 0 && (
