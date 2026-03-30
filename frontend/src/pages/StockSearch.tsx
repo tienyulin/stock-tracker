@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { stockService, watchlistService, alertService } from '../services/api'
-import type { StockQuote, AlertConditionType } from '../services/api'
+import type { StockQuote, StockHistory, AlertConditionType } from '../services/api'
 import StockIndicators from '../components/StockIndicators'
+import StockChart from '../components/StockChart'
 import './StockSearch.css'
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
@@ -9,6 +10,7 @@ const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
 function StockSearch() {
   const [symbol, setSymbol] = useState('')
   const [quote, setQuote] = useState<StockQuote | null>(null)
+  const [history, setHistory] = useState<StockHistory | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [addedToWatchlist, setAddedToWatchlist] = useState(false)
@@ -29,6 +31,9 @@ function StockSearch() {
       if (result) {
         setQuote(result)
         setAlertThreshold(result.price.toString())
+        // Fetch history for chart
+        const historyData = await stockService.getStockHistory(symbol.toUpperCase(), '1mo', '1d')
+        setHistory(historyData)
       } else {
         setError('Stock not found')
         setQuote(null)
@@ -143,6 +148,8 @@ function StockSearch() {
           </form>
 
           <StockIndicators symbol={quote.symbol} />
+
+          {history && <StockChart data={history} symbol={quote.symbol} />}
         </div>
       )}
     </div>
