@@ -95,6 +95,7 @@ class AlertUpdate(BaseModel):
     is_active: Optional[bool] = None
     condition_type: Optional[str] = Field(None, pattern="^(above|below|change_pct)$")
     threshold: Optional[float] = None
+    triggered_at: Optional[int] = None  # Set to null to reset triggered state
 
 
 class AlertResponse(BaseModel):

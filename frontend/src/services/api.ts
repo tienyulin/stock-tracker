@@ -203,7 +203,7 @@ export const alertService = {
   async updateAlert(
     userId: string,
     alertId: string,
-    data: { is_active?: boolean; condition_type?: AlertConditionType; threshold?: number }
+    data: { is_active?: boolean; condition_type?: AlertConditionType; threshold?: number; triggered_at?: number | null }
   ): Promise<Alert> {
     const response = await apiClient.put(`/alerts/${alertId}`, data, {
       params: { user_id: userId },
