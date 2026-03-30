@@ -3,6 +3,7 @@ Alert Service - Price Alert Feature
 
 Provides price alert management for users to monitor stock prices.
 """
+from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass
