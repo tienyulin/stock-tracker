@@ -122,3 +122,36 @@ class HealthResponse(BaseModel):
 
     status: str = "healthy"
     timestamp: datetime
+
+
+# Auth schemas
+class UserCreate(BaseModel):
+    """Schema for user registration."""
+
+    email: str = Field(..., min_length=5, max_length=255)
+    username: str = Field(..., min_length=3, max_length=100)
+    password: str = Field(..., min_length=8, max_length=128)
+
+
+class UserLogin(BaseModel):
+    """Schema for user login."""
+
+    email: str = Field(..., min_length=5, max_length=255)
+    password: str = Field(..., min_length=1)
+
+
+class UserResponse(BaseModel):
+    """Schema for user response."""
+
+    id: str
+    email: str
+    username: str
+    created_at: Optional[str] = None
+
+
+class TokenResponse(BaseModel):
+    """Schema for authentication token response."""
+
+    access_token: str
+    token_type: str = "bearer"
+    user_id: str
