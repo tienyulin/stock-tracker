@@ -119,10 +119,10 @@ A web-based stock tracking system for Taiwan market with:
 **Deployment Progress:**
 - [x] Tony: Created accounts (Neon, Upstash, Render, Vercel) ✅
 - [x] Tony: Shared credentials with Athena ✅
-- [ ] **Tony: Set DATABASE_URL + REDIS_URL in Render Dashboard** ← BLOCKING
-- [ ] Tony: Trigger manual redeploy after env vars set
-- [ ] Athena: Verify API health endpoint
-- [ ] Athena: Investigate Vercel 404 error
+- [x] Tony: Set DATABASE_URL + REDIS_URL in Render Dashboard ✅
+- [ ] Athena: pydantic upgraded to 2.10.6 + python 3.12 — rebuilding
+- [ ] Backend: Build in progress (dep-d7583me97pvs73c71lg) — awaiting completion
+- [ ] Athena: Verify API health after rebuild
 - [ ] Tony: Configure DNS (stock-tracker.tienyulin.com)
 
 ---
