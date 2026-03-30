@@ -18,6 +18,8 @@ class StockQuoteResponse(BaseModel):
     volume: int
     timestamp: Optional[int] = None
     market_state: Optional[str] = None
+    change: Optional[float] = None
+    change_percent: Optional[float] = None
 
 
 class StockHistoryResponse(BaseModel):

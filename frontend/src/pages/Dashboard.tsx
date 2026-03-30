@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { stockService } from '../services/api'
 import type { StockQuote } from '../services/api'
+import { StockCardSkeleton } from '../components/Skeleton'
 import './Dashboard.css'
 
 // Major market indices
@@ -10,6 +11,13 @@ const MARKET_INDICES = [
   { symbol: '^DJI', name: 'Dow Jones' },
   { symbol: '^TNX', name: '10Y Treasury' },
 ]
+
+function formatChange(change: number | undefined, percent: number | undefined) {
+  if (change === undefined || change === null) return null
+  const sign = change >= 0 ? '+' : ''
+  const pctStr = percent !== undefined ? ` (${sign}${percent.toFixed(2)}%)` : ''
+  return `${sign}${change.toFixed(2)}${pctStr}`
+}
 
 function Dashboard() {
   const [quotes, setQuotes] = useState<StockQuote[]>([])
@@ -43,7 +51,23 @@ function Dashboard() {
   }
 
   if (loading) {
-    return <div className="loading">Loading...</div>
+    return (
+      <div className="dashboard">
+        <h2>Dashboard</h2>
+        <section className="market-section">
+          <h3>Market Overview</h3>
+          <div className="stock-grid indices-grid">
+            {[1, 2, 3, 4].map(i => <StockCardSkeleton key={i} />)}
+          </div>
+        </section>
+        <section className="watchlist-section">
+          <h3>My Watchlist</h3>
+          <div className="stock-grid">
+            {[1, 2, 3, 4].map(i => <StockCardSkeleton key={i} />)}
+          </div>
+        </section>
+      </div>
+    )
   }
 
   if (error) {
@@ -59,19 +83,26 @@ function Dashboard() {
         <section className="market-section">
           <h3>Market Overview</h3>
           <div className="stock-grid indices-grid">
-            {indices.map((quote, i) => (
-              <div key={quote.symbol} className="stock-card index-card">
-                <div className="stock-header">
-                  <span className="stock-symbol">{MARKET_INDICES[i]?.name || quote.symbol}</span>
-                  <span className={`market-badge ${quote.market_state?.toLowerCase()}`}>
-                    {quote.market_state || 'Unknown'}
-                  </span>
+            {indices.map((quote, i) => {
+              const changeStr = formatChange(quote.change, quote.change_percent)
+              const isUp = (quote.change ?? 0) >= 0
+              return (
+                <div key={quote.symbol} className="stock-card index-card">
+                  <div className="stock-header">
+                    <span className="stock-symbol">{MARKET_INDICES[i]?.name || quote.symbol}</span>
+                    <span className={`market-badge ${quote.market_state?.toLowerCase()}`}>
+                      {quote.market_state || 'Unknown'}
+                    </span>
+                  </div>
+                  <div className="stock-price">${quote.price.toFixed(2)}</div>
+                  {changeStr && (
+                    <div className={`stock-change ${isUp ? 'up' : 'down'}`}>
+                      {changeStr}
+                    </div>
+                  )}
                 </div>
-                <div className="stock-price">
-                  ${quote.price.toFixed(2)}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </section>
       )}
@@ -83,16 +114,25 @@ function Dashboard() {
         <section className="watchlist-section">
           <h3>My Watchlist</h3>
           <div className="stock-grid">
-            {quotes.map(quote => (
-              <div key={quote.symbol} className="stock-card">
-                <div className="stock-header">
-                  <span className="stock-symbol">{quote.symbol}</span>
-                  <span className="stock-market-state">{quote.market_state || 'Unknown'}</span>
+            {quotes.map(quote => {
+              const changeStr = formatChange(quote.change, quote.change_percent)
+              const isUp = (quote.change ?? 0) >= 0
+              return (
+                <div key={quote.symbol} className="stock-card">
+                  <div className="stock-header">
+                    <span className="stock-symbol">{quote.symbol}</span>
+                    <span className="stock-market-state">{quote.market_state || 'Unknown'}</span>
+                  </div>
+                  <div className="stock-price">${quote.price.toFixed(2)}</div>
+                  {changeStr && (
+                    <div className={`stock-change ${isUp ? 'up' : 'down'}`}>
+                      {changeStr}
+                    </div>
+                  )}
+                  <div className="stock-volume">Vol: {quote.volume.toLocaleString()}</div>
                 </div>
-                <div className="stock-price">${quote.price.toFixed(2)}</div>
-                <div className="stock-volume">Vol: {quote.volume.toLocaleString()}</div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </section>
       )}

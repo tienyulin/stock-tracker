@@ -14,6 +14,8 @@ export interface StockQuote {
   volume: number
   timestamp?: number
   market_state?: string
+  change?: number
+  change_percent?: number
 }
 
 export interface StockHistory {
