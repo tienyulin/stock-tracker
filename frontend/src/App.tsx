@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import Watchlist from './pages/Watchlist'
 import Alerts from './pages/Alerts'
@@ -12,10 +12,10 @@ function App() {
         <nav className="navbar">
           <h1>Stock Tracker</h1>
           <ul className="nav-links">
-            <li><Link to="/">Dashboard</Link></li>
-            <li><Link to="/search">Search</Link></li>
-            <li><Link to="/watchlist">Watchlist</Link></li>
-            <li><Link to="/alerts">Alerts</Link></li>
+            <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>Dashboard</NavLink></li>
+            <li><NavLink to="/search" className={({ isActive }) => isActive ? 'active' : ''}>Search</NavLink></li>
+            <li><NavLink to="/watchlist" className={({ isActive }) => isActive ? 'active' : ''}>Watchlist</NavLink></li>
+            <li><NavLink to="/alerts" className={({ isActive }) => isActive ? 'active' : ''}>Alerts</NavLink></li>
           </ul>
         </nav>
         <main className="main-content">
