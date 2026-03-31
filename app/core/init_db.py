@@ -9,7 +9,7 @@ import uuid
 from sqlalchemy import text
 
 from app.core.database import engine, Base, AsyncSessionLocal
-from app.models import Alert, AlertNotification, User, Watchlist, WatchlistItem
+from app.models import Alert, AlertNotification, User, Watchlist, WatchlistItem  # noqa: F401 - imported for side effect (Base.metadata)
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,8 @@ async def seed_demo_user() -> None:
                 id=DEMO_USER_ID,
                 username="demo",
                 email="demo@example.com",
-                password_hash="demo_password_hash",  # Not used for demo
+                # Pre-computed bcrypt hash for "demo123" (bcrypt 4.x format)
+                password_hash="$2b$12$HYuTbwNSogO1UA3yOys.pOJVT7uB9MXGGO1Q9eRrePHb177ZZzSnG",
             )
             session.add(demo_user)
             await session.commit()
