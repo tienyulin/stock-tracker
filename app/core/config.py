@@ -10,11 +10,14 @@ class Settings(BaseSettings):
     """Application settings."""
 
     def _fix_database_url(url: str) -> str:
-        """Convert postgresql:// to postgresql+asyncpg:// for SQLAlchemy async."""
-        # Remove sslmode from URL - asyncpg handles SSL via connect_args, not URL
-        if "sslmode=" in url:
-            # Handle both ?sslmode= and &sslmode= formats
-            url = url.split("?sslmode=")[0].split("&sslmode=")[0]
+        """Convert postgresql:// to postgresql+asyncpg:// for SQLAlchemy async.
+        
+        Note: asyncpg does NOT support libpq URL parameters like sslmode.
+        All connection parameters must be passed via connect_args instead.
+        """
+        # Remove ALL query parameters from URL - asyncpg doesn't support them
+        if "?" in url:
+            url = url.split("?")[0]
         if url.startswith("postgresql://") and "+asyncpg" not in url:
             return url.replace("postgresql://", "postgresql+asyncpg://", 1)
         return url

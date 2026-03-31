@@ -14,14 +14,20 @@ class Base(DeclarativeBase):
     pass
 
 
-# Determine if SSL is required (Render PostgreSQL requires SSL)
+# Determine SSL requirement based on host
+# Render/Neon requires SSL, local Docker does not
+_is_remote_db = not any(
+    host in settings.database_url.lower()
+    for host in ["localhost", "host.docker.internal", "db:", "127.0.0.1"]
+)
+
 _connect_args = {
     "server_settings": {
         "jit": "off"
     },
 }
-# Render PostgreSQL requires SSL; local Docker does not
-if "render" in settings.database_url.lower():
+if _is_remote_db:
+    # Remote databases (Render, Neon, etc.) require SSL
     _connect_args["ssl"] = True
 
 engine = create_async_engine(
