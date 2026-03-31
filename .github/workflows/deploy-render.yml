@@ -18,7 +18,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install Render CLI
-        run: npm install -g @render/cli
+        run: npm install -g render
 
       - name: Configure Render CLI
         run: render config write --token ${{ secrets.RENDER_API_KEY }}
