@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import router as api_v1_router
 from app.api.v1 import websocket
+from app.core.init_db import init_db
 
 # Configure structured logging
 logging.basicConfig(
@@ -26,6 +27,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
     logger.info("Stock Tracker API starting up...")
+    await init_db()
     yield
     logger.info("Stock Tracker API shutting down...")
 
