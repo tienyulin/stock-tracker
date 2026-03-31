@@ -14,6 +14,7 @@ class StockQuoteResponse(BaseModel):
     """Stock quote response."""
 
     symbol: str
+    name: Optional[str] = None
     price: float
     volume: int
     timestamp: Optional[int] = None

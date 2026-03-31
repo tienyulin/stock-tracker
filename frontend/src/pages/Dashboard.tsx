@@ -116,9 +116,11 @@ function Dashboard() {
                 <div key={quote.symbol} className="stock-card index-card">
                   <div className="stock-header">
                     <span className="stock-symbol">{MARKET_INDICES[i]?.name || quote.symbol}</span>
-                    <span className={`market-badge ${quote.market_state?.toLowerCase()}`}>
-                      {quote.market_state || 'Unknown'}
-                    </span>
+                    {quote.market_state && (
+                      <span className={`market-badge ${quote.market_state.toLowerCase()}`}>
+                        {quote.market_state}
+                      </span>
+                    )}
                   </div>
                   <div className="stock-price">${quote.price.toFixed(2)}</div>
                   {changeStr && (
@@ -146,8 +148,10 @@ function Dashboard() {
               return (
                 <div key={quote.symbol} className="stock-card">
                   <div className="stock-header">
-                    <span className="stock-symbol">{quote.symbol}</span>
-                    <span className="stock-market-state">{quote.market_state || 'Unknown'}</span>
+                    <span className="stock-symbol">{quote.name || quote.symbol}</span>
+                    {quote.market_state && (
+                      <span className="stock-market-state">{quote.market_state}</span>
+                    )}
                   </div>
                   <div className="stock-price">${quote.price.toFixed(2)}</div>
                   {changeStr && (
