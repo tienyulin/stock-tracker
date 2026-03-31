@@ -197,6 +197,7 @@ function StockSearch() {
         <div className="stock-details">
           <div className="stock-header">
             <span className="symbol">{quote.symbol}</span>
+            <span className="company-name">{quote.name || 'Unknown'}</span>
             <span className="market-state">{quote.market_state || 'Unknown'}</span>
           </div>
           <div className="stock-price">${quote.price.toFixed(2)}</div>
