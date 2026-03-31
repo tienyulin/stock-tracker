@@ -16,10 +16,13 @@ class Settings(BaseSettings):
         All connection parameters must be passed via connect_args instead.
         """
         # Remove ALL query parameters from URL - asyncpg doesn't support them
+        # This must happen BEFORE any driver conversion
         if "?" in url:
-            url = url.split("?")[0]
-        if url.startswith("postgresql://") and "+asyncpg" not in url:
-            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            base_url = url.split("?")[0]
+            url = base_url
+        # Convert to asyncpg driver
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
         return url
 
     database_url: str = _fix_database_url(
