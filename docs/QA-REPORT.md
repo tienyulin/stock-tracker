@@ -27,8 +27,9 @@
 
 | # | 標題 | 優先 | 狀態 |
 |---|------|------|------|
-| #65 | Watchlist/Alerts require user_id auth | High | OPEN |
-| #64 | RSI shows N/A on frontend | Medium | OPEN |
+| #66 | DB connection - sslmode argument error | High | 🔴 OPEN |
+| #65 | Watchlist/Alerts require user_id auth | High | 🔴 OPEN |
+| #64 | RSI shows N/A on frontend | Medium | 🔴 OPEN |
 
 ## ✅ Fixed Issues
 
@@ -41,6 +42,17 @@
 ---
 
 ## 🔧 待修正
+
+### Issue #66：DB SSL 連線問題
+**Render (Production):**
+```
+TypeError: connect() got an unexpected keyword argument 'sslmode'
+```
+**Local Docker:**
+```
+ConnectionError: PostgreSQL server at "db:5432" rejected SSL upgrade
+```
+**可能原因：** `DATABASE_URL` 包含 `sslmode=require` 但 asyncpg driver 處理方式不同
 
 ### Issue #65：Watchlist/Alerts 需要 auth
 - Backend 需要 UUID user_id，前端無 login UI
@@ -57,3 +69,4 @@
 | 日期 | 內容 |
 |------|------|
 | 2026-03-31 | 初始 QA 報告 |
+| 2026-03-31 | 加入 Issue #66 DB SSL 問題 |
