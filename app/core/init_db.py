@@ -43,7 +43,7 @@ async def seed_demo_user() -> None:
                 id=DEMO_USER_ID,
                 username="demo",
                 email="demo@example.com",
-                password_hash="demo_password_hash",  # Not used for demo
+                password_hash=hash_password("demo123"),
             )
             session.add(demo_user)
             await session.commit()
