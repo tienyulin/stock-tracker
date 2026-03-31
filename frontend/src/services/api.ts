@@ -10,10 +10,11 @@ const apiClient = axios.create({
 // Stock types
 export interface StockQuote {
   symbol: string
+  name?: string
   price: number
   volume: number
   timestamp?: number
-  market_state?: string
+  market_state?: string | null
   change?: number
   change_percent?: number
 }
