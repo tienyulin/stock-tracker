@@ -9,23 +9,13 @@ jobs:
   deploy-backend:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Render CLI
-        run: npm install -g render
-
-      - name: Deploy to Render
-        run: npx render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }} --token ${{ secrets.RENDER_API_KEY }} --env production --python-version 3.12 --build-command "pip install -r requirements.txt" --start-command "uvicorn app.main:app --host 0.0.0.0 --port \$PORT"
+      - name: Trigger Render Deploy
+        run: |
+          curl -s -X POST "https://api.render.com/v1/services/srv-d7583alactks738ruoe0/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache":true}'
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
-          PORT: 10000
-
-      - name: Print backend URL
-        run: echo "Backend deployed to ${{ secrets.RENDER_BACKEND_URL }}"
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
