@@ -20,19 +20,8 @@ jobs:
       - name: Install Render CLI
         run: npm install -g render
 
-      - name: Configure Render CLI
-        run: render config write --token ${{ secrets.RENDER_API_KEY }}
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-
       - name: Deploy to Render
-        run: |
-          render deploy \
-            --service-id ${{ secrets.RENDER_SERVICE_ID }} \
-            --env production \
-            --python-version 3.12 \
-            --build-command "pip install -r requirements.txt" \
-            --start-command "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+        run: npx render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }} --token ${{ secrets.RENDER_API_KEY }} --env production --python-version 3.12 --build-command "pip install -r requirements.txt" --start-command "uvicorn app.main:app --host 0.0.0.0 --port \$PORT"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
