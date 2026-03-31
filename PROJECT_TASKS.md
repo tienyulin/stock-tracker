@@ -11,7 +11,8 @@
 
 | Service | URL | Status |
 |---------|-----|--------|
-| Frontend | https://frontend-rouge-one-20.vercel.app | ✅ Deployed |
+| Frontend (Vercel) | https://stock-tracker-xi-one.vercel.app | ✅ Deployed |
+| Frontend (Custom) | https://stock.tienyulin.com | ✅ DNS OK |
 | Backend API | https://stock-tracker-api-5ht7.onrender.com | ✅ Deployed |
 | API Docs | https://stock-tracker-api-5ht7.onrender.com/docs | ✅ |
 
