@@ -217,7 +217,7 @@ async def get_stock_indicators(
                 "symbol": symbol.upper(),
                 "period": period,
                 "interval": interval,
-                "indicators": indicators,
+                **indicators,
             }
     except HTTPException:
         raise
