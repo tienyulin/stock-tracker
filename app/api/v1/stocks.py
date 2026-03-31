@@ -3,6 +3,7 @@ Stock API routes.
 """
 
 import logging
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -12,6 +13,44 @@ from app.services.indicators_service import TechnicalIndicatorsService
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 logger = logging.getLogger(__name__)
+
+
+# Known stock names for lookup (same as search endpoint)
+STOCK_NAMES = {
+    # US Stocks
+    "AAPL": "Apple Inc.",
+    "GOOGL": "Alphabet Inc.",
+    "MSFT": "Microsoft Corporation",
+    "AMZN": "Amazon.com Inc.",
+    "TSLA": "Tesla Inc.",
+    "NVDA": "NVIDIA Corporation",
+    "META": "Meta Platforms Inc.",
+    "NFLX": "Netflix Inc.",
+    # Taiwan Stocks (TWSE)
+    "2330.TW": "Taiwan Semiconductor (TSMC)",
+    "2317.TW": "Hon Hai Precision (Foxconn)",
+    "2454.TW": "MediaTek Inc.",
+    "2308.TW": "Delta Electronics",
+    "2371.TW": "Acer Inc.",
+    "2498.TW": "HTC Corporation",
+    "2609.TW": "Yang Ming Marine",
+    "2618.TW": "Evergreen Marine",
+    "2891.TW": "Cathay Financial",
+    "0050.TW": "Yuanta/P-Shares Taiwan Top 50 ETF",
+    "0056.TW": "Yuanta MSCI Taiwan ETF",
+    # Market Indices
+    "^GSPC": "S&P 500",
+    "^IXIC": "Nasdaq",
+    "^DJI": "Dow Jones Industrial Average",
+    "^TNX": "10-Year Treasury Yield",
+}
+
+
+def _get_market_state_display(state: Optional[str]) -> Optional[str]:
+    """Convert market state to user-friendly display value."""
+    if not state or state == "UNKNOWN":
+        return None
+    return state
 
 
 @router.get("/{symbol}/quote", response_model=StockQuoteResponse)
@@ -26,22 +65,26 @@ async def get_stock_quote(symbol: str) -> StockQuoteResponse:
         StockQuoteResponse with current price data
     """
     service = YFinanceService()
+    normalized = symbol.upper()
     try:
         async with service:
-            quote = await service.get_quote(symbol.upper())
+            quote = await service.get_quote(normalized)
             if quote is None:
                 raise HTTPException(
                     status_code=404, detail=f"Symbol {symbol} not found"
                 )
             return StockQuoteResponse(
                 symbol=quote.symbol,
+                name=STOCK_NAMES.get(normalized),
                 price=quote.price,
                 volume=quote.volume,
                 timestamp=quote.timestamp,
-                market_state=quote.market_state,
+                market_state=_get_market_state_display(quote.market_state),
                 change=quote.change,
                 change_percent=quote.change_percent,
             )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch quote: {str(e)}")
 
