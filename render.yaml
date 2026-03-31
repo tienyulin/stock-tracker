@@ -8,7 +8,7 @@ services:
     env: python
     region: singapore
     plan: free
-    branch: develop
+    branch: main
     repo: https://github.com/tienyulin/stock-tracker.git
     rootDirectory: .
     buildCommand: pip install -r requirements.txt --prefer-binary
