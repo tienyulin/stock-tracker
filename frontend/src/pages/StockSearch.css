@@ -1,0 +1,266 @@
+.search-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.search-form {
+  display: flex;
+  gap: 1rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4fc3f7;
+}
+
+.search-btn {
+  padding: 0.75rem 1.5rem;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.search-btn:hover:not(:disabled) {
+  background: #2a2a4e;
+}
+
+.search-btn:disabled {
+  opacity: 0.6;
+}
+
+/* Suggestions dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 50;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background: #f9fafb;
+}
+
+.suggestion-symbol {
+  font-weight: 700;
+  color: #1a1a2e;
+  min-width: 60px;
+}
+
+.suggestion-name {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.suggestion-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.error-message {
+  color: #e53935;
+  margin-bottom: 1rem;
+}
+
+.stock-details {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stock-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.stock-header .symbol {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.stock-header .exchange {
+  font-size: 0.9rem;
+  color: #666;
+  background: #f0f0f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+}
+
+.stock-name {
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.stock-currency {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.stock-actions {
+  margin-bottom: 1.5rem;
+}
+
+.action-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.watchlist-btn {
+  background: #4fc3f7;
+  color: #1a1a2e;
+}
+
+.watchlist-btn:hover:not(:disabled) {
+  background: #29b6f6;
+}
+
+.watchlist-btn:disabled {
+  background: #a0a0a0;
+  color: white;
+}
+
+.alert-form h3 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.alert-inputs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.alert-select,
+.threshold-input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+}
+
+.alert-select:focus,
+.threshold-input:focus {
+  outline: none;
+  border-color: #4fc3f7;
+}
+
+.create-alert-btn {
+  padding: 0.75rem 1.5rem;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.create-alert-btn:hover {
+  background: #43a047;
+}
+
+/* Chart section */
+.chart-section {
+  margin-top: 1.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.chart-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.period-selector {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.period-btn {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.period-btn:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.period-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.period-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chart-loading {
+  padding: 3rem;
+  text-align: center;
+  color: #9ca3af;
+  background: #f9fafb;
+  border-radius: 8px;
+}

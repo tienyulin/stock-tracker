@@ -1,0 +1,195 @@
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #e53935;
+}
+
+.dashboard h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.dashboard section:first-of-type h3 {
+  margin-top: 0;
+}
+
+/* Market status banner */
+.market-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.market-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.market-open {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.market-open .market-status-dot {
+  background: #10b981;
+}
+
+.market-pre {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.market-pre .market-status-dot {
+  background: #f59e0b;
+}
+
+.market-after {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.market-after .market-status-dot {
+  background: #8b5cf6;
+}
+
+.market-closed {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.market-closed .market-status-dot {
+  background: #9ca3af;
+}
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.indices-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.stock-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stock-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.index-card {
+  border-left: 3px solid #2563eb;
+}
+
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.stock-symbol {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.market-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.market-badge.premarket,
+.market-badge.extendedhours {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.market-badge.regular {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.stock-market-state {
+  font-size: 0.75rem;
+  color: #666;
+  background: #f3f4f6;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.stock-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.index-card .stock-price {
+  font-size: 1.25rem;
+}
+
+.stock-change {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.stock-change.up {
+  color: #10b981;
+}
+
+.stock-change.down {
+  color: #ef4444;
+}
+
+.stock-volume {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.stock-exchange {
+  font-size: 0.8rem;
+  color: #666;
+  background: #f0f0f0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.stock-name {
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.stock-info {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stock-currency {
+  font-size: 0.9rem;
+  color: #666;
+}

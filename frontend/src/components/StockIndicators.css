@@ -1,0 +1,123 @@
+.indicators-container {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.indicators-container h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.indicator-card {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 3px solid #6c757d;
+}
+
+.indicator-card.overbought {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.indicator-card.oversold {
+  border-left-color: #28a745;
+  background: #f0fff4;
+}
+
+.indicator-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.indicator-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.indicator-status {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.indicator-card.overbought .indicator-status {
+  background: #dc3545;
+  color: white;
+}
+
+.indicator-card.oversold .indicator-status {
+  background: #28a745;
+  color: white;
+}
+
+.indicator-card:not(.overbought):not(.oversold) .indicator-status {
+  background: #6c757d;
+  color: white;
+}
+
+.indicator-detail {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.indicator-histogram {
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.indicator-histogram.positive {
+  color: #28a745;
+}
+
+.indicator-histogram.negative {
+  color: #dc3545;
+}
+
+.indicator-values {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.indicator-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.indicator-key {
+  color: #6c757d;
+}
+
+.indicator-val {
+  font-weight: 600;
+  color: #333;
+}
+
+.indicators-loading,
+.indicators-error {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.indicators-error {
+  color: #dc3545;
+}
