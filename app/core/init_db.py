@@ -30,27 +30,44 @@ async def init_db() -> None:
 
 
 async def seed_demo_user() -> None:
-    """Create demo user if not exists."""
+    """Create demo user if not exists, or fix password hash if invalid."""
+    # Pre-computed bcrypt hash for "demo123" (bcrypt 4.x format)
+    DEMO_PASSWORD_HASH = "$2b$12$HYuTbwNSogO1UA3yOys.pOJVT7uB9MXGGO1Q9eRrePHb177ZZzSnG"
+
     async with AsyncSessionLocal() as session:
         # Check if demo user exists
         result = await session.execute(
-            text("SELECT id FROM users WHERE id = :id"),
+            text("SELECT id, password_hash FROM users WHERE id = :id"),
             {"id": DEMO_USER_ID}
         )
-        if result.scalar() is None:
+        row = result.fetchone()
+
+        if row is None:
+            # User doesn't exist - create it
             logger.info("Seeding demo user...")
             demo_user = User(
                 id=DEMO_USER_ID,
                 username="demo",
                 email="demo@example.com",
-                # Pre-computed bcrypt hash for "demo123" (bcrypt 4.x format)
-                password_hash="$2b$12$HYuTbwNSogO1UA3yOys.pOJVT7uB9MXGGO1Q9eRrePHb177ZZzSnG",
+                password_hash=DEMO_PASSWORD_HASH,
             )
             session.add(demo_user)
             await session.commit()
             logger.info("Demo user seeded successfully.")
         else:
-            logger.info("Demo user already exists.")
+            # User exists - check if password hash is valid bcrypt
+            existing_hash = row.password_hash
+            if existing_hash and existing_hash.startswith("$2"):
+                logger.info("Demo user already exists with valid password hash.")
+            else:
+                # Fix invalid password hash (e.g., "demo_password_hash" plaintext)
+                logger.info("Fixing demo user password hash...")
+                await session.execute(
+                    text("UPDATE users SET password_hash = :hash WHERE id = :id"),
+                    {"hash": DEMO_PASSWORD_HASH, "id": DEMO_USER_ID}
+                )
+                await session.commit()
+                logger.info("Demo user password hash fixed.")
 
 
 async def check_db_connection() -> bool:
