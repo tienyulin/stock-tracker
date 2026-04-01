@@ -7,7 +7,7 @@ Provides user registration, login, logout, and token validation.
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -174,7 +174,7 @@ async def logout(response: Response):
 @router.get("/me", response_model=UserResponse)
 async def get_current_user(
     db: AsyncSession = Depends(get_db),
-    authorization: str = None,
+    authorization: str = Header(None),
 ):
     """
     Get current authenticated user's information.
