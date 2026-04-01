@@ -147,8 +147,8 @@
 
 | # | Task | Owner | Status |
 |---|------|-------|--------|
-| 5-01 | Signal Engine API（後端訊號計算服務） | Athena | 🆕 New |
-| 5-02 | 評估演算法設計（基於技術指標的買賣信號） | Athena | 🆕 New |
+| 5-01 | Signal Engine API（後端訊號計算服務） | Athena | ✅ Done |
+| 5-02 | 評估演算法設計（基於技術指標的買賣信號） | Athena | ✅ Done |
 
 ---
 
@@ -156,9 +156,9 @@
 
 | # | Task | Owner | Status |
 |---|------|-------|--------|
-| 5-03 | Dashboard 快速評估顯示（好/不好/理由） | Athena | ⏳ Pending |
-| 5-04 | 信心度視覺化（百分比或等級） | Athena | ⏳ Pending |
-| 5-05 | 指標詳解（每個指標的意義說明） | Athena | ⏳ Pending |
+| 5-03 | Dashboard 快速評估顯示（好/不好/理由） | Athena | ✅ Done |
+| 5-04 | 信心度視覺化（百分比或等級） | Athena | ✅ Done |
+| 5-05 | 指標詳解（每個指標的意義說明） | Athena | 🔄 In Progress |
 
 ---
 
