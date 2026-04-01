@@ -11,6 +11,7 @@ from app.schemas import StockHistoryResponse, StockQuoteResponse
 from app.services.yfinance_service import YFinanceService
 from app.services.indicators_service import TechnicalIndicatorsService
 from app.services.signal_engine_service import SignalEngineService, SignalType
+from app.services.simulated_trading_service import SimulatedTradingService, SimulationConfig, RiskProfile
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 logger = logging.getLogger(__name__)
@@ -293,3 +294,104 @@ def _get_signal_label(signal: SignalType) -> str:
         SignalType.STRONG_SELL: "強烈賣出",
     }
     return labels.get(signal, "未知")
+
+
+@router.post("/simulation/run")
+async def run_simulation(
+    symbols: list[str],
+    initial_capital: float = 5000.0,
+    duration_days: int = 30,
+    risk_profile: str = "moderate",
+) -> dict:
+    """
+    Run a trading simulation.
+
+    Args:
+        symbols: List of stock symbols to simulate
+        initial_capital: Starting capital (default $5000)
+        duration_days: Simulation duration in days
+        risk_profile: Risk profile (conservative/moderate/aggressive)
+
+    Returns:
+        Simulation results with trades and performance metrics
+    """
+    config = SimulationConfig(
+        initial_capital=initial_capital,
+        duration_days=duration_days,
+        risk_profile=RiskProfile(risk_profile),
+    )
+
+    service = SimulatedTradingService()
+    try:
+        result = await service.run_simulation(symbols, config)
+
+        return {
+            "initial_capital": result.initial_capital,
+            "final_capital": round(result.final_capital, 2),
+            "total_return": round(result.total_return, 2),
+            "total_return_percent": round(result.total_return_percent, 2),
+            "num_trades": result.num_trades,
+            "winning_trades": result.winning_trades,
+            "losing_trades": result.losing_trades,
+            "win_rate": round(result.win_rate, 1),
+            "trades": [
+                {
+                    "id": t.id,
+                    "timestamp": t.timestamp.isoformat(),
+                    "symbol": t.symbol,
+                    "action": t.action,
+                    "shares": round(t.shares, 2),
+                    "price": round(t.price, 2),
+                    "total": round(t.total, 2),
+                    "reason": t.reason,
+                }
+                for t in result.trades
+            ],
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Simulation failed: {str(e)}")
+
+
+@router.post("/simulation/evaluate")
+async def evaluate_for_simulation(
+    symbols: list[str],
+    initial_capital: float = 5000.0,
+    risk_profile: str = "moderate",
+) -> dict:
+    """
+    Quick evaluation of symbols for trading simulation.
+
+    Args:
+        symbols: List of stock symbols to evaluate
+        initial_capital: Starting capital
+        risk_profile: Risk profile (conservative/moderate/aggressive)
+
+    Returns:
+        Evaluation results for each symbol
+    """
+    config = SimulationConfig(
+        initial_capital=initial_capital,
+        risk_profile=RiskProfile(risk_profile),
+    )
+
+    service = SimulatedTradingService()
+    results = []
+
+    for symbol in symbols:
+        try:
+            eval_result = await service.quick_evaluate(symbol, config)
+            results.append(eval_result)
+        except Exception as e:
+            results.append({
+                "symbol": symbol,
+                "should_buy": False,
+                "reason": f"Error: {str(e)}",
+            })
+
+    return {
+        "symbols": results,
+        "config": {
+            "initial_capital": initial_capital,
+            "risk_profile": risk_profile,
+        },
+    }

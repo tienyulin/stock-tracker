@@ -8,6 +8,7 @@ import StockIndicators from '../components/StockIndicators'
 import StockSignal from '../components/StockSignal'
 import SignalHistory from '../components/SignalHistory'
 import StockChart from '../components/StockChart'
+import SimulatedTrading from '../components/SimulatedTrading'
 import { useAuth } from '../contexts/AuthContext'
 import './StockSearch.css'
 
@@ -247,6 +248,8 @@ function StockSearch() {
           <StockSignal symbol={quote.symbol} />
 
           <SignalHistory />
+
+          <SimulatedTrading />
 
           {history && (
             <div className="chart-section">
