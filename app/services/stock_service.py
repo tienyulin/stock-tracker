@@ -61,7 +61,7 @@ class StockService:
             return False
 
         valid_chars = set(
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.^-"
         )
         return all(c in valid_chars for c in symbol)
 

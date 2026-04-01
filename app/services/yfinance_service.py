@@ -131,9 +131,9 @@ class YFinanceService:
         if not symbol or len(symbol) > 10:
             return False
 
-        # Allow alphanumeric, dots (for yahoo finance format), and dashes
+        # Allow alphanumeric, dots (for yahoo finance format), dashes, and caret (for indices like ^GSPC)
         valid_chars = set(
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.^-"
         )
         return all(c in valid_chars for c in symbol)
 
