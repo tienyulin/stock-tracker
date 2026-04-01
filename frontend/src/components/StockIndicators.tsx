@@ -79,13 +79,13 @@ function StockIndicators({ symbol, period = '3mo', interval = '1d' }: StockIndic
           <div className="indicator-card">
             <div className="indicator-label">MACD (12/26/9)</div>
             <div className="indicator-value">
-              {indicators.macd.macd_line.toFixed(4)}
+              {indicators.macd.macd_line != null ? indicators.macd.macd_line.toFixed(4) : 'N/A'}
             </div>
             <div className="indicator-detail">
-              Signal: {indicators.macd.signal_line.toFixed(4)}
+              Signal: {indicators.macd.signal_line != null ? indicators.macd.signal_line.toFixed(4) : 'N/A'}
             </div>
             <div className={`indicator-histogram ${indicators.macd.histogram >= 0 ? 'positive' : 'negative'}`}>
-              Histogram: {indicators.macd.histogram.toFixed(4)}
+              Histogram: {indicators.macd.histogram != null ? indicators.macd.histogram.toFixed(4) : 'N/A'}
             </div>
           </div>
         )}
@@ -97,7 +97,7 @@ function StockIndicators({ symbol, period = '3mo', interval = '1d' }: StockIndic
             {Object.entries(indicators.sma || {}).map(([key, value]) => (
               <div key={key} className="indicator-row">
                 <span className="indicator-key">{key}:</span>
-                <span className="indicator-val">{value.toFixed(2)}</span>
+                <span className="indicator-val">{value != null ? value.toFixed(2) : 'N/A'}</span>
               </div>
             ))}
           </div>
@@ -110,7 +110,7 @@ function StockIndicators({ symbol, period = '3mo', interval = '1d' }: StockIndic
             {Object.entries(indicators.ema || {}).map(([key, value]) => (
               <div key={key} className="indicator-row">
                 <span className="indicator-key">{key}:</span>
-                <span className="indicator-val">{value.toFixed(2)}</span>
+                <span className="indicator-val">{value != null ? value.toFixed(2) : 'N/A'}</span>
               </div>
             ))}
           </div>
