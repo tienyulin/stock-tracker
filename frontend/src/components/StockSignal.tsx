@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { stockService, type StockSignal } from '../services/api'
+import { IndicatorExplainPanel } from './IndicatorExplain'
 import './StockSignal.css'
 
 interface StockSignalProps {
@@ -12,6 +13,8 @@ function StockSignal({ symbol, period = '3mo', interval = '1d' }: StockSignalPro
   const [signal, setSignal] = useState<StockSignal | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showExplain, setShowExplain] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   useEffect(() => {
     if (!symbol) return
@@ -115,19 +118,45 @@ function StockSignal({ symbol, period = '3mo', interval = '1d' }: StockSignalPro
       </div>
 
       <div className="indicator-signals">
-        <h4>📊 指標分析</h4>
+        <div className="signals-header">
+          <h4>📊 指標分析</h4>
+          <div className="signal-toggles">
+            <button
+              className={`toggle-btn ${showExplain ? 'active' : ''}`}
+              onClick={() => setShowExplain(!showExplain)}
+            >
+              📚 看說明
+            </button>
+            <button
+              className={`toggle-btn ${showAdvanced ? 'active' : ''}`}
+              onClick={() => setShowAdvanced(!showAdvanced)}
+            >
+              ⚙️ 進階
+            </button>
+          </div>
+        </div>
         <div className="indicator-list">
           {signal.indicators.map((ind, i) => (
             <div key={i} className={`indicator-item ${getSignalClass(ind.signal)}`}>
               <span className="indicator-name">{ind.indicator}</span>
-              <span className="indicator-value">
-                {typeof ind.value === 'number' ? ind.value.toFixed(2) : ind.value}
-              </span>
+              {showAdvanced ? (
+                <span className="indicator-value">
+                  {typeof ind.value === 'number' ? ind.value.toFixed(4) : ind.value}
+                </span>
+              ) : (
+                <span className="indicator-value">
+                  {typeof ind.value === 'number' ? ind.value.toFixed(2) : ind.value}
+                </span>
+              )}
               <span className="indicator-signal">{ind.signal}</span>
             </div>
           ))}
         </div>
       </div>
+
+      {showExplain && (
+        <IndicatorExplainPanel indicators={signal.indicators} />
+      )}
 
       <div className="signal-footer">
         <small>分析區間: {signal.period} | 間隔: {signal.interval}</small>
