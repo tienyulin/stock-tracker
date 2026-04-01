@@ -6,6 +6,7 @@ import { stockService, watchlistService, alertService } from '../services/api'
 import type { StockQuote, StockHistory, AlertConditionType } from '../services/api'
 import StockIndicators from '../components/StockIndicators'
 import StockSignal from '../components/StockSignal'
+import SignalHistory from '../components/SignalHistory'
 import StockChart from '../components/StockChart'
 import { useAuth } from '../contexts/AuthContext'
 import './StockSearch.css'
@@ -244,6 +245,8 @@ function StockSearch() {
           <StockIndicators symbol={quote.symbol} />
 
           <StockSignal symbol={quote.symbol} />
+
+          <SignalHistory />
 
           {history && (
             <div className="chart-section">

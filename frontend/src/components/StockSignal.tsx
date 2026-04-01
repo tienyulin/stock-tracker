@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { stockService, type StockSignal } from '../services/api'
+import { addToSignalHistory } from '../services/signalHistory'
 import { IndicatorExplainPanel } from './IndicatorExplain'
 import './StockSignal.css'
 
@@ -26,6 +27,7 @@ function StockSignal({ symbol, period = '3mo', interval = '1d' }: StockSignalPro
         const result = await stockService.getStockSignal(symbol, period, interval)
         if (result) {
           setSignal(result)
+          addToSignalHistory(symbol, result)
         } else {
           setError('Failed to load signal')
         }
