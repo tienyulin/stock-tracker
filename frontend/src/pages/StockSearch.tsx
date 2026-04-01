@@ -6,9 +6,8 @@ import { stockService, watchlistService, alertService } from '../services/api'
 import type { StockQuote, StockHistory, AlertConditionType } from '../services/api'
 import StockIndicators from '../components/StockIndicators'
 import StockChart from '../components/StockChart'
+import { useAuth } from '../contexts/AuthContext'
 import './StockSearch.css'
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 // Popular US stocks for suggestions
 const POPULAR_STOCKS = [
@@ -34,6 +33,8 @@ const PERIOD_MAP: Record<Period, { period: string; interval: string }> = {
 }
 
 function StockSearch() {
+  const { user } = useAuth()
+  const userId = user?.id || '00000000-0000-0000-0000-000000000001' // fallback for demo
   const [symbol, setSymbol] = useState('')
   const [quote, setQuote] = useState<StockQuote | null>(null)
   const [history, setHistory] = useState<StockHistory | null>(null)
@@ -113,14 +114,14 @@ function StockSearch() {
   const handleAddToWatchlist = async () => {
     if (!quote) return
     try {
-      const watchlists = await watchlistService.getWatchlists(DEMO_USER_ID)
+      const watchlists = await watchlistService.getWatchlists(userId)
       let targetWatchlist = watchlists.find(wl => wl.is_default) || watchlists[0]
 
       if (!targetWatchlist) {
-        targetWatchlist = await watchlistService.createWatchlist(DEMO_USER_ID, 'My Watchlist', true)
+        targetWatchlist = await watchlistService.createWatchlist(userId, 'My Watchlist', true)
       }
 
-      await watchlistService.addItemToWatchlist(DEMO_USER_ID, targetWatchlist.id, quote.symbol)
+      await watchlistService.addItemToWatchlist(userId, targetWatchlist.id, quote.symbol)
       setAddedToWatchlist(true)
       setMessage('Added to watchlist!')
     } catch (err) {
@@ -134,7 +135,7 @@ function StockSearch() {
     if (!quote || !alertThreshold) return
     try {
       await alertService.createAlert(
-        DEMO_USER_ID,
+        userId,
         quote.symbol,
         alertType,
         parseFloat(alertThreshold)

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { watchlistService, stockService } from '../services/api'
 import type { Watchlist, StockQuote } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
 import './Watchlist.css'
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 type SortKey = 'symbol' | 'price'
 
 function Watchlist() {
+  const { user } = useAuth()
   const [watchlists, setWatchlists] = useState<Watchlist[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -18,8 +18,12 @@ function Watchlist() {
   const [notification, setNotification] = useState<string | null>(null)
 
   useEffect(() => {
-    loadWatchlists()
-  }, [])
+    if (user?.id) {
+      loadWatchlists()
+    }
+  }, [user?.id])
+
+  const userId = user?.id || ''
 
   const showNotification = (message: string) => {
     setNotification(message)
@@ -30,7 +34,7 @@ function Watchlist() {
     try {
       setLoading(true)
       setError(null)
-      const lists = await watchlistService.getWatchlists(DEMO_USER_ID)
+      const lists = await watchlistService.getWatchlists(userId)
       setWatchlists(lists)
 
       // Load quotes for all symbols in parallel
@@ -56,7 +60,7 @@ function Watchlist() {
 
   const handleRemoveItem = async (watchlistId: string, itemId: string, symbol: string) => {
     try {
-      await watchlistService.removeItemFromWatchlist(DEMO_USER_ID, watchlistId, itemId)
+      await watchlistService.removeItemFromWatchlist(userId, watchlistId, itemId)
       showNotification(`${symbol} removed from watchlist`)
       await loadWatchlists()
     } catch (err) {
@@ -69,7 +73,7 @@ function Watchlist() {
     if (!newListName.trim()) return
     try {
       setCreating(true)
-      await watchlistService.createWatchlist(DEMO_USER_ID, newListName.trim(), false)
+      await watchlistService.createWatchlist(userId, newListName.trim(), false)
       setNewListName('')
       showNotification('Watchlist created')
       await loadWatchlists()
