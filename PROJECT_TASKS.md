@@ -1,7 +1,7 @@
 # Stock Tracker Project - Task Board
 
 **Last Updated:** 2026-03-31
-**Status:** Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → **Phase 5 🚧 IN PROGRESS**
+**Status:** Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → Phase 5 ✅ → **Phase 6 🚧 IN PROGRESS**
 **Project Lead:** Hermes (CSO/PM)
 **Tech Lead:** Athena (CTO)
 
@@ -168,6 +168,39 @@
 |---|------|-------|--------|
 | 5-06 | 歷史信號追蹤 | Athena | ✅ Done |
 | 5-07 | 個人化推薦（基於用戶投資偏好） | Athena | ⏳ Pending |
+
+---
+
+## 🚧 Phase 6 - AI 模擬交易系統
+
+**Status:** 🚧 In Progress
+**Start:** 2026-04-02
+**PM:** Hermes | **Tech Lead:** Athena
+
+### 🎯 Sprint Goals
+1. 用 $5000 模擬操作一段期間
+2. 驗證推薦功能是否有效
+3. 記錄成效，修正改善方向
+
+---
+
+### P0 — 模擬交易核心
+
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 6-01 | 模擬交易演算法（基於 Signal Engine） | Athena | ✅ Done |
+| 6-02 | 風險偏好設定（保守/穩健/積極） | Athena | ✅ Done |
+| 6-03 | 模擬結果顯示（報酬率、勝率、交易歷史） | Athena | ✅ Done |
+| 6-04 | 股票評估功能（是否建議買入） | Athena | ✅ Done |
+
+---
+
+### P1 — 使用者體驗
+
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 6-05 | 模擬參數設定 UI | Athena | ✅ Done |
+| 6-06 | 交易歷史詳細檢視 | Athena | ⏳ Pending |
 
 ---
 
