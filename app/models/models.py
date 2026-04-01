@@ -30,6 +30,7 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+    line_notify_token: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     # Relationships
     watchlists: Mapped[list["Watchlist"]] = relationship(

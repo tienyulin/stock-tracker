@@ -265,4 +265,24 @@ export const authService = {
     // Call logout endpoint and clear cookies
     apiClient.post('/auth/logout').catch(console.error)
   },
+
+  async getLineTokenStatus(): Promise<{ line_notify_connected: boolean }> {
+    const response = await apiClient.get('/users/me/line-token')
+    return response.data
+  },
+
+  async updateLineToken(token: string): Promise<{ line_notify_connected: boolean }> {
+    const response = await apiClient.put('/users/me/line-token', { line_notify_token: token })
+    return response.data
+  },
+
+  async deleteLineToken(): Promise<{ line_notify_connected: boolean }> {
+    const response = await apiClient.delete('/users/me/line-token')
+    return response.data
+  },
+
+  async testLineToken(token: string): Promise<{ success: boolean; message: string }> {
+    const response = await apiClient.post('/users/me/line-token/test', { line_notify_token: token })
+    return response.data
+  },
 }

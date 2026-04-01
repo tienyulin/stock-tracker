@@ -1,0 +1,125 @@
+"""
+User management endpoints.
+"""
+
+from fastapi import APIRouter, Depends, HTTPException, Header
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from pydantic import BaseModel
+import logging
+
+from app.core.database import get_db
+from app.core.auth import get_current_user_from_token
+from app.models.models import User
+
+router = APIRouter(prefix="/users", tags=["users"])
+logger = logging.getLogger(__name__)
+
+
+class LineTokenResponse(BaseModel):
+    line_notify_connected: bool
+
+
+class LineTokenUpdate(BaseModel):
+    line_notify_token: str
+
+
+class LineTokenTestResult(BaseModel):
+    success: bool
+    message: str
+
+
+async def get_current_user_id(authorization: str = Header(None)) -> str:
+    """Extract user ID from Authorization header."""
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    user = await get_current_user_from_token(authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return user.id
+
+
+@router.get("/me/line-token", response_model=LineTokenResponse)
+async def get_line_token_status(
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Get LINE Notify token connection status."""
+    result = await db.execute(
+        select(User.line_notify_token).where(User.id == user_id)
+    )
+    token = result.scalar_one_or_none()
+    
+    return LineTokenResponse(line_notify_connected=bool(token))
+
+
+@router.put("/me/line-token", response_model=LineTokenResponse)
+async def update_line_token(
+    token_data: LineTokenUpdate,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Update LINE Notify token for the current user."""
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.line_notify_token = token_data.line_notify_token
+    await db.commit()
+    
+    logger.info(f"User {user_id} updated LINE Notify token")
+    
+    return LineTokenResponse(line_notify_connected=bool(token_data.line_notify_token))
+
+
+@router.delete("/me/line-token", response_model=LineTokenResponse)
+async def delete_line_token(
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Remove LINE Notify token (disconnect LINE notifications)."""
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.line_notify_token = None
+    await db.commit()
+    
+    logger.info(f"User {user_id} disconnected LINE Notify")
+    
+    return LineTokenResponse(line_notify_connected=False)
+
+
+@router.post("/me/line-token/test", response_model=LineTokenTestResult)
+async def test_line_token(
+    token_data: LineTokenUpdate,
+    user_id: str = Depends(get_current_user_id)
+):
+    """Test LINE Notify token by sending a test message."""
+    from app.services.line_notify_service import send_line_notify
+    
+    test_message = """
+🔔 Stock Tracker LINE Notify Test
+
+Your LINE Notify integration is working! 
+You will receive stock alerts here.
+    """.strip()
+    
+    success = await send_line_notify(token_data.line_notify_token, test_message)
+    
+    if success:
+        return LineTokenTestResult(success=True, message="Test message sent! Check your LINE app.")
+    else:
+        return LineTokenTestResult(
+            success=False, 
+            message="Failed to send test message. Please check your LINE Notify token."
+        )
