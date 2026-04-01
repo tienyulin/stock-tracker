@@ -166,7 +166,7 @@
 
 | # | Task | Owner | Status |
 |---|------|-------|--------|
-| 5-06 | 歷史信號追蹤 | Athena | ⏳ Pending |
+| 5-06 | 歷史信號追蹤 | Athena | ✅ Done |
 | 5-07 | 個人化推薦（基於用戶投資偏好） | Athena | ⏳ Pending |
 
 ---
