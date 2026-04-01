@@ -50,9 +50,22 @@ function Dashboard() {
         Promise.all(MARKET_INDICES.map(i => stockService.getStockQuote(i.symbol))),
       ])
 
-      setQuotes(watchlistResults.filter((q): q is StockQuote => q !== null))
-      setIndices(indexResults.filter((q): q is StockQuote => q !== null))
+      const validQuotes = watchlistResults.filter((q): q is StockQuote => q !== null)
+      const validIndices = indexResults.filter((q): q is StockQuote => q !== null)
+
+      // Debug: log results
+      console.log('Watchlist results:', watchlistResults)
+      console.log('Index results:', indexResults)
+
+      setQuotes(validQuotes)
+      setIndices(validIndices)
+
+      // If we got no data at all, show an error
+      if (validQuotes.length === 0 && validIndices.length === 0) {
+        setError('Failed to load data - please check your connection')
+      }
     } catch (err) {
+      console.error('Dashboard loadAll error:', err)
       setError('Failed to load data')
     } finally {
       setLoading(false)
@@ -122,7 +135,11 @@ function Dashboard() {
                       </span>
                     )}
                   </div>
-                  <div className="stock-price">${quote.price.toFixed(2)}</div>
+                  <div className="stock-price">
+                    {quote.price != null && quote.price > 0
+                      ? `$${quote.price.toFixed(2)}`
+                      : 'N/A'}
+                  </div>
                   {changeStr && (
                     <div className={`stock-change ${isUp ? 'up' : 'down'}`}>
                       {changeStr}
@@ -153,7 +170,11 @@ function Dashboard() {
                       <span className="stock-market-state">{quote.market_state}</span>
                     )}
                   </div>
-                  <div className="stock-price">${quote.price.toFixed(2)}</div>
+                  <div className="stock-price">
+                    {quote.price != null && quote.price > 0
+                      ? `$${quote.price.toFixed(2)}`
+                      : 'N/A'}
+                  </div>
                   {changeStr && (
                     <div className={`stock-change ${isUp ? 'up' : 'down'}`}>
                       {changeStr}

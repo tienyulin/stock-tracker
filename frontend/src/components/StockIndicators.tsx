@@ -21,12 +21,14 @@ function StockIndicators({ symbol, period = '3mo', interval = '1d' }: StockIndic
       setError(null)
       try {
         const result = await stockService.getStockIndicators(symbol, period, interval)
+        console.log('getStockIndicators result:', result)
         if (result) {
           setIndicators(result)
         } else {
           setError('Failed to load indicators')
         }
       } catch (err) {
+        console.error('fetchIndicators error:', err)
         setError('Failed to load indicators')
       } finally {
         setLoading(false)

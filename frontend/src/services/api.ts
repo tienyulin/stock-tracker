@@ -123,6 +123,14 @@ export const stockService = {
       return response.data
     } catch (err) {
       console.error('Failed to get stock indicators:', err)
+      if (axios.isAxiosError(err)) {
+        console.error('Axios error details:', {
+          message: err.message,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data,
+        })
+      }
       return null
     }
   },
