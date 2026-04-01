@@ -2,6 +2,7 @@
 User management endpoints.
 """
 
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -9,8 +10,8 @@ from pydantic import BaseModel
 import logging
 
 from app.core.database import get_db
-from app.core.auth import get_current_user_from_token
 from app.models.models import User
+from app.utils.auth import decode_access_token
 
 router = APIRouter(prefix="/users", tags=["users"])
 logger = logging.getLogger(__name__)
@@ -34,10 +35,22 @@ async def get_current_user_id(authorization: str = Header(None)) -> str:
     if not authorization:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    user = await get_current_user_from_token(authorization)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return user.id
+    # Extract token from "Bearer <token>"
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(status_code=401, detail="Invalid authorization header format")
+    
+    token = parts[1]
+    payload = decode_access_token(token)
+    
+    if payload is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token payload")
+    
+    return user_id
 
 
 @router.get("/me/line-token", response_model=LineTokenResponse)
