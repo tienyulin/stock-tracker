@@ -25,8 +25,25 @@ async def init_db() -> None:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database tables initialized successfully.")
 
+    # Migration: Add line_notify_token column if it doesn't exist
+    await run_migrations()
+
     # Seed demo user
     await seed_demo_user()
+
+
+async def run_migrations() -> None:
+    """Run database migrations for schema updates."""
+    async with engine.begin() as conn:
+        # Add line_notify_token column if it doesn't exist
+        try:
+            await conn.execute(
+                text("ALTER TABLE users ADD COLUMN IF NOT EXISTS line_notify_token VARCHAR(255)")
+            )
+            logger.info("Migration: line_notify_token column added (if not exists)")
+        except Exception as e:
+            # Column might already exist or other issue - log but don't fail
+            logger.warning(f"Migration note: {e}")
 
 
 async def seed_demo_user() -> None:
