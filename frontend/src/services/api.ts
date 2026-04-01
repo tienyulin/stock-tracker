@@ -43,6 +43,27 @@ export interface StockIndicators {
   timestamp: string
 }
 
+// Signal types
+export type SignalType = 'STRONG_BUY' | 'BUY' | 'HOLD' | 'SELL' | 'STRONG_SELL'
+
+export interface StockSignal {
+  symbol: string
+  signal: SignalType
+  signal_label: string
+  confidence: number
+  summary: string
+  bullish_factors: string[]
+  bearish_factors: string[]
+  indicators: Array<{
+    indicator: string
+    value: number
+    signal: SignalType
+    reasoning: string
+  }>
+  period: string
+  interval: string
+}
+
 // Watchlist types
 export interface WatchlistItem {
   id: string
@@ -123,6 +144,30 @@ export const stockService = {
       return response.data
     } catch (err) {
       console.error('Failed to get stock indicators:', err)
+      if (axios.isAxiosError(err)) {
+        console.error('Axios error details:', {
+          message: err.message,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data,
+        })
+      }
+      return null
+    }
+  },
+
+  async getStockSignal(
+    symbol: string,
+    period: string = '3mo',
+    interval: string = '1d'
+  ): Promise<StockSignal | null> {
+    try {
+      const response = await apiClient.get(`/stocks/${symbol}/signal`, {
+        params: { period, interval },
+      })
+      return response.data
+    } catch (err) {
+      console.error('Failed to get stock signal:', err)
       if (axios.isAxiosError(err)) {
         console.error('Axios error details:', {
           message: err.message,
