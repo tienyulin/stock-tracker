@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, Query
 from app.schemas import StockHistoryResponse, StockQuoteResponse
 from app.services.yfinance_service import YFinanceService
 from app.services.indicators_service import TechnicalIndicatorsService
+from app.services.signal_engine_service import SignalEngineService, SignalType
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 logger = logging.getLogger(__name__)
@@ -223,3 +224,72 @@ async def get_stock_indicators(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to calculate indicators: {str(e)}")
+
+
+@router.get("/{symbol}/signal")
+async def get_stock_signal(
+    symbol: str,
+    period: str = Query(
+        "3mo", description="Time period for calculation: 1d, 5d, 1mo, 3mo, 6mo, 1y"
+    ),
+    interval: str = Query("1d", description="Data interval: 1d, 1wk"),
+) -> dict:
+    """
+    Get automated stock signal (buy/sell/hold recommendation).
+
+    Uses technical indicators (RSI, MACD, SMA, EMA) to generate
+    a trading signal with confidence level and detailed reasoning.
+
+    Args:
+        symbol: Stock symbol
+        period: Time period for calculation
+        interval: Data interval
+
+    Returns:
+        Dict with signal, confidence, and reasoning
+    """
+    service = SignalEngineService()
+    try:
+        result = await service.get_signal(symbol.upper(), period=period, interval=interval)
+        if result is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Symbol {symbol} not found or insufficient data"
+            )
+
+        return {
+            "symbol": result.symbol,
+            "signal": result.overall_signal.value,
+            "signal_label": _get_signal_label(result.overall_signal),
+            "confidence": result.confidence,
+            "summary": result.summary,
+            "bullish_factors": result.bullish_factors,
+            "bearish_factors": result.bearish_factors,
+            "indicators": [
+                {
+                    "indicator": ind.indicator,
+                    "value": ind.value,
+                    "signal": ind.signal.value,
+                    "reasoning": ind.reasoning,
+                }
+                for ind in result.indicators
+            ],
+            "period": period,
+            "interval": interval,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get signal: {str(e)}")
+
+
+def _get_signal_label(signal: SignalType) -> str:
+    """Get human-readable label for signal."""
+    labels = {
+        SignalType.STRONG_BUY: "強烈買入",
+        SignalType.BUY: "買入",
+        SignalType.HOLD: "持有",
+        SignalType.SELL: "賣出",
+        SignalType.STRONG_SELL: "強烈賣出",
+    }
+    return labels.get(signal, "未知")

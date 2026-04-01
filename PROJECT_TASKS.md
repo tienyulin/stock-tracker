@@ -1,7 +1,7 @@
 # Stock Tracker Project - Task Board
 
 **Last Updated:** 2026-03-31
-**Status:** Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → **Phase 4 🚧 IN PROGRESS**
+**Status:** Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → **Phase 5 🚧 IN PROGRESS**
 **Project Lead:** Hermes (CSO/PM)
 **Tech Lead:** Athena (CTO)
 
@@ -126,6 +126,48 @@
 - **Backend:** Render.com free tier
 - **Database:** Neon PostgreSQL
 - **Redis:** Upstash
+
+---
+
+## 🚧 Phase 5 - Signal Engine & Smart Recommendations
+
+**Status:** 🚧 In Progress
+**Start:** 2026-04-02
+**PM:** Hermes | **Tech Lead:** Athena
+
+### 🎯 Sprint Goals
+1. 自動化股票評估系統（好/不好）
+2. 信心度顯示
+3. 詳細原因說明（哪個指標導致評估）
+4. 教育性內容（每個指標代表什麼意義）
+
+---
+
+### P0 — Signal Engine API
+
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 5-01 | Signal Engine API（後端訊號計算服務） | Athena | 🆕 New |
+| 5-02 | 評估演算法設計（基於技術指標的買賣信號） | Athena | 🆕 New |
+
+---
+
+### P1 — Frontend Signal Display
+
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 5-03 | Dashboard 快速評估顯示（好/不好/理由） | Athena | ⏳ Pending |
+| 5-04 | 信心度視覺化（百分比或等級） | Athena | ⏳ Pending |
+| 5-05 | 指標詳解（每個指標的意義說明） | Athena | ⏳ Pending |
+
+---
+
+### P2 — 進階功能
+
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 5-06 | 歷史信號追蹤 | Athena | ⏳ Pending |
+| 5-07 | 個人化推薦（基於用戶投資偏好） | Athena | ⏳ Pending |
 
 ---
 
