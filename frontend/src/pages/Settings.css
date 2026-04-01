@@ -1,0 +1,209 @@
+.settings-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.settings-container h2 {
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.settings-section {
+  background: #1e1e3f;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.settings-section h3 {
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.settings-description {
+  color: #aaa;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.settings-info p {
+  color: #ccc;
+  margin: 0.5rem 0;
+}
+
+.settings-info strong {
+  color: #4fc3f7;
+}
+
+/* LINE Notifications */
+.line-setup {
+  margin-top: 1rem;
+}
+
+.line-instructions {
+  background: #0d0d1a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.line-instructions h4 {
+  color: #4fc3f7;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.line-instructions ol {
+  color: #aaa;
+  font-size: 0.85rem;
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.line-instructions li {
+  margin: 0.4rem 0;
+}
+
+.line-instructions a {
+  color: #4fc3f7;
+}
+
+.line-instructions a:hover {
+  text-decoration: underline;
+}
+
+.line-token-input {
+  margin-bottom: 1rem;
+}
+
+.line-token-input label {
+  display: block;
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.line-token-input input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0d0d1a;
+  color: white;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.line-token-input input:focus {
+  outline: none;
+  border-color: #4fc3f7;
+}
+
+.line-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-test {
+  padding: 0.6rem 1.2rem;
+  background: #333;
+  color: #ccc;
+  border: 1px solid #444;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-test:hover:not(:disabled) {
+  background: #444;
+  color: white;
+}
+
+.btn-connect {
+  padding: 0.6rem 1.2rem;
+  background: #00b900;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-connect:hover:not(:disabled) {
+  background: #00c900;
+}
+
+.btn-disconnect {
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-disconnect:hover:not(:disabled) {
+  background: #ff6b6b;
+  color: white;
+}
+
+.line-connected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0d0d1a;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.line-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #00c900;
+  font-weight: 500;
+}
+
+.line-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #666;
+}
+
+.line-status-dot.connected {
+  background: #00c900;
+  box-shadow: 0 0 8px #00c900;
+}
+
+.message {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.message.success {
+  background: rgba(0, 201, 0, 0.15);
+  color: #00c900;
+  border: 1px solid #00c900;
+}
+
+.message.error {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+.settings-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #4fc3f7;
+  font-size: 1.2rem;
+}

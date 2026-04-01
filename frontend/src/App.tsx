@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import Watchlist from './pages/Watchlist'
 import Alerts from './pages/Alerts'
 import StockSearch from './pages/StockSearch'
+import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import './App.css'
@@ -20,6 +21,7 @@ function NavBar() {
         <li><NavLink to="/search" className={({ isActive }) => isActive ? 'active' : ''}>Search</NavLink></li>
         <li><NavLink to="/watchlist" className={({ isActive }) => isActive ? 'active' : ''}>Watchlist</NavLink></li>
         <li><NavLink to="/alerts" className={({ isActive }) => isActive ? 'active' : ''}>Alerts</NavLink></li>
+        <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>Settings</NavLink></li>
       </ul>
       <div className="nav-auth">
         {isAuthenticated ? (
@@ -58,6 +60,7 @@ function AppRoutes() {
       <Route path="/search" element={<RequireAuth><StockSearch /></RequireAuth>} />
       <Route path="/watchlist" element={<RequireAuth><Watchlist /></RequireAuth>} />
       <Route path="/alerts" element={<RequireAuth><Alerts /></RequireAuth>} />
+      <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
     </Routes>
   )
 }

@@ -165,6 +165,31 @@ async def trigger_alert(
     await db.commit()
     await db.refresh(alert)
 
+    # Send LINE notification (async, non-blocking)
+    from app.services.line_notify_service import notify_alert_triggered
+    try:
+        # Get current price for notification
+        from app.services.yfinance_service import get_quote
+        quote = await get_quote(alert.symbol)
+        current_price = quote.get("regularMarketPrice") or quote.get("price") or alert.threshold
+    except Exception:
+        current_price = alert.threshold
+    
+    # Fire and forget - don't block the response
+    try:
+        await notify_alert_triggered(
+            db=db,
+            user_id=str(alert.user_id),
+            symbol=alert.symbol,
+            condition_type=alert.condition_type,
+            threshold=alert.threshold,
+            current_price=float(current_price)
+        )
+    except Exception as e:
+        # Log but don't fail the request
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to send LINE notification: {e}")
+
     return AlertResponse(
         id=alert.id,
         symbol=alert.symbol,
