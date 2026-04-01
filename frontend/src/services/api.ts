@@ -183,6 +183,21 @@ export const watchlistService = {
   },
 }
 
+// User type
+export interface User {
+  id: string
+  email: string
+  username: string
+  created_at?: string
+}
+
+// Auth response type
+interface AuthResponse {
+  access_token: string
+  token_type: string
+  user_id: string
+}
+
 export const alertService = {
   async getAlerts(userId: string): Promise<Alert[]> {
     const response = await apiClient.get('/alerts', { params: { user_id: userId } })
@@ -225,5 +240,29 @@ export const alertService = {
       params: { user_id: userId },
     })
     return response.data
+  },
+}
+
+export const authService = {
+  async login(email: string, password: string): Promise<AuthResponse> {
+    const response = await apiClient.post('/auth/login', { email, password })
+    return response.data
+  },
+
+  async signup(email: string, username: string, password: string): Promise<AuthResponse> {
+    const response = await apiClient.post('/auth/signup', { email, username, password })
+    return response.data
+  },
+
+  async getCurrentUser(token: string): Promise<User> {
+    const response = await apiClient.get('/auth/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  },
+
+  logout(): void {
+    // Call logout endpoint and clear cookies
+    apiClient.post('/auth/logout').catch(console.error)
   },
 }

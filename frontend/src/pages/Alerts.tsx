@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { alertService } from '../services/api'
 import type { Alert } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
 import './Alerts.css'
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 type FilterType = 'all' | 'active' | 'triggered'
 
 function Alerts() {
+  const { user } = useAuth()
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -15,14 +15,18 @@ function Alerts() {
   const [notification, setNotification] = useState<string | null>(null)
 
   useEffect(() => {
-    loadAlerts()
-  }, [])
+    if (user?.id) {
+      loadAlerts()
+    }
+  }, [user?.id])
+
+  const userId = user?.id || ''
 
   const loadAlerts = async () => {
     try {
       setLoading(true)
       setError(null)
-      const userAlerts = await alertService.getAlerts(DEMO_USER_ID)
+      const userAlerts = await alertService.getAlerts(userId)
       setAlerts(userAlerts)
     } catch (err) {
       setError('Failed to load alerts')
@@ -38,7 +42,7 @@ function Alerts() {
 
   const handleToggle = async (alertId: string, isActive: boolean) => {
     try {
-      await alertService.updateAlert(DEMO_USER_ID, alertId, { is_active: !isActive })
+      await alertService.updateAlert(userId, alertId, { is_active: !isActive })
       setAlerts(alerts.map(a =>
         a.id === alertId ? { ...a, is_active: !isActive } : a
       ))
@@ -50,7 +54,7 @@ function Alerts() {
 
   const handleDelete = async (alertId: string) => {
     try {
-      await alertService.deleteAlert(DEMO_USER_ID, alertId)
+      await alertService.deleteAlert(userId, alertId)
       setAlerts(alerts.filter(a => a.id !== alertId))
       showNotification('Alert deleted')
     } catch (err) {
@@ -60,7 +64,7 @@ function Alerts() {
 
   const handleResetAlert = async (alertId: string) => {
     try {
-      const updated = await alertService.updateAlert(DEMO_USER_ID, alertId, { triggered_at: undefined })
+      const updated = await alertService.updateAlert(userId, alertId, { triggered_at: undefined })
       setAlerts(alerts.map(a => a.id === alertId ? updated : a))
       showNotification('Alert reset successfully')
     } catch (err) {
