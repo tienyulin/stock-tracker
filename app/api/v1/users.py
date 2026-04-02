@@ -2,7 +2,6 @@
 User management endpoints.
 """
 
-from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
