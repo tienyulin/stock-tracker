@@ -657,7 +657,7 @@ async def get_portfolio_risk_analytics(
 
     token = authorization.replace("Bearer ", "")
     payload = decode_access_token(token)
-    if not payload or "user_id" not in payload:
+    if not payload or "sub" not in payload:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
     user_id = payload.get("sub")
