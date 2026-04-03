@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.models import Alert
+from app.models import Alert, User
 from app.schemas import AlertCreate, AlertResponse, AlertUpdate
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
