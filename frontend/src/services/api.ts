@@ -358,6 +358,45 @@ export interface PortfolioSectorResponse {
   total_portfolio_value: number
 }
 
+export interface PortfolioHoldingSignal {
+  id: string
+  symbol: string
+  quantity: number
+  avg_cost: number
+  current_price: number | null
+  current_value: number | null
+  gain_loss: number | null
+  gain_loss_pct: number | null
+}
+
+export interface PortfolioSignal {
+  signal: SignalType
+  signal_label: string
+  confidence: number
+  summary: string
+  bullish_factors: string[]
+  bearish_factors: string[]
+  indicators: Array<{
+    indicator: string
+    value: number
+    signal: SignalType
+    reasoning: string
+  }>
+}
+
+export interface HoldingWithSignal {
+  holding: PortfolioHoldingSignal
+  signal: PortfolioSignal
+  is_conflict: boolean
+}
+
+export interface PortfolioSignalsResponse {
+  holdings: HoldingWithSignal[]
+  conflicts: HoldingWithSignal[]
+  total_holdings: number
+  total_conflicts: number
+}
+
 function getAuthHeaders() {
   const token = localStorage.getItem('token')
   return token ? { Authorization: `Bearer ${token}` } : {}
@@ -422,6 +461,13 @@ export const portfolioService = {
 
   async getAllocationBySector(): Promise<PortfolioSectorResponse> {
     const response = await apiClient.get('/portfolio/summary/by-sector', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
+  },
+
+  async getPortfolioSignals(): Promise<PortfolioSignalsResponse> {
+    const response = await apiClient.get('/portfolio/signals', {
       headers: getAuthHeaders(),
     })
     return response.data
