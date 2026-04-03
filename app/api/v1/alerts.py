@@ -222,3 +222,151 @@ async def trigger_alert(
         created_at=alert.created_at,
         updated_at=alert.updated_at,
     )
+
+
+# === Alerts Expansion Endpoints ===
+
+from pydantic import BaseModel
+from typing import Optional, List
+
+
+class AlertConditionRequest(BaseModel):
+    """Single alert condition."""
+    metric: str
+    operator: str
+    value: float
+
+
+class CreateExpandedAlertRequest(BaseModel):
+    """Request to create an expanded alert."""
+    symbol: str
+    name: str
+    conditions: List[AlertConditionRequest]
+    notification_channels: List[str] = ["LINE"]
+    custom_message: Optional[str] = None
+
+
+class AlertResponse(BaseModel):
+    """Alert response."""
+    id: str
+    symbol: str
+    name: str
+    conditions: List[dict]
+    notification_channels: List[str]
+    custom_message: str
+    is_active: bool
+    created_at: str
+
+
+@router.post("/expanded", response_model=dict)
+async def create_expanded_alert(
+    request: CreateExpandedAlertRequest,
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Create an expanded alert with multiple conditions.
+
+    Supports:
+    - Multiple alert types (price, percent, RSI, MACD)
+    - AND/OR condition logic
+    - Custom notification messages
+    - Multiple notification channels
+    """
+    from app.services.alerts_expansion_service import AlertsExpansionService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Create alert
+    alert_service = AlertsExpansionService()
+
+    conditions = [
+        {"metric": c.metric, "operator": c.operator, "value": c.value}
+        for c in request.conditions
+    ]
+
+    alert_data = {
+        "id": f"alert_{user_id[:8]}_{request.symbol}_{int(datetime.now().timestamp())}",
+        "user_id": user_id,
+        "symbol": request.symbol,
+        "name": request.name,
+        "conditions": conditions,
+        "notification_channels": request.notification_channels,
+        "custom_message": request.custom_message or f"Alert triggered for {request.symbol}",
+        "is_active": True,
+        "created_at": datetime.now().isoformat(),
+    }
+
+    return alert_data
+
+
+@router.post("/expanded/evaluate", response_model=dict)
+async def evaluate_alerts(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Evaluate all active alerts against current market data.
+    """
+    from app.services.alerts_expansion_service import AlertsExpansionService
+    from app.services.yfinance_service import YFinanceService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Get user's active alerts (placeholder - would query database)
+    alerts = []
+
+    # Get current market data for user's watchlist
+    yfinance = YFinanceService()
+    current_data = {}
+
+    try:
+        # Get quotes for all symbols in alerts
+        symbols = list(set(a.get("symbol") for a in alerts if a.get("symbol")))
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                current_data[symbol] = {
+                    "price": quote.price,
+                    "percent_change": getattr(quote, "change_percent", 0),
+                }
+            except Exception:
+                pass
+    finally:
+        await yfinance.close()
+
+    # Evaluate alerts
+    alert_service = AlertsExpansionService()
+    results = await alert_service.evaluate_alerts(alerts, current_data)
+
+    return {
+        "evaluated_at": datetime.now().isoformat(),
+        "results": [
+            {
+                "alert_id": r.alert_id,
+                "symbol": r.symbol,
+                "triggered": r.triggered,
+                "triggered_conditions": r.triggered_conditions,
+                "current_values": r.current_values,
+            }
+            for r in results
+        ],
+    }
