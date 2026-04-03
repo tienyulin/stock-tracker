@@ -1,0 +1,94 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "watchlist": "Watchlist",
+    "alerts": "Alerts",
+    "portfolio": "Portfolio",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalValue": "Total Value",
+    "dayChange": "Day Change",
+    "stocks": "Stocks",
+    "etfs": "ETFs",
+    "bonds": "Bonds",
+    "aiSignals": "AI Signals",
+    "signal": "Signal",
+    "confidence": "Confidence",
+    "price": "Price",
+    "change": "Change",
+    "buy": "Buy",
+    "sell": "Sell",
+    "hold": "Hold"
+  },
+  "watchlist": {
+    "title": "Watchlist",
+    "addSymbol": "Add Symbol",
+    "symbol": "Symbol",
+    "price": "Price",
+    "change": "Change",
+    "actions": "Actions",
+    "delete": "Delete",
+    "noItems": "No items in watchlist"
+  },
+  "alerts": {
+    "title": "Price Alerts",
+    "create": "Create Alert",
+    "symbol": "Symbol",
+    "condition": "Condition",
+    "targetPrice": "Target Price",
+    "currentPrice": "Current Price",
+    "status": "Status",
+    "active": "Active",
+    "triggered": "Triggered",
+    "delete": "Delete",
+    "noAlerts": "No alerts configured"
+  },
+  "portfolio": {
+    "title": "Portfolio Overview",
+    "holdings": "Holdings",
+    "totalValue": "Total Value",
+    "totalGain": "Total Gain/Loss",
+    "sector": "Sector",
+    "assetType": "Asset Type",
+    "quantity": "Quantity",
+    "avgCost": "Avg Cost",
+    "currentPrice": "Current Price",
+    "gainLoss": "Gain/Loss",
+    "aiSignal": "AI Signal",
+    "exportPdf": "Export PDF",
+    "noHoldings": "No holdings found"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "discord": "Discord Notifications",
+    "discordWebhook": "Discord Webhook URL",
+    "testWebhook": "Test",
+    "save": "Save",
+    "delete": "Delete",
+    "language": "Language"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "search": "Search"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "welcome": "Welcome back"
+  }
+}
