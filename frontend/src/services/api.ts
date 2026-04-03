@@ -297,11 +297,20 @@ export const alertService = {
 }
 
 // Portfolio types
+export type AssetType = 'STOCK' | 'ETF' | 'BOND' | 'REIT' | 'OTHER'
+export type Currency = 'USD' | 'TWD'
+export type DividendFrequency = 'QUARTERLY' | 'MONTHLY' | 'ANNUALLY' | 'NONE'
+
 export interface Holding {
   id: string
   symbol: string
   quantity: number
   avg_cost: number
+  asset_type: AssetType
+  sector: string | null
+  dividend_yield: number | null
+  currency: Currency
+  dividend_frequency: DividendFrequency
   current_price: number | null
   current_value: number | null
   gain_loss: number | null
@@ -323,29 +332,73 @@ export interface PortfolioResponse {
   summary: PortfolioSummary
 }
 
+export interface AssetAllocation {
+  asset_type: AssetType
+  holdings_count: number
+  total_cost: number
+  total_current_value: number
+  allocation_pct: number | null
+}
+
+export interface SectorAllocation {
+  sector: string
+  holdings_count: number
+  total_cost: number
+  total_current_value: number
+  allocation_pct: number | null
+}
+
+export interface PortfolioAllocationResponse {
+  asset_allocation: AssetAllocation[]
+  total_portfolio_value: number
+}
+
+export interface PortfolioSectorResponse {
+  sector_allocation: SectorAllocation[]
+  total_portfolio_value: number
+}
+
 function getAuthHeaders() {
   const token = localStorage.getItem('token')
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 export const portfolioService = {
-  async getPortfolio(): Promise<PortfolioResponse> {
+  async getPortfolio(params?: { asset_type?: string; sector?: string }): Promise<PortfolioResponse> {
     const response = await apiClient.get('/portfolio', {
       headers: getAuthHeaders(),
+      params,
     })
     return response.data
   },
 
-  async addHolding(symbol: string, quantity: number, avg_cost: number): Promise<Holding> {
+  async addHolding(data: {
+    symbol: string
+    quantity: number
+    avg_cost: number
+    asset_type?: AssetType
+    sector?: string | null
+    dividend_yield?: number | null
+    currency?: Currency
+    dividend_frequency?: DividendFrequency
+  }): Promise<Holding> {
     const response = await apiClient.post(
       '/portfolio/holdings',
-      { symbol, quantity, avg_cost },
+      data,
       { headers: getAuthHeaders() }
     )
     return response.data
   },
 
-  async updateHolding(holdingId: string, data: { quantity?: number; avg_cost?: number }): Promise<Holding> {
+  async updateHolding(holdingId: string, data: {
+    quantity?: number
+    avg_cost?: number
+    asset_type?: AssetType
+    sector?: string | null
+    dividend_yield?: number | null
+    currency?: Currency
+    dividend_frequency?: DividendFrequency
+  }): Promise<Holding> {
     const response = await apiClient.put(
       `/portfolio/holdings/${holdingId}`,
       data,
@@ -358,6 +411,20 @@ export const portfolioService = {
     await apiClient.delete(`/portfolio/holdings/${holdingId}`, {
       headers: getAuthHeaders(),
     })
+  },
+
+  async getAllocationByAssetType(): Promise<PortfolioAllocationResponse> {
+    const response = await apiClient.get('/portfolio/summary/by-asset-type', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
+  },
+
+  async getAllocationBySector(): Promise<PortfolioSectorResponse> {
+    const response = await apiClient.get('/portfolio/summary/by-sector', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
   },
 }
 
