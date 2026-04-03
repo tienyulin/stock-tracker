@@ -1014,3 +1014,98 @@ async def get_tax_loss_harvesting(
         "capital_gains_rate": result_data.capital_gains_rate,
         "timestamp": result_data.timestamp,
     }
+
+
+@router.post("/backtest", response_model=dict)
+async def run_portfolio_backtest(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+    symbol: str = "AAPL",
+    period: str = "1y",
+    strategy: str = "sma_crossover",
+    initial_capital: float = 10000.0,
+):
+    """
+    Run backtest for a trading strategy.
+
+    Args:
+        symbol: Stock symbol to backtest
+        period: Time period (e.g., '1y', '6m', '2y')
+        strategy: Strategy name (default 'sma_crossover')
+        initial_capital: Starting capital (default $10,000)
+
+    Returns:
+        Backtest results with performance metrics and trade history.
+    """
+    from app.services.backtesting_service import PortfolioBacktestingService
+
+    # Extract user ID from token (optional for backtest)
+    user_id = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.replace("Bearer ", "")
+        payload = decode_access_token(token)
+        if payload and "sub" in payload:
+            user_id = payload["sub"]
+
+    # Get historical data
+    yfinance = YFinanceService()
+    try:
+        history = await yfinance.get_historical(symbol, period=period)
+        if not history or not history.closes:
+            return {"error": f"No historical data for {symbol}"}
+
+        prices = history.closes
+        dates = history.dates if hasattr(history, 'dates') else [f"Day_{i}" for i in range(len(prices))]
+
+    except Exception as e:
+        return {"error": f"Failed to get historical data: {str(e)}"}
+    finally:
+        await yfinance.close()
+
+    # Run backtest
+    backtest_service = PortfolioBacktestingService()
+    try:
+        result = await backtest_service.run_backtest(
+            symbol=symbol,
+            historical_prices=prices,
+            dates=dates,
+            strategy=strategy,
+            initial_capital=initial_capital,
+        )
+
+        return {
+            "symbol": result.symbol,
+            "strategy": result.strategy,
+            "start_date": result.start_date,
+            "end_date": result.end_date,
+            "initial_capital": result.initial_capital,
+            "final_value": result.final_value,
+            "metrics": {
+                "total_return": result.metrics.total_return,
+                "total_return_percent": result.metrics.total_return_percent,
+                "sharpe_ratio": result.metrics.sharpe_ratio,
+                "max_drawdown": result.metrics.max_drawdown,
+                "max_drawdown_percent": result.metrics.max_drawdown_percent,
+                "volatility": result.metrics.volatility,
+                "win_rate": result.metrics.win_rate,
+                "trade_count": result.metrics.trade_count,
+                "benchmark_return": result.metrics.benchmark_return,
+                "alpha": result.metrics.alpha,
+            },
+            "trades": [
+                {
+                    "date": t.date,
+                    "action": t.action,
+                    "symbol": t.symbol,
+                    "quantity": t.quantity,
+                    "price": t.price,
+                    "value": t.value,
+                }
+                for t in result.trades
+            ],
+            "equity_curve": result.equity_curve,
+            "timestamp": result.metrics.timestamp,
+        }
+
+    except Exception as e:
+        return {"error": f"Backtest failed: {str(e)}"}
