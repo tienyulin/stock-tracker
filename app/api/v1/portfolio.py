@@ -1014,3 +1014,171 @@ async def get_tax_loss_harvesting(
         "capital_gains_rate": result_data.capital_gains_rate,
         "timestamp": result_data.timestamp,
     }
+
+
+@router.get("/share", response_model=dict)
+async def share_portfolio(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+    is_public: bool = True,
+):
+    """
+    Share portfolio publicly.
+
+    Args:
+        is_public: Whether to share publicly (default True)
+
+    Returns:
+        Shared portfolio summary.
+    """
+    from app.services.social_features_service import SocialFeaturesService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+    username = f"user_{user_id[:8]}"  # Placeholder username
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {"error": "No holdings to share"}
+
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Share portfolio
+    social_service = SocialFeaturesService()
+    shared = await social_service.share_portfolio(
+        user_id=user_id,
+        username=username,
+        holdings=holdings_data,
+        prices=prices,
+        is_public=is_public,
+    )
+
+    return {
+        "user_id": shared.user_id,
+        "username": shared.username,
+        "portfolio_summary": shared.portfolio_summary,
+        "total_value": shared.total_value,
+        "total_gain_loss": shared.total_gain_loss,
+        "total_gain_loss_percent": shared.total_gain_loss_percent,
+        "is_public": shared.is_public,
+        "shared_at": shared.shared_at,
+    }
+
+
+@router.post("/follow/{target_user_id}", response_model=dict)
+async def follow_user(
+    target_user_id: str,
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+    action: str = "follow",
+):
+    """
+    Follow or unfollow a user.
+
+    Args:
+        target_user_id: User ID to follow/unfollow
+        action: "follow" or "unfollow"
+
+    Returns:
+        Follow result.
+    """
+    from app.services.social_features_service import SocialFeaturesService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    follower_id = payload["sub"]
+
+    social_service = SocialFeaturesService()
+    result = await social_service.follow_user(
+        follower_id=follower_id,
+        following_id=target_user_id,
+        action=action,
+    )
+
+    return {
+        "success": result.success,
+        "message": result.message,
+        "followers_count": result.followers_count,
+    }
+
+
+@router.get("/community", response_model=dict)
+async def get_community_portfolios(
+    limit: int = 20,
+    sort_by: str = "performance",
+):
+    """
+    Get publicly shared portfolios from community.
+
+    Args:
+        limit: Number of portfolios to return
+        sort_by: Sort criteria (performance, followers, recent)
+
+    Returns:
+        List of shared portfolios.
+    """
+    from app.services.social_features_service import SocialFeaturesService
+
+    social_service = SocialFeaturesService()
+    portfolios = await social_service.get_community_portfolios(
+        limit=limit,
+        sort_by=sort_by,
+    )
+
+    return {
+        "portfolios": [
+            {
+                "user_id": p.user_id,
+                "username": p.username,
+                "total_value": p.total_value,
+                "total_gain_loss": p.total_gain_loss,
+                "total_gain_loss_percent": p.total_gain_loss_percent,
+                "followers_count": p.followers_count,
+                "shared_at": p.shared_at,
+            }
+            for p in portfolios
+        ],
+        "count": len(portfolios),
+    }
