@@ -143,21 +143,188 @@ def calculate_ma(prices: list, periods=None) -> Union[float, dict]:
     return result
 
 
-def calculate_all_indicators(prices: list, symbol: str = None) -> dict:
-    """Calculate all technical indicators.
+def calculate_bollinger_bands(prices: list, period: int = 20, std_dev: int = 2) -> dict:
+    """Calculate Bollinger Bands.
 
     Args:
         prices: List of historical prices.
+        period: Moving average period (default 20).
+        std_dev: Standard deviations for bands (default 2).
+
+    Returns:
+        Dict with 'upper', 'middle', 'lower', and 'bandwidth'.
+
+    Raises:
+        ValueError: If insufficient data for calculation.
+    """
+    if len(prices) < period:
+        raise ValueError(f"Insufficient data: need at least {period} prices")
+
+    # Calculate middle band (SMA)
+    middle = sum(prices[-period:]) / period
+
+    # Calculate standard deviation
+    variance = sum((p - middle) ** 2 for p in prices[-period:]) / period
+    std = variance ** 0.5
+
+    upper = middle + (std_dev * std)
+    lower = middle - (std_dev * std)
+    bandwidth = (upper - lower) / middle if middle > 0 else 0
+
+    return {
+        "upper": round(upper, 2),
+        "middle": round(middle, 2),
+        "lower": round(lower, 2),
+        "bandwidth": round(bandwidth, 4),
+    }
+
+
+def calculate_kdj(prices_high: list, prices_low: list, prices_close: list, period: int = 9) -> dict:
+    """Calculate KDJ (Stochastic) Indicator.
+
+    Args:
+        prices_high: List of historical high prices.
+        prices_low: List of historical low prices.
+        prices_close: List of historical closing prices.
+        period: KDJ period (default 9).
+
+    Returns:
+        Dict with 'k', 'd', and 'j' values.
+
+    Raises:
+        ValueError: If insufficient data for calculation.
+    """
+    if len(prices_high) < period or len(prices_low) < period or len(prices_close) < period:
+        raise ValueError(f"Insufficient data: need at least {period} prices")
+
+    # Calculate RSV (Raw Stochastic Value)
+    high_max = max(prices_high[-period:])
+    low_min = min(prices_low[-period:])
+    close = prices_close[-1]
+
+    if high_max == low_min:
+        rsv = 50.0
+    else:
+        rsv = (close - low_min) / (high_max - low_min) * 100
+
+    # Calculate K, D, J (simplified version)
+    k = rsv  # Using RSV as K for simplicity
+    d = (k + 50) / 2  # Simplified D
+    j = 3 * k - 2 * d
+
+    return {
+        "k": round(k, 2),
+        "d": round(d, 2),
+        "j": round(j, 2),
+    }
+
+
+def calculate_williams_r(prices_high: list, prices_low: list, prices_close: list, period: int = 14) -> dict:
+    """Calculate Williams %R Indicator.
+
+    Args:
+        prices_high: List of historical high prices.
+        prices_low: List of historical low prices.
+        prices_close: List of historical closing prices.
+        period: Williams %R period (default 14).
+
+    Returns:
+        Dict with 'williams_r' and 'signal'.
+
+    Raises:
+        ValueError: If insufficient data for calculation.
+    """
+    if len(prices_high) < period or len(prices_low) < period or len(prices_close) < period:
+        raise ValueError(f"Insufficient data: need at least {period} prices")
+
+    high_max = max(prices_high[-period:])
+    low_min = min(prices_low[-period:])
+    close = prices_close[-1]
+
+    if high_max == low_min:
+        williams_r = -50.0
+    else:
+        williams_r = (high_max - close) / (high_max - low_min) * -100
+
+    # Signal: Overbought (> -20) or Oversold (< -80)
+    if williams_r > -20:
+        signal = "OVERBOUGHT"
+    elif williams_r < -80:
+        signal = "OVERSOLD"
+    else:
+        signal = "NEUTRAL"
+
+    return {
+        "williams_r": round(williams_r, 2),
+        "signal": signal,
+    }
+
+
+def calculate_pivot_points(prices_high: float, prices_low: float, prices_close: float) -> dict:
+    """Calculate Pivot Points and support/resistance levels.
+
+    Args:
+        prices_high: Previous period high price.
+        prices_low: Previous period low price.
+        prices_close: Previous period closing price.
+
+    Returns:
+        Dict with pivot point, support and resistance levels.
+
+    Raises:
+        ValueError: If prices are invalid.
+    """
+    if prices_high <= 0 or prices_low <= 0 or prices_close <= 0:
+        raise ValueError("Invalid price data")
+
+    pivot = (prices_high + prices_low + prices_close) / 3
+
+    r1 = 2 * pivot - prices_low
+    s1 = 2 * pivot - prices_high
+    r2 = pivot + (prices_high - prices_low)
+    s2 = pivot - (prices_high - prices_low)
+
+    return {
+        "pivot": round(pivot, 2),
+        "r1": round(r1, 2),
+        "r2": round(r2, 2),
+        "s1": round(s1, 2),
+        "s2": round(s2, 2),
+    }
+
+
+def calculate_all_indicators(
+    prices: list,
+    prices_high: list = None,
+    prices_low: list = None,
+    symbol: str = None
+) -> dict:
+    """Calculate all technical indicators.
+
+    Args:
+        prices: List of historical closing prices.
+        prices_high: Optional list of historical high prices.
+        prices_low: Optional list of historical low prices.
         symbol: Optional stock symbol for metadata.
 
     Returns:
-        Dict with RSI, MACD, MA, symbol, and timestamp.
+        Dict with all indicators, symbol, and timestamp.
     """
     result = {
         "rsi": round(calculate_rsi(prices), 2),
         "macd": calculate_macd(prices),
         "ma": calculate_ma(prices, periods=[5, 10, 20, 60]),
+        "bollinger_bands": calculate_bollinger_bands(prices),
         "symbol": symbol,
         "timestamp": datetime.now().isoformat(),
     }
+
+    # Add KDJ if high/low data available
+    if prices_high and prices_low and len(prices_high) >= 9 and len(prices_low) >= 9:
+        result["kdj"] = calculate_kdj(prices_high, prices_low, prices)
+
+    # Add Williams %R if high/low data available
+    if prices_high and prices_low and len(prices_high) >= 14 and len(prices_low) >= 14:
+        result["williams_r"] = calculate_williams_r(prices_high, prices_low, prices)
+
     return result
