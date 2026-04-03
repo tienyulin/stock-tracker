@@ -168,6 +168,11 @@ class UserHolding(Base):
     symbol: Mapped[str] = mapped_column(String(20), nullable=False)
     quantity: Mapped[float] = mapped_column(nullable=False)
     avg_cost: Mapped[float] = mapped_column(nullable=False)  # average cost per share
+    asset_type: Mapped[str] = mapped_column(String(20), nullable=False, default="STOCK")
+    sector: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    dividend_yield: Mapped[Optional[float]] = mapped_column(nullable=True)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
+    dividend_frequency: Mapped[str] = mapped_column(String(20), nullable=False, default="NONE")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

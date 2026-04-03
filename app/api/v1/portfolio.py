@@ -1,12 +1,12 @@
 """
-Portfolio management endpoints.
+Portfolio management endpoints with multi-asset support.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Literal
 from datetime import datetime
 import logging
 
@@ -23,6 +23,11 @@ class HoldingBase(BaseModel):
     symbol: str
     quantity: float
     avg_cost: float
+    asset_type: Literal["STOCK", "ETF", "BOND", "REIT", "OTHER"] = "STOCK"
+    sector: Optional[str] = None
+    dividend_yield: Optional[float] = None
+    currency: Literal["USD", "TWD"] = "USD"
+    dividend_frequency: Literal["QUARTERLY", "MONTHLY", "ANNUALLY", "NONE"] = "NONE"
 
 
 class HoldingCreate(HoldingBase):
@@ -32,6 +37,11 @@ class HoldingCreate(HoldingBase):
 class HoldingUpdate(BaseModel):
     quantity: Optional[float] = None
     avg_cost: Optional[float] = None
+    asset_type: Optional[Literal["STOCK", "ETF", "BOND", "REIT", "OTHER"]] = None
+    sector: Optional[str] = None
+    dividend_yield: Optional[float] = None
+    currency: Optional[Literal["USD", "TWD"]] = None
+    dividend_frequency: Optional[Literal["QUARTERLY", "MONTHLY", "ANNUALLY", "NONE"]] = None
 
 
 class HoldingResponse(HoldingBase):
@@ -84,37 +94,45 @@ async def get_current_user(user_id: str = Depends(get_current_user_id), db: Asyn
     return user
 
 
+async def _get_current_price(symbol: str) -> Optional[float]:
+    """Get current market price for a symbol."""
+    try:
+        stock_service = StockService()
+        quote = await stock_service._fetch_quote(symbol)
+        if quote:
+            return quote.get("regularMarketPrice")
+    except Exception as e:
+        logger.warning(f"Failed to get quote for {symbol}: {e}")
+    return None
+
+
 @router.get("", response_model=dict)
 async def get_portfolio(
+    asset_type: Optional[str] = Query(None, description="Filter by asset type (STOCK, ETF, BOND, REIT, OTHER)"),
+    sector: Optional[str] = Query(None, description="Filter by sector"),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """
     Get user's portfolio with current market values.
     
-    Returns list of holdings with current prices and gain/loss calculations.
+    Supports filtering by asset_type and sector.
     """
-    # Get all holdings for user
-    result = await db.execute(
-        select(UserHolding).where(UserHolding.user_id == user.id)
-    )
+    query = select(UserHolding).where(UserHolding.user_id == user.id)
+    if asset_type:
+        query = query.where(UserHolding.asset_type == asset_type.upper())
+    if sector:
+        query = query.where(UserHolding.sector == sector)
+    
+    result = await db.execute(query)
     holdings = result.scalars().all()
     
-    stock_service = StockService()
     portfolio_items = []
     total_cost = 0.0
     total_current_value = 0.0
     
     for h in holdings:
-        # Get current price
-        current_price = None
-        try:
-            quote = await stock_service.get_quote(h.symbol)
-            if quote:
-                current_price = quote.get("regularMarketPrice")
-        except Exception as e:
-            logger.warning(f"Failed to get quote for {h.symbol}: {e}")
-        
+        current_price = await _get_current_price(h.symbol)
         current_value = current_price * h.quantity if current_price else None
         cost_basis = h.avg_cost * h.quantity
         gain_loss = current_value - cost_basis if current_value else None
@@ -129,6 +147,11 @@ async def get_portfolio(
             "symbol": h.symbol,
             "quantity": h.quantity,
             "avg_cost": h.avg_cost,
+            "asset_type": h.asset_type,
+            "sector": h.sector,
+            "dividend_yield": h.dividend_yield,
+            "currency": h.currency,
+            "dividend_frequency": h.dividend_frequency,
             "current_price": current_price,
             "current_value": current_value,
             "gain_loss": gain_loss,
@@ -144,11 +167,121 @@ async def get_portfolio(
         "holdings": portfolio_items,
         "summary": {
             "total_cost": total_cost,
-            "total_current_value": total_current_value,
+            "total_current_value": total_current_value if total_current_value else 0.0,
             "total_gain_loss": total_gain_loss,
             "total_gain_loss_pct": total_gain_loss_pct,
             "holdings_count": len(holdings),
         }
+    }
+
+
+@router.get("/summary/by-asset-type", response_model=dict)
+async def get_portfolio_by_asset_type(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get portfolio summary grouped by asset type.
+    """
+    result = await db.execute(
+        select(
+            UserHolding.asset_type,
+            func.count(UserHolding.id).label("count"),
+            func.sum(UserHolding.avg_cost * UserHolding.quantity).label("total_cost"),
+        )
+        .where(UserHolding.user_id == user.id)
+        .group_by(UserHolding.asset_type)
+    )
+    rows = result.all()
+    
+    breakdown = []
+    total_portfolio_value = 0.0
+    
+    for row in rows:
+        holdings_result = await db.execute(
+            select(UserHolding).where(
+                UserHolding.user_id == user.id,
+                UserHolding.asset_type == row.asset_type
+            )
+        )
+        holdings = holdings_result.scalars().all()
+        total_value = 0.0
+        for h in holdings:
+            current_price = await _get_current_price(h.symbol)
+            if current_price:
+                total_value += current_price * h.quantity
+        
+        total_portfolio_value += total_value
+        breakdown.append({
+            "asset_type": row.asset_type,
+            "holdings_count": row.count,
+            "total_cost": float(row.total_cost or 0),
+            "total_current_value": total_value,
+            "allocation_pct": None
+        })
+    
+    for item in breakdown:
+        if total_portfolio_value:
+            item["allocation_pct"] = round((item["total_current_value"] / total_portfolio_value) * 100, 2)
+    
+    return {
+        "asset_allocation": breakdown,
+        "total_portfolio_value": total_portfolio_value
+    }
+
+
+@router.get("/summary/by-sector", response_model=dict)
+async def get_portfolio_by_sector(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get portfolio summary grouped by sector.
+    """
+    result = await db.execute(
+        select(
+            UserHolding.sector,
+            func.count(UserHolding.id).label("count"),
+            func.sum(UserHolding.avg_cost * UserHolding.quantity).label("total_cost"),
+        )
+        .where(UserHolding.user_id == user.id, UserHolding.sector.isnot(None))
+        .group_by(UserHolding.sector)
+    )
+    rows = result.all()
+    
+    breakdown = []
+    total_portfolio_value = 0.0
+    
+    for row in rows:
+        holdings_result = await db.execute(
+            select(UserHolding).where(
+                UserHolding.user_id == user.id,
+                UserHolding.sector == row.sector
+            )
+        )
+        holdings = holdings_result.scalars().all()
+        total_value = 0.0
+        for h in holdings:
+            current_price = await _get_current_price(h.symbol)
+            if current_price:
+                total_value += current_price * h.quantity
+        
+        total_portfolio_value += total_value
+        breakdown.append({
+            "sector": row.sector,
+            "holdings_count": row.count,
+            "total_cost": float(row.total_cost or 0),
+            "total_current_value": total_value,
+            "allocation_pct": None
+        })
+    
+    for item in breakdown:
+        if total_portfolio_value:
+            item["allocation_pct"] = round((item["total_current_value"] / total_portfolio_value) * 100, 2)
+    
+    return {
+        "sector_allocation": breakdown,
+        "total_portfolio_value": total_portfolio_value
     }
 
 
@@ -159,7 +292,6 @@ async def create_holding(
     db: AsyncSession = Depends(get_db),
 ):
     """Add a new holding to user's portfolio."""
-    # Check if holding already exists for this symbol
     result = await db.execute(
         select(UserHolding).where(
             UserHolding.user_id == user.id,
@@ -175,20 +307,36 @@ async def create_holding(
         symbol=holding.symbol.upper(),
         quantity=holding.quantity,
         avg_cost=holding.avg_cost,
+        asset_type=holding.asset_type,
+        sector=holding.sector,
+        dividend_yield=holding.dividend_yield,
+        currency=holding.currency,
+        dividend_frequency=holding.dividend_frequency,
     )
     db.add(db_holding)
     await db.commit()
     await db.refresh(db_holding)
+    
+    current_price = await _get_current_price(db_holding.symbol)
+    current_value = current_price * db_holding.quantity if current_price else None
+    cost_basis = db_holding.avg_cost * db_holding.quantity
+    gain_loss = current_value - cost_basis if current_value else None
+    gain_loss_pct = (gain_loss / cost_basis * 100) if gain_loss and cost_basis else None
     
     return {
         "id": str(db_holding.id),
         "symbol": db_holding.symbol,
         "quantity": db_holding.quantity,
         "avg_cost": db_holding.avg_cost,
-        "current_price": None,
-        "current_value": None,
-        "gain_loss": None,
-        "gain_loss_pct": None,
+        "asset_type": db_holding.asset_type,
+        "sector": db_holding.sector,
+        "dividend_yield": db_holding.dividend_yield,
+        "currency": db_holding.currency,
+        "dividend_frequency": db_holding.dividend_frequency,
+        "current_price": current_price,
+        "current_value": current_value,
+        "gain_loss": gain_loss,
+        "gain_loss_pct": gain_loss_pct,
         "created_at": db_holding.created_at,
         "updated_at": db_holding.updated_at,
     }
@@ -216,20 +364,21 @@ async def update_holding(
         db_holding.quantity = update.quantity
     if update.avg_cost is not None:
         db_holding.avg_cost = update.avg_cost
+    if update.asset_type is not None:
+        db_holding.asset_type = update.asset_type
+    if update.sector is not None:
+        db_holding.sector = update.sector
+    if update.dividend_yield is not None:
+        db_holding.dividend_yield = update.dividend_yield
+    if update.currency is not None:
+        db_holding.currency = update.currency
+    if update.dividend_frequency is not None:
+        db_holding.dividend_frequency = update.dividend_frequency
     
     await db.commit()
     await db.refresh(db_holding)
     
-    # Get current price
-    stock_service = StockService()
-    current_price = None
-    try:
-        quote = await stock_service.get_quote(db_holding.symbol)
-        if quote:
-            current_price = quote.get("regularMarketPrice")
-    except Exception as e:
-        logger.warning(f"Failed to get quote for {db_holding.symbol}: {e}")
-    
+    current_price = await _get_current_price(db_holding.symbol)
     current_value = current_price * db_holding.quantity if current_price else None
     cost_basis = db_holding.avg_cost * db_holding.quantity
     gain_loss = current_value - cost_basis if current_value else None
@@ -240,6 +389,11 @@ async def update_holding(
         "symbol": db_holding.symbol,
         "quantity": db_holding.quantity,
         "avg_cost": db_holding.avg_cost,
+        "asset_type": db_holding.asset_type,
+        "sector": db_holding.sector,
+        "dividend_yield": db_holding.dividend_yield,
+        "currency": db_holding.currency,
+        "dividend_frequency": db_holding.dividend_frequency,
         "current_price": current_price,
         "current_value": current_value,
         "gain_loss": gain_loss,
