@@ -15,6 +15,7 @@ from app.models.models import User, UserHolding
 from app.utils.auth import decode_access_token
 from app.services.stock_service import StockService
 from app.services.signal_engine_service import SignalEngineService, SignalType
+from app.services.yfinance_service import YFinanceService
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 logger = logging.getLogger(__name__)
