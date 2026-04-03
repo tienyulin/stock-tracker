@@ -1,7 +1,7 @@
 {
   "name": "Stock Tracker Dev",
   "context": "..",
-  "dockerfile": "../Dockerfile",
+  "dockerfile": "../Dockerfile.dev",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/node:1": {}
