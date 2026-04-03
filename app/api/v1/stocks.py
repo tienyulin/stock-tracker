@@ -391,7 +391,7 @@ async def evaluate_for_simulation(
     return {
         "symbols": results,
         "config": {
-            "initial_capital": initial_capital,
-            "risk_profile": risk_profile,
+            "initial_capital": request.initial_capital,
+            "risk_profile": request.risk_profile,
         },
     }

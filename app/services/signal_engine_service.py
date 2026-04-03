@@ -177,7 +177,7 @@ class SignalEngineService:
                 reasoning = f"MACD histogram at {histogram:.4f} shows bearish momentum"
             else:
                 signal = SignalType.HOLD
-                reasoning = f"MACD line and signal line converging, momentum unclear"
+                reasoning = "MACD line and signal line converging, momentum unclear"
 
             signals.append(IndicatorSignal(
                 indicator="MACD",

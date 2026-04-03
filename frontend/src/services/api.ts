@@ -296,6 +296,192 @@ export const alertService = {
   },
 }
 
+// Portfolio types
+export type AssetType = 'STOCK' | 'ETF' | 'BOND' | 'REIT' | 'OTHER'
+export type Currency = 'USD' | 'TWD'
+export type DividendFrequency = 'QUARTERLY' | 'MONTHLY' | 'ANNUALLY' | 'NONE'
+
+export interface Holding {
+  id: string
+  symbol: string
+  quantity: number
+  avg_cost: number
+  asset_type: AssetType
+  sector: string | null
+  dividend_yield: number | null
+  currency: Currency
+  dividend_frequency: DividendFrequency
+  current_price: number | null
+  current_value: number | null
+  gain_loss: number | null
+  gain_loss_pct: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PortfolioSummary {
+  total_cost: number
+  total_current_value: number
+  total_gain_loss: number
+  total_gain_loss_pct: number
+  holdings_count: number
+}
+
+export interface PortfolioResponse {
+  holdings: Holding[]
+  summary: PortfolioSummary
+}
+
+export interface AssetAllocation {
+  asset_type: AssetType
+  holdings_count: number
+  total_cost: number
+  total_current_value: number
+  allocation_pct: number | null
+}
+
+export interface SectorAllocation {
+  sector: string
+  holdings_count: number
+  total_cost: number
+  total_current_value: number
+  allocation_pct: number | null
+}
+
+export interface PortfolioAllocationResponse {
+  asset_allocation: AssetAllocation[]
+  total_portfolio_value: number
+}
+
+export interface PortfolioSectorResponse {
+  sector_allocation: SectorAllocation[]
+  total_portfolio_value: number
+}
+
+export interface PortfolioHoldingSignal {
+  id: string
+  symbol: string
+  quantity: number
+  avg_cost: number
+  current_price: number | null
+  current_value: number | null
+  gain_loss: number | null
+  gain_loss_pct: number | null
+}
+
+export interface PortfolioSignal {
+  signal: SignalType
+  signal_label: string
+  confidence: number
+  summary: string
+  bullish_factors: string[]
+  bearish_factors: string[]
+  indicators: Array<{
+    indicator: string
+    value: number
+    signal: SignalType
+    reasoning: string
+  }>
+}
+
+export interface HoldingWithSignal {
+  holding: PortfolioHoldingSignal
+  signal: PortfolioSignal
+  is_conflict: boolean
+}
+
+export interface PortfolioSignalsResponse {
+  holdings: HoldingWithSignal[]
+  conflicts: HoldingWithSignal[]
+  total_holdings: number
+  total_conflicts: number
+}
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+export const portfolioService = {
+  async getPortfolio(params?: { asset_type?: string; sector?: string }): Promise<PortfolioResponse> {
+    const response = await apiClient.get('/portfolio', {
+      headers: getAuthHeaders(),
+      params,
+    })
+    return response.data
+  },
+
+  async addHolding(data: {
+    symbol: string
+    quantity: number
+    avg_cost: number
+    asset_type?: AssetType
+    sector?: string | null
+    dividend_yield?: number | null
+    currency?: Currency
+    dividend_frequency?: DividendFrequency
+  }): Promise<Holding> {
+    const response = await apiClient.post(
+      '/portfolio/holdings',
+      data,
+      { headers: getAuthHeaders() }
+    )
+    return response.data
+  },
+
+  async updateHolding(holdingId: string, data: {
+    quantity?: number
+    avg_cost?: number
+    asset_type?: AssetType
+    sector?: string | null
+    dividend_yield?: number | null
+    currency?: Currency
+    dividend_frequency?: DividendFrequency
+  }): Promise<Holding> {
+    const response = await apiClient.put(
+      `/portfolio/holdings/${holdingId}`,
+      data,
+      { headers: getAuthHeaders() }
+    )
+    return response.data
+  },
+
+  async deleteHolding(holdingId: string): Promise<void> {
+    await apiClient.delete(`/portfolio/holdings/${holdingId}`, {
+      headers: getAuthHeaders(),
+    })
+  },
+
+  async getAllocationByAssetType(): Promise<PortfolioAllocationResponse> {
+    const response = await apiClient.get('/portfolio/summary/by-asset-type', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
+  },
+
+  async getAllocationBySector(): Promise<PortfolioSectorResponse> {
+    const response = await apiClient.get('/portfolio/summary/by-sector', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
+  },
+
+  async getPortfolioSignals(): Promise<PortfolioSignalsResponse> {
+    const response = await apiClient.get('/portfolio/signals', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
+  },
+
+  async downloadPortfolioPdf(): Promise<Blob> {
+    const response = await apiClient.get('/portfolio/report/pdf', {
+      headers: getAuthHeaders(),
+      responseType: 'blob',
+    })
+    return response.data
+  },
+}
+
 export const authService = {
   async login(email: string, password: string): Promise<AuthResponse> {
     const response = await apiClient.post('/auth/login', { email, password })
