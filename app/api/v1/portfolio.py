@@ -1109,3 +1109,134 @@ async def run_portfolio_backtest(
 
     except Exception as e:
         return {"error": f"Backtest failed: {str(e)}"}
+
+
+@router.get("/currencies")
+async def get_supported_currencies():
+    """
+    Get list of supported currencies.
+
+    Returns:
+        List of supported currency codes and info.
+    """
+    from app.services.multi_currency_service import MultiCurrencyService
+
+    service = MultiCurrencyService()
+    currencies = await service.get_supported_currencies()
+
+    return {
+        "currencies": currencies,
+        "count": len(currencies),
+    }
+
+
+@router.get("/convert")
+async def convert_currency(
+    amount: float,
+    from_currency: str,
+    to_currency: str,
+):
+    """
+    Convert amount between currencies.
+
+    Args:
+        amount: Amount to convert
+        from_currency: Source currency code
+        to_currency: Target currency code
+
+    Returns:
+        Converted amount and exchange rate.
+    """
+    from app.services.multi_currency_service import MultiCurrencyService
+
+    service = MultiCurrencyService()
+    rate = await service.get_exchange_rate(from_currency, to_currency)
+    converted = await service.convert_amount(amount, from_currency, to_currency)
+
+    return {
+        "from_currency": from_currency,
+        "to_currency": to_currency,
+        "original_amount": amount,
+        "converted_amount": round(converted, 2),
+        "exchange_rate": round(rate, 4),
+        "formatted": service.format_currency(converted, to_currency),
+    }
+
+
+@router.get("/portfolio/{currency}")
+async def get_portfolio_in_currency(
+    currency: str,
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Get portfolio summary in specific currency.
+
+    Args:
+        currency: Target currency code (USD, TWD, JPY, etc.)
+
+    Returns:
+        Portfolio summary in target currency.
+    """
+    from app.services.multi_currency_service import MultiCurrencyService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {
+            "base_currency": "USD",
+            "display_currency": currency,
+            "holdings": [],
+            "total_value": 0,
+            "total_cost": 0,
+            "total_gain_loss": 0,
+        }
+
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Convert to target currency
+    service = MultiCurrencyService()
+    portfolio = await service.get_portfolio_in_currency(
+        holdings=holdings_data,
+        prices=prices,
+        target_currency=currency,
+    )
+
+    return portfolio
