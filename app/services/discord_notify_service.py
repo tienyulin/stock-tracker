@@ -5,7 +5,6 @@ Discord webhook notification service.
 import re
 import httpx
 import logging
-from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +28,6 @@ async def send_discord_webhook(webhook_url: str, message: str, username: str = "
         return False
     
     # Validate webhook URL is a legitimate Discord webhook (prevents SSRF)
-    parsed = urlparse(webhook_url)
     discord_pattern = re.compile(
         r'^https://(discord\.com|discordapp\.com)/api/webhooks/\d+/[\w-]+$'
     )
