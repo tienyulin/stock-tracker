@@ -7,7 +7,7 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
-from app.schemas import EvaluateRequest, SimulationRequest, StockHistoryResponse, StockQuoteResponse
+from app.schemas import StockHistoryResponse, StockQuoteResponse
 from app.services.yfinance_service import YFinanceService
 from app.services.indicators_service import TechnicalIndicatorsService
 from app.services.signal_engine_service import SignalEngineService, SignalType
@@ -297,7 +297,12 @@ def _get_signal_label(signal: SignalType) -> str:
 
 
 @router.post("/simulation/run")
-async def run_simulation(request: SimulationRequest) -> dict:
+async def run_simulation(
+    symbols: list[str],
+    initial_capital: float = 5000.0,
+    duration_days: int = 30,
+    risk_profile: str = "moderate",
+) -> dict:
     """
     Run a trading simulation.
 
@@ -311,14 +316,14 @@ async def run_simulation(request: SimulationRequest) -> dict:
         Simulation results with trades and performance metrics
     """
     config = SimulationConfig(
-        initial_capital=request.initial_capital,
-        duration_days=request.duration_days,
-        risk_profile=RiskProfile(request.risk_profile),
+        initial_capital=initial_capital,
+        duration_days=duration_days,
+        risk_profile=RiskProfile(risk_profile),
     )
 
     service = SimulatedTradingService()
     try:
-        result = await service.run_simulation(request.symbols, config)
+        result = await service.run_simulation(symbols, config)
 
         return {
             "initial_capital": result.initial_capital,
@@ -348,7 +353,11 @@ async def run_simulation(request: SimulationRequest) -> dict:
 
 
 @router.post("/simulation/evaluate")
-async def evaluate_for_simulation(request: EvaluateRequest) -> dict:
+async def evaluate_for_simulation(
+    symbols: list[str],
+    initial_capital: float = 5000.0,
+    risk_profile: str = "moderate",
+) -> dict:
     """
     Quick evaluation of symbols for trading simulation.
 
@@ -361,14 +370,14 @@ async def evaluate_for_simulation(request: EvaluateRequest) -> dict:
         Evaluation results for each symbol
     """
     config = SimulationConfig(
-        initial_capital=request.initial_capital,
-        risk_profile=RiskProfile(request.risk_profile),
+        initial_capital=initial_capital,
+        risk_profile=RiskProfile(risk_profile),
     )
 
     service = SimulatedTradingService()
     results = []
 
-    for symbol in request.symbols:
+    for symbol in symbols:
         try:
             eval_result = await service.quick_evaluate(symbol, config)
             results.append(eval_result)

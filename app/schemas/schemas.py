@@ -35,24 +35,6 @@ class StockHistoryResponse(BaseModel):
     volumes: list[int]
 
 
-# Simulation schemas
-class SimulationRequest(BaseModel):
-    """Schema for simulation request body."""
-
-    symbols: list[str] = Field(..., description="List of stock symbols to simulate")
-    initial_capital: float = Field(5000.0, description="Starting capital")
-    duration_days: int = Field(30, description="Simulation duration in days")
-    risk_profile: str = Field("moderate", description="Risk profile: conservative/moderate/aggressive")
-
-
-class EvaluateRequest(BaseModel):
-    """Schema for evaluation request body."""
-
-    symbols: list[str] = Field(..., description="List of stock symbols to evaluate")
-    initial_capital: float = Field(5000.0, description="Starting capital")
-    risk_profile: str = Field("moderate", description="Risk profile: conservative/moderate/aggressive")
-
-
 # Watchlist schemas
 class WatchlistItemCreate(BaseModel):
     """Schema for creating a watchlist item."""
