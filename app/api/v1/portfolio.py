@@ -897,3 +897,120 @@ async def get_portfolio_drift_detection(
         "rebalancing_total_sell": drift_result.rebalancing_total_sell,
         "timestamp": drift_result.timestamp,
     }
+
+
+@router.get("/tax-loss-harvesting", response_model=dict)
+async def get_tax_loss_harvesting(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+    risk_tolerance: str = "MEDIUM",
+):
+    """
+    Get tax-loss harvesting opportunities.
+
+    Identifies positions with unrealized losses that could be harvested
+    for tax benefits, while avoiding wash sale rule violations.
+
+    Args:
+        risk_tolerance: User's risk tolerance (LOW, MEDIUM, HIGH)
+
+    Returns:
+        Tax-loss harvesting analysis with candidates and suggestions.
+    """
+    from app.services.tax_loss_harvesting_service import TaxLossHarvestingService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {
+            "total_unrealized_loss": 0,
+            "total_estimated_tax_savings": 0,
+            "candidates": [],
+            "harvesting_trades": [],
+            "total_harvest_value": 0,
+            "replacement_suggestions": [],
+            "capital_gains_rate": 0.20,
+            "timestamp": "",
+        }
+
+    # Prepare holdings data
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Calculate tax-loss harvesting opportunities
+    tax_service = TaxLossHarvestingService()
+    result_data = tax_service.calculate_harvesting_opportunities(
+        holdings=holdings_data,
+        prices=prices,
+        risk_tolerance=risk_tolerance,
+    )
+
+    return {
+        "total_unrealized_loss": result_data.total_unrealized_loss,
+        "total_estimated_tax_savings": result_data.total_estimated_tax_savings,
+        "candidates": [
+            {
+                "symbol": c.symbol,
+                "quantity": c.quantity,
+                "current_price": c.current_price,
+                "avg_cost": c.avg_cost,
+                "unrealized_loss": c.unrealized_loss,
+                "unrealized_loss_percent": c.unrealized_loss_percent,
+                "estimated_tax_savings": c.estimated_tax_savings,
+                "wash_sale_risk": c.wash_sale_risk,
+                "replacement_candidate": c.replacement_candidate,
+                "action": c.action,
+            }
+            for c in result_data.candidates
+        ],
+        "harvesting_trades": [
+            {
+                "symbol": c.symbol,
+                "quantity": c.quantity,
+                "unrealized_loss": c.unrealized_loss,
+                "estimated_tax_savings": c.estimated_tax_savings,
+                "replacement_candidate": c.replacement_candidate,
+            }
+            for c in result_data.harvesting_trades
+        ],
+        "total_harvest_value": result_data.total_harvest_value,
+        "replacement_suggestions": result_data.replacement_suggestions,
+        "capital_gains_rate": result_data.capital_gains_rate,
+        "timestamp": result_data.timestamp,
+    }
