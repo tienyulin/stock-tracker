@@ -296,6 +296,71 @@ export const alertService = {
   },
 }
 
+// Portfolio types
+export interface Holding {
+  id: string
+  symbol: string
+  quantity: number
+  avg_cost: number
+  current_price: number | null
+  current_value: number | null
+  gain_loss: number | null
+  gain_loss_pct: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PortfolioSummary {
+  total_cost: number
+  total_current_value: number
+  total_gain_loss: number
+  total_gain_loss_pct: number
+  holdings_count: number
+}
+
+export interface PortfolioResponse {
+  holdings: Holding[]
+  summary: PortfolioSummary
+}
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+export const portfolioService = {
+  async getPortfolio(): Promise<PortfolioResponse> {
+    const response = await apiClient.get('/portfolio', {
+      headers: getAuthHeaders(),
+    })
+    return response.data
+  },
+
+  async addHolding(symbol: string, quantity: number, avg_cost: number): Promise<Holding> {
+    const response = await apiClient.post(
+      '/portfolio/holdings',
+      { symbol, quantity, avg_cost },
+      { headers: getAuthHeaders() }
+    )
+    return response.data
+  },
+
+  async updateHolding(holdingId: string, data: { quantity?: number; avg_cost?: number }): Promise<Holding> {
+    const response = await apiClient.put(
+      `/portfolio/holdings/${holdingId}`,
+      data,
+      { headers: getAuthHeaders() }
+    )
+    return response.data
+  },
+
+  async deleteHolding(holdingId: string): Promise<void> {
+    await apiClient.delete(`/portfolio/holdings/${holdingId}`, {
+      headers: getAuthHeaders(),
+    })
+  },
+}
+
 export const authService = {
   async login(email: string, password: string): Promise<AuthResponse> {
     const response = await apiClient.post('/auth/login', { email, password })

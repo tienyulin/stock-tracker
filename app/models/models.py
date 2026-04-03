@@ -39,6 +39,9 @@ class User(Base):
     alerts: Mapped[list["Alert"]] = relationship(
         "Alert", back_populates="user", cascade="all, delete-orphan"
     )
+    holdings: Mapped[list["UserHolding"]] = relationship(
+        "UserHolding", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Watchlist(Base):
@@ -149,3 +152,28 @@ class AlertNotification(Base):
 
     # Relationships
     alert: Mapped["Alert"] = relationship("Alert", back_populates="notifications")
+
+
+class UserHolding(Base):
+    """User stock holding model."""
+
+    __tablename__ = "user_holdings"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    symbol: Mapped[str] = mapped_column(String(20), nullable=False)
+    quantity: Mapped[float] = mapped_column(nullable=False)
+    avg_cost: Mapped[float] = mapped_column(nullable=False)  # average cost per share
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="holdings")
