@@ -45,6 +45,16 @@ async def run_migrations() -> None:
             # Column might already exist or other issue - log but don't fail
             logger.warning(f"Migration note: {e}")
 
+        # Add discord_webhook_url column if it doesn't exist
+        try:
+            await conn.execute(
+                text("ALTER TABLE users ADD COLUMN IF NOT EXISTS discord_webhook_url VARCHAR(500)")
+            )
+            logger.info("Migration: discord_webhook_url column added (if not exists)")
+        except Exception as e:
+            # Column might already exist or other issue - log but don't fail
+            logger.warning(f"Migration note: {e}")
+
 
 async def seed_demo_user() -> None:
     """Create demo user if not exists, or fix password hash if invalid."""
