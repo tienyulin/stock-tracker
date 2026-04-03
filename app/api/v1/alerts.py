@@ -190,6 +190,28 @@ async def trigger_alert(
         import logging
         logging.getLogger(__name__).warning(f"Failed to send LINE notification: {e}")
 
+    # Send Discord notification (async, non-blocking)
+    from app.services.discord_notify_service import notify_discord_alert_triggered
+    try:
+        # Get user's Discord webhook URL
+        user_result = await db.execute(
+            select(User.discord_webhook_url).where(User.id == alert.user_id)
+        )
+        discord_webhook_url = user_result.scalar_one_or_none()
+        
+        if discord_webhook_url:
+            await notify_discord_alert_triggered(
+                webhook_url=discord_webhook_url,
+                symbol=alert.symbol,
+                condition_type=alert.condition_type,
+                threshold=alert.threshold,
+                current_price=float(current_price)
+            )
+    except Exception as e:
+        # Log but don't fail the request
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to send Discord notification: {e}")
+
     return AlertResponse(
         id=alert.id,
         symbol=alert.symbol,

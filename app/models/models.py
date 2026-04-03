@@ -31,6 +31,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
     line_notify_token: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    discord_webhook_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     # Relationships
     watchlists: Mapped[list["Watchlist"]] = relationship(
