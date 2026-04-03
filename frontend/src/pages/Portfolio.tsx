@@ -39,6 +39,7 @@ function Portfolio() {
   const [newSector, setNewSector] = useState('')
   const [newDividendYield, setNewDividendYield] = useState('')
   const [adding, setAdding] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
 
   // Edit holding
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -84,6 +85,26 @@ function Portfolio() {
       setError(getErrorMessage(err))
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExportPdf = async () => {
+    try {
+      setExportingPdf(true)
+      const blob = await portfolioService.downloadPortfolioPdf()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `portfolio-report-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+      showNotification('PDF report downloaded!')
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setExportingPdf(false)
     }
   }
 
@@ -200,9 +221,14 @@ function Portfolio() {
     <div className="portfolio-page">
       <div className="page-header">
         <h1>Portfolio Overview</h1>
-        <button className="btn-primary" onClick={() => setShowAddForm(!showAddForm)}>
-          {showAddForm ? 'Cancel' : '+ Add Holding'}
-        </button>
+        <div className="header-actions">
+          <button className="btn-secondary" onClick={handleExportPdf} disabled={exportingPdf}>
+            {exportingPdf ? 'Generating...' : '📄 Export PDF'}
+          </button>
+          <button className="btn-primary" onClick={() => setShowAddForm(!showAddForm)}>
+            {showAddForm ? 'Cancel' : '+ Add Holding'}
+          </button>
+        </div>
       </div>
 
       {notification && <div className="notification">{notification}</div>}

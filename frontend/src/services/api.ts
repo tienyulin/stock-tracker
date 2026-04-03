@@ -472,6 +472,14 @@ export const portfolioService = {
     })
     return response.data
   },
+
+  async downloadPortfolioPdf(): Promise<Blob> {
+    const response = await apiClient.get('/portfolio/report/pdf', {
+      headers: getAuthHeaders(),
+      responseType: 'blob',
+    })
+    return response.data
+  },
 }
 
 export const authService = {
