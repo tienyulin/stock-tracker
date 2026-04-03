@@ -660,7 +660,7 @@ async def get_portfolio_risk_analytics(
     if not payload or "user_id" not in payload:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-    user_id = payload["user_id"]
+    user_id = payload.get("sub")
 
     # Get user holdings
     result = await db.execute(
