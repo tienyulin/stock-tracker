@@ -14,6 +14,7 @@ from app.core.database import get_db
 from app.models.models import User, UserHolding
 from app.utils.auth import decode_access_token
 from app.services.stock_service import StockService
+from app.services.signal_engine_service import SignalEngineService, SignalType
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 logger = logging.getLogger(__name__)
@@ -424,3 +425,107 @@ async def delete_holding(
     await db.commit()
     
     return {"message": "Holding deleted successfully"}
+
+
+@router.get("/signals", response_model=dict)
+async def get_portfolio_signals(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get AI signals for all stock holdings in user's portfolio.
+    
+    Returns holdings with their corresponding buy/sell/hold signals,
+    confidence levels, and bullish/bearish factors.
+    Only includes holdings with asset_type=STOCK.
+    """
+    # Get only STOCK holdings (ETF/BOND signals not meaningful)
+    result = await db.execute(
+        select(UserHolding).where(
+            UserHolding.user_id == user.id,
+            UserHolding.asset_type == "STOCK"
+        )
+    )
+    holdings = result.scalars().all()
+    
+    signal_service = SignalEngineService()
+    holdings_with_signals = []
+    conflicts = []
+    
+    for h in holdings:
+        # Get current price
+        current_price = await _get_current_price(h.symbol)
+        current_value = current_price * h.quantity if current_price else None
+        cost_basis = h.avg_cost * h.quantity
+        gain_loss = current_value - cost_basis if current_value else None
+        gain_loss_pct = (gain_loss / cost_basis * 100) if gain_loss and cost_basis else None
+        
+        # Get signal from AI engine
+        signal_result = await signal_service.get_signal(h.symbol)
+        
+        holding_data = {
+            "id": str(h.id),
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+            "current_price": current_price,
+            "current_value": current_value,
+            "gain_loss": gain_loss,
+            "gain_loss_pct": gain_loss_pct,
+        }
+        
+        if signal_result:
+            # Determine if there's a conflict (holding but signal is bearish)
+            is_conflict = signal_result.overall_signal in (SignalType.SELL, SignalType.STRONG_SELL)
+            
+            signal_data = {
+                "signal": signal_result.overall_signal.value,
+                "signal_label": _get_signal_label(signal_result.overall_signal),
+                "confidence": signal_result.confidence,
+                "summary": signal_result.summary,
+                "bullish_factors": signal_result.bullish_factors,
+                "bearish_factors": signal_result.bearish_factors,
+                "indicators": [
+                    {
+                        "indicator": ind.indicator,
+                        "value": ind.value,
+                        "signal": ind.signal.value,
+                        "reasoning": ind.reasoning,
+                    }
+                    for ind in signal_result.indicators
+                ],
+            }
+            
+            if is_conflict:
+                conflicts.append({
+                    "holding": holding_data,
+                    "signal": signal_data,
+                })
+            
+            holdings_with_signals.append({
+                "holding": holding_data,
+                "signal": signal_data,
+                "is_conflict": is_conflict,
+            })
+    
+    # Sort by confidence (highest first)
+    holdings_with_signals.sort(key=lambda x: x["signal"]["confidence"], reverse=True)
+    
+    return {
+        "holdings": holdings_with_signals,
+        "conflicts": conflicts,
+        "total_holdings": len(holdings_with_signals),
+        "total_conflicts": len(conflicts),
+    }
+
+
+def _get_signal_label(signal: SignalType) -> str:
+    """Get human-readable label for signal."""
+    labels = {
+        SignalType.STRONG_BUY: "強烈買入",
+        SignalType.BUY: "買入",
+        SignalType.HOLD: "持有",
+        SignalType.SELL: "賣出",
+        SignalType.STRONG_SELL: "強烈賣出",
+    }
+    return labels.get(signal, "未知")
