@@ -15,6 +15,7 @@ from app.models.models import User, UserHolding
 from app.utils.auth import decode_access_token
 from app.services.stock_service import StockService
 from app.services.signal_engine_service import SignalEngineService, SignalType
+from app.services.yfinance_service import YFinanceService
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 logger = logging.getLogger(__name__)
@@ -757,4 +758,142 @@ async def get_portfolio_risk_analytics(
         "portfolio_return": metrics.portfolio_return,
         "volatility": metrics.volatility,
         "timestamp": metrics.timestamp,
+    }
+
+
+@router.get("/drift-detection", response_model=dict)
+async def get_portfolio_drift_detection(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Get portfolio drift detection analysis.
+
+    Compares current holdings against AI Signal recommendations
+    and provides rebalancing suggestions.
+
+    Returns:
+        Drift analysis with holding details and rebalancing trades.
+    """
+    from app.services.drift_detection_service import DriftDetectionService
+    from app.services.signal_engine_service import SignalEngineService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {
+            "total_value": 0,
+            "drift_score": 0,
+            "holdings": [],
+            "rebalancing_trades": [],
+            "rebalancing_total_buy": 0,
+            "rebalancing_total_sell": 0,
+            "timestamp": "",
+        }
+
+    # Prepare holdings data
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Calculate portfolio value
+    portfolio_value = sum(
+        h["quantity"] * prices.get(h["symbol"], 0)
+        for h in holdings_data
+    )
+
+    # Get signals for each holding
+    signal_engine = SignalEngineService()
+    signals = {}
+
+    try:
+        for symbol in symbols:
+            try:
+                signal = await signal_engine.get_signal(symbol)
+                if signal:
+                    signals[symbol] = {
+                        "signal": signal.overall_signal.value,
+                        "confidence": signal.confidence,
+                    }
+                else:
+                    signals[symbol] = {"signal": "HOLD", "confidence": 0.5}
+            except Exception:
+                signals[symbol] = {"signal": "HOLD", "confidence": 0.5}
+    finally:
+        await signal_engine.close()
+
+    # Calculate drift
+    drift_service = DriftDetectionService()
+    drift_result = await drift_service.calculate_drift(
+        holdings=holdings_data,
+        prices=prices,
+        signals=signals,
+        portfolio_value=portfolio_value,
+    )
+
+    return {
+        "total_value": drift_result.total_value,
+        "drift_score": drift_result.drift_score,
+        "holdings": [
+            {
+                "symbol": h.symbol,
+                "current_quantity": h.current_quantity,
+                "current_value": h.current_value,
+                "current_weight": h.current_weight,
+                "recommended_signal": h.recommended_signal,
+                "recommended_weight": h.recommended_weight,
+                "drift_percentage": h.drift_percentage,
+                "action": h.action,
+                "action_quantity": h.action_quantity,
+                "action_value": h.action_value,
+            }
+            for h in drift_result.holdings
+        ],
+        "rebalancing_trades": [
+            {
+                "symbol": h.symbol,
+                "action": h.action,
+                "quantity": h.action_quantity,
+                "value": h.action_value,
+            }
+            for h in drift_result.rebalancing_trades
+        ],
+        "rebalancing_total_buy": drift_result.rebalancing_total_buy,
+        "rebalancing_total_sell": drift_result.rebalancing_total_sell,
+        "timestamp": drift_result.timestamp,
     }
