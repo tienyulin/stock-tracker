@@ -6,8 +6,6 @@ and provides auto-rebalancing suggestions.
 """
 
 from dataclasses import dataclass
-from typing import Optional
-import math
 
 
 @dataclass
