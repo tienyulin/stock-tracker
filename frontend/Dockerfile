@@ -4,17 +4,17 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files
-COPY frontend/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy source code
-COPY frontend/src ./src
-COPY frontend/index.html ./
-COPY frontend/tsconfig.json ./
-COPY frontend/tsconfig.node.json ./
-COPY frontend/vite.config.ts ./
+COPY src ./src
+COPY index.html ./
+COPY tsconfig.json ./
+COPY tsconfig.node.json ./
+COPY vite.config.ts ./
 
 # Build the application (clear Vite cache first)
 RUN rm -rf node_modules/.vite && npm run build
