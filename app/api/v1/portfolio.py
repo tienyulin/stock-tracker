@@ -529,3 +529,102 @@ def _get_signal_label(signal: SignalType) -> str:
         SignalType.STRONG_SELL: "強烈賣出",
     }
     return labels.get(signal, "未知")
+
+
+@router.get("/report/pdf")
+async def get_portfolio_pdf(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Generate and download a PDF report of the user's portfolio.
+    
+    Includes portfolio summary, holdings table with gain/loss, and AI signals.
+    """
+    from fastapi.responses import Response
+    from app.services.report_service import generate_portfolio_pdf
+    
+    # Get holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user.id)
+    )
+    holdings = result.scalars().all()
+    
+    portfolio_items = []
+    total_cost = 0.0
+    total_current_value = 0.0
+    
+    for h in holdings:
+        current_price = await _get_current_price(h.symbol)
+        current_value = current_price * h.quantity if current_price else None
+        cost_basis = h.avg_cost * h.quantity
+        gain_loss = current_value - cost_basis if current_value else None
+        gain_loss_pct = (gain_loss / cost_basis * 100) if gain_loss and cost_basis else None
+        
+        total_cost += cost_basis
+        if current_value:
+            total_current_value += current_value
+        
+        portfolio_items.append({
+            "id": str(h.id),
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+            "asset_type": h.asset_type,
+            "current_price": current_price,
+            "current_value": current_value,
+            "gain_loss": gain_loss,
+            "gain_loss_pct": gain_loss_pct,
+        })
+    
+    total_gain_loss = total_current_value - total_cost if total_current_value else None
+    total_gain_loss_pct = (total_gain_loss / total_cost * 100) if total_gain_loss and total_cost else None
+    
+    summary = {
+        "total_cost": total_cost,
+        "total_current_value": total_current_value,
+        "total_gain_loss": total_gain_loss,
+        "total_gain_loss_pct": total_gain_loss_pct,
+    }
+    
+    # Try to get signals data (optional, don't fail if it errors)
+    signals_data = None
+    try:
+        signal_service = SignalEngineService()
+        holdings_with_signals = []
+        for h in holdings:
+            if h.asset_type != "STOCK":
+                continue
+            signal_result = await signal_service.get_signal(h.symbol)
+            if signal_result:
+                holding_data = {
+                    "symbol": h.symbol,
+                    "quantity": h.quantity,
+                    "avg_cost": h.avg_cost,
+                    "current_price": await _get_current_price(h.symbol),
+                    "current_value": (await _get_current_price(h.symbol) or 0) * h.quantity if await _get_current_price(h.symbol) else None,
+                }
+                signal_data = {
+                    "signal": signal_result.overall_signal.value,
+                    "signal_label": _get_signal_label(signal_result.overall_signal),
+                    "confidence": signal_result.confidence,
+                    "summary": signal_result.summary,
+                }
+                holdings_with_signals.append({
+                    "holding": holding_data,
+                    "signal": signal_data,
+                })
+        if holdings_with_signals:
+            signals_data = {"holdings": holdings_with_signals}
+    except Exception:
+        pass  # Signals are optional for PDF
+    
+    pdf_bytes = generate_portfolio_pdf(portfolio_items, summary, signals_data)
+    
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=portfolio-report.pdf"
+        }
+    )
