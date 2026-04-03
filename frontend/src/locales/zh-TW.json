@@ -1,0 +1,94 @@
+{
+  "nav": {
+    "dashboard": "儀表板",
+    "watchlist": "關注列表",
+    "alerts": "價格警報",
+    "portfolio": "投資組合",
+    "settings": "設定",
+    "logout": "登出"
+  },
+  "dashboard": {
+    "title": "儀表板",
+    "totalValue": "總市值",
+    "dayChange": "日漲跌",
+    "stocks": "股票",
+    "etfs": "ETF",
+    "bonds": "債券",
+    "aiSignals": "AI 信號",
+    "signal": "信號",
+    "confidence": "信心度",
+    "price": "價格",
+    "change": "漲跌",
+    "buy": "買入",
+    "sell": "賣出",
+    "hold": "持有"
+  },
+  "watchlist": {
+    "title": "關注列表",
+    "addSymbol": "新增股票代碼",
+    "symbol": "代碼",
+    "price": "價格",
+    "change": "漲跌",
+    "actions": "操作",
+    "delete": "刪除",
+    "noItems": "關注列表是空的"
+  },
+  "alerts": {
+    "title": "價格警報",
+    "create": "建立警報",
+    "symbol": "股票代碼",
+    "condition": "條件",
+    "targetPrice": "目標價格",
+    "currentPrice": "現在價格",
+    "status": "狀態",
+    "active": "啟動中",
+    "triggered": "已觸發",
+    "delete": "刪除",
+    "noAlerts": "尚未設定警報"
+  },
+  "portfolio": {
+    "title": "投資組合總覽",
+    "holdings": "持倉",
+    "totalValue": "總市值",
+    "totalGain": "總損益",
+    "sector": "產業",
+    "assetType": "資產類型",
+    "quantity": "數量",
+    "avgCost": "平均成本",
+    "currentPrice": "現價",
+    "gainLoss": "損益",
+    "aiSignal": "AI 信號",
+    "exportPdf": "匯出 PDF",
+    "noHoldings": "尚無持倉資料"
+  },
+  "settings": {
+    "title": "設定",
+    "account": "帳戶",
+    "discord": "Discord 通知",
+    "discordWebhook": "Discord Webhook 網址",
+    "testWebhook": "測試",
+    "save": "儲存",
+    "delete": "刪除",
+    "language": "語言"
+  },
+  "common": {
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "retry": "重試",
+    "save": "儲存",
+    "cancel": "取消",
+    "confirm": "確認",
+    "delete": "刪除",
+    "edit": "編輯",
+    "add": "新增",
+    "close": "關閉",
+    "search": "搜尋"
+  },
+  "auth": {
+    "login": "登入",
+    "logout": "登出",
+    "email": "電子郵件",
+    "password": "密碼",
+    "welcome": "歡迎回來"
+  }
+}

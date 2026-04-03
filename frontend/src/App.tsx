@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Dashboard from './pages/Dashboard'
@@ -12,30 +13,47 @@ import Portfolio from './pages/Portfolio'
 import PortfolioSignals from './pages/PortfolioSignals'
 import './App.css'
 
+function LanguageSwitcher() {
+  const { i18n } = useTranslation()
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'zh-TW' : 'en'
+    i18n.changeLanguage(newLang)
+  }
+
+  return (
+    <button onClick={toggleLanguage} className="btn-lang-switch" title="Toggle Language">
+      {i18n.language === 'en' ? '中文' : 'EN'}
+    </button>
+  )
+}
+
 function NavBar() {
+  const { t } = useTranslation()
   const { user, isAuthenticated, logout } = useAuth()
 
   return (
     <nav className="navbar">
       <h1>Stock Tracker</h1>
       <ul className="nav-links">
-        <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>Dashboard</NavLink></li>
-        <li><NavLink to="/search" className={({ isActive }) => isActive ? 'active' : ''}>Search</NavLink></li>
-        <li><NavLink to="/watchlist" className={({ isActive }) => isActive ? 'active' : ''}>Watchlist</NavLink></li>
-        <li><NavLink to="/alerts" className={({ isActive }) => isActive ? 'active' : ''}>Alerts</NavLink></li>
-        <li><NavLink to="/portfolio" className={({ isActive }) => isActive ? 'active' : ''}>Portfolio</NavLink></li>
-        <li><NavLink to="/portfolio-signals" className={({ isActive }) => isActive ? 'active' : ''}>Signals</NavLink></li>
-        <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>Settings</NavLink></li>
+        <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.dashboard')}</NavLink></li>
+        <li><NavLink to="/search" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.dashboard')}</NavLink></li>
+        <li><NavLink to="/watchlist" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.watchlist')}</NavLink></li>
+        <li><NavLink to="/alerts" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.alerts')}</NavLink></li>
+        <li><NavLink to="/portfolio" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolio')}</NavLink></li>
+        <li><NavLink to="/portfolio-signals" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolio')}</NavLink></li>
+        <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
       </ul>
       <div className="nav-auth">
+        <LanguageSwitcher />
         {isAuthenticated ? (
           <>
             <span className="nav-user">{user?.username || user?.email}</span>
-            <button onClick={logout} className="btn-logout">Logout</button>
+            <button onClick={logout} className="btn-logout">{t('nav.logout')}</button>
           </>
         ) : (
           <>
-            <NavLink to="/login" className="btn-nav">Login</NavLink>
+            <NavLink to="/login" className="btn-nav">{t('auth.login')}</NavLink>
             <NavLink to="/signup" className="btn-nav">Sign Up</NavLink>
           </>
         )}
