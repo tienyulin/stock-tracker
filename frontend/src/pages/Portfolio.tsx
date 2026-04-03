@@ -1,33 +1,58 @@
 import { useState, useEffect } from 'react'
-import { portfolioService, getErrorMessage, Holding, PortfolioSummary } from '../services/api'
+import { portfolioService, getErrorMessage, Holding, PortfolioSummary, AssetType, PortfolioAllocationResponse } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 import './Portfolio.css'
+
+const ASSET_TYPES: Array<{ value: AssetType | 'ALL'; label: string }> = [
+  { value: 'ALL', label: 'All' },
+  { value: 'STOCK', label: 'Stocks' },
+  { value: 'ETF', label: 'ETFs' },
+  { value: 'BOND', label: 'Bonds' },
+  { value: 'REIT', label: 'REITs' },
+  { value: 'OTHER', label: 'Other' },
+]
+
+const ASSET_TYPE_OPTIONS: Array<{ value: AssetType; label: string }> = [
+  { value: 'STOCK', label: 'Stock' },
+  { value: 'ETF', label: 'ETF' },
+  { value: 'BOND', label: 'Bond' },
+  { value: 'REIT', label: 'REIT' },
+  { value: 'OTHER', label: 'Other' },
+]
 
 function Portfolio() {
   const { user } = useAuth()
   const [holdings, setHoldings] = useState<Holding[]>([])
   const [summary, setSummary] = useState<PortfolioSummary | null>(null)
+  const [allocation, setAllocation] = useState<PortfolioAllocationResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [notification, setNotification] = useState<string | null>(null)
+  const [activeFilter, setActiveFilter] = useState<AssetType | 'ALL'>('ALL')
 
   // Add holding form
   const [showAddForm, setShowAddForm] = useState(false)
   const [newSymbol, setNewSymbol] = useState('')
   const [newQuantity, setNewQuantity] = useState('')
   const [newAvgCost, setNewAvgCost] = useState('')
+  const [newAssetType, setNewAssetType] = useState<AssetType>('STOCK')
+  const [newSector, setNewSector] = useState('')
+  const [newDividendYield, setNewDividendYield] = useState('')
   const [adding, setAdding] = useState(false)
 
   // Edit holding
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editQuantity, setEditQuantity] = useState('')
   const [editAvgCost, setEditAvgCost] = useState('')
+  const [editAssetType, setEditAssetType] = useState<AssetType>('STOCK')
+  const [editSector, setEditSector] = useState('')
+  const [editDividendYield, setEditDividendYield] = useState('')
 
   useEffect(() => {
     if (user?.id) {
       loadPortfolio()
     }
-  }, [user?.id])
+  }, [user?.id, activeFilter])
 
   const showNotification = (message: string) => {
     setNotification(message)
@@ -38,9 +63,23 @@ function Portfolio() {
     try {
       setLoading(true)
       setError(null)
-      const data = await portfolioService.getPortfolio()
+      const params = activeFilter !== 'ALL' ? { asset_type: activeFilter } : undefined
+      const data = await portfolioService.getPortfolio(params)
       setHoldings(data.holdings)
       setSummary(data.summary)
+
+      // Also load allocation data for pie chart (only for "All" view)
+      if (activeFilter === 'ALL') {
+        try {
+          const allocData = await portfolioService.getAllocationByAssetType()
+          setAllocation(allocData)
+        } catch {
+          // Allocation is secondary, don't fail if it doesn't load
+          setAllocation(null)
+        }
+      } else {
+        setAllocation(null)
+      }
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
@@ -54,11 +93,21 @@ function Portfolio() {
 
     try {
       setAdding(true)
-      await portfolioService.addHolding(newSymbol.toUpperCase(), parseFloat(newQuantity), parseFloat(newAvgCost))
+      await portfolioService.addHolding({
+        symbol: newSymbol.toUpperCase(),
+        quantity: parseFloat(newQuantity),
+        avg_cost: parseFloat(newAvgCost),
+        asset_type: newAssetType,
+        sector: newSector || null,
+        dividend_yield: newDividendYield ? parseFloat(newDividendYield) : null,
+      })
       showNotification(`${newSymbol.toUpperCase()} added to portfolio`)
       setNewSymbol('')
       setNewQuantity('')
       setNewAvgCost('')
+      setNewAssetType('STOCK')
+      setNewSector('')
+      setNewDividendYield('')
       setShowAddForm(false)
       await loadPortfolio()
     } catch (err) {
@@ -70,15 +119,21 @@ function Portfolio() {
 
   const handleUpdateHolding = async (id: string) => {
     try {
-      const data: { quantity?: number; avg_cost?: number } = {}
+      const data: Parameters<typeof portfolioService.updateHolding>[1] = {}
       if (editQuantity) data.quantity = parseFloat(editQuantity)
       if (editAvgCost) data.avg_cost = parseFloat(editAvgCost)
-      
+      if (editAssetType) data.asset_type = editAssetType
+      if (editSector !== undefined) data.sector = editSector || null
+      if (editDividendYield) data.dividend_yield = parseFloat(editDividendYield)
+
       await portfolioService.updateHolding(id, data)
       showNotification('Holding updated')
       setEditingId(null)
       setEditQuantity('')
       setEditAvgCost('')
+      setEditAssetType('STOCK')
+      setEditSector('')
+      setEditDividendYield('')
       await loadPortfolio()
     } catch (err) {
       setError(getErrorMessage(err))
@@ -101,12 +156,18 @@ function Portfolio() {
     setEditingId(holding.id)
     setEditQuantity(holding.quantity.toString())
     setEditAvgCost(holding.avg_cost.toString())
+    setEditAssetType(holding.asset_type)
+    setEditSector(holding.sector || '')
+    setEditDividendYield(holding.dividend_yield?.toString() || '')
   }
 
   const cancelEdit = () => {
     setEditingId(null)
     setEditQuantity('')
     setEditAvgCost('')
+    setEditAssetType('STOCK')
+    setEditSector('')
+    setEditDividendYield('')
   }
 
   const formatCurrency = (value: number | null | undefined): string => {
@@ -118,6 +179,17 @@ function Portfolio() {
     if (value === null || value === undefined) return '—'
     const sign = value >= 0 ? '+' : ''
     return `${sign}${value.toFixed(2)}%`
+  }
+
+  const getAssetTypeColor = (assetType: string): string => {
+    const colors: Record<string, string> = {
+      STOCK: '#3b82f6',
+      ETF: '#10b981',
+      BOND: '#f59e0b',
+      REIT: '#8b5cf6',
+      OTHER: '#6b7280',
+    }
+    return colors[assetType] || '#6b7280'
   }
 
   if (!user) {
@@ -152,6 +224,17 @@ function Portfolio() {
                 />
               </div>
               <div className="form-group">
+                <label>Asset Type</label>
+                <select
+                  value={newAssetType}
+                  onChange={(e) => setNewAssetType(e.target.value as AssetType)}
+                >
+                  {ASSET_TYPE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
                 <label>Quantity</label>
                 <input
                   type="number"
@@ -171,6 +254,27 @@ function Portfolio() {
                   onChange={(e) => setNewAvgCost(e.target.value)}
                   placeholder="Cost per share"
                   required
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Sector (optional)</label>
+                <input
+                  type="text"
+                  value={newSector}
+                  onChange={(e) => setNewSector(e.target.value)}
+                  placeholder="e.g. Technology"
+                />
+              </div>
+              <div className="form-group">
+                <label>Dividend Yield % (optional)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={newDividendYield}
+                  onChange={(e) => setNewDividendYield(e.target.value)}
+                  placeholder="e.g. 2.5"
                 />
               </div>
             </div>
@@ -206,6 +310,52 @@ function Portfolio() {
         </div>
       )}
 
+      {activeFilter === 'ALL' && allocation && allocation.asset_allocation.length > 0 && (
+        <div className="allocation-section">
+          <h3>Asset Allocation</h3>
+          <div className="allocation-chart">
+            <div className="allocation-legend">
+              {allocation.asset_allocation.map((item) => (
+                <div key={item.asset_type} className="legend-item">
+                  <div
+                    className="legend-color"
+                    style={{ backgroundColor: getAssetTypeColor(item.asset_type) }}
+                  />
+                  <span className="legend-label">{item.asset_type}</span>
+                  <span className="legend-value">{item.allocation_pct?.toFixed(1)}%</span>
+                  <span className="legend-amount">{formatCurrency(item.total_current_value)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="allocation-bar">
+              {allocation.asset_allocation.map((item) => (
+                <div
+                  key={item.asset_type}
+                  className="allocation-segment"
+                  style={{
+                    backgroundColor: getAssetTypeColor(item.asset_type),
+                    flex: item.allocation_pct || 0,
+                  }}
+                  title={`${item.asset_type}: ${item.allocation_pct?.toFixed(1)}%`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="filter-tabs">
+        {ASSET_TYPES.map((type) => (
+          <button
+            key={type.value}
+            className={`filter-tab ${activeFilter === type.value ? 'active' : ''}`}
+            onClick={() => setActiveFilter(type.value)}
+          >
+            {type.label}
+          </button>
+        ))}
+      </div>
+
       {loading ? (
         <div className="loading">Loading portfolio...</div>
       ) : holdings.length === 0 ? (
@@ -218,6 +368,7 @@ function Portfolio() {
             <thead>
               <tr>
                 <th>Symbol</th>
+                <th>Type</th>
                 <th>Shares</th>
                 <th>Avg Cost</th>
                 <th>Current Price</th>
@@ -231,6 +382,14 @@ function Portfolio() {
               {holdings.map((holding) => (
                 <tr key={holding.id}>
                   <td className="symbol">{holding.symbol}</td>
+                  <td>
+                    <span
+                      className="asset-type-badge"
+                      style={{ backgroundColor: getAssetTypeColor(holding.asset_type) }}
+                    >
+                      {holding.asset_type}
+                    </span>
+                  </td>
                   <td>
                     {editingId === holding.id ? (
                       <input
