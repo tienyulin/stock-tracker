@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { portfolioService, getErrorMessage, HoldingWithSignal, PortfolioSignalsResponse } from '../services/api'
+import { portfolioService, getErrorMessage, PortfolioSignalsResponse } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 import './PortfolioSignals.css'
 

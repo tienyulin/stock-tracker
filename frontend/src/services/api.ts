@@ -7,6 +7,21 @@ const apiClient = axios.create({
   timeout: 10000,
 })
 
+// Helper to extract user-friendly error messages from axios errors
+export function getErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    const axiosErr = err as { response?: { status?: number }, message?: string }
+    if (axiosErr.response?.status === 401) return 'Unauthorized. Please login again.'
+    if (axiosErr.response?.status === 403) return 'Access forbidden.'
+    if (axiosErr.response?.status === 404) return 'Resource not found.'
+    if (axiosErr.response?.status === 422) return 'Validation error.'
+    if (axiosErr.response?.status === 500) return 'Server error. Please try again later.'
+    if (axiosErr.message?.includes('timeout')) return 'Request timed out. Please try again.'
+    if (axiosErr.message?.includes('Network Error')) return 'Network error. Check your connection.'
+  }
+  return 'An unexpected error occurred.'
+}
+
 // Stock types
 export interface StockQuote {
   symbol: string
