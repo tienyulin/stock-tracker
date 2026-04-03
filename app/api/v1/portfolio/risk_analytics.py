@@ -8,11 +8,11 @@ from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
-from typing import Optional
+
 import logging
 
 from app.core.database import get_db
-from app.models.models import User, UserHolding
+from app.models.models import UserHolding
 from app.services.risk_analytics_service import RiskAnalyticsService
 from app.services.yfinance_service import YFinanceService
 from app.utils.auth import decode_access_token

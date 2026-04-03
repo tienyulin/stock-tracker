@@ -3,7 +3,6 @@ Tests for Risk Analytics Service
 """
 
 import pytest
-import asyncio
 from app.services.risk_analytics_service import RiskAnalyticsService, RiskMetrics
 
 
