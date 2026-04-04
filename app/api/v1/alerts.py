@@ -2,14 +2,17 @@
 Alert API routes.
 """
 
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.utils.auth import decode_access_token
 from app.models import Alert, User
 from app.schemas import AlertCreate, AlertResponse, AlertUpdate
 
@@ -226,9 +229,6 @@ async def trigger_alert(
 
 # === Alerts Expansion Endpoints ===
 
-from pydantic import BaseModel
-from typing import Optional, List
-
 
 class AlertConditionRequest(BaseModel):
     """Single alert condition."""
@@ -286,8 +286,8 @@ async def create_expanded_alert(
 
     user_id = payload["sub"]
 
-    # Create alert
-    alert_service = AlertsExpansionService()
+    # Create alert (placeholder)
+    _alert_service = AlertsExpansionService()
 
     conditions = [
         {"metric": c.metric, "operator": c.operator, "value": c.value}
@@ -329,7 +329,7 @@ async def evaluate_alerts(
     if not payload or "sub" not in payload:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-    user_id = payload["sub"]
+    _user_id = payload["sub"]
 
     # Get user's active alerts (placeholder - would query database)
     alerts = []

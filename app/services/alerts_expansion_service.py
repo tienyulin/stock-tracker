@@ -19,8 +19,8 @@ class AlertCondition:
     metric: str  # price, percent_change, rsi, macd, volume
     operator: str  # >, <, >=, <=, ==, crosses_above, crosses_below
     value: float
-    AND next_condition: Optional["AlertCondition"] = None
-    OR next_condition: Optional["AlertCondition"] = None
+    next_condition_and: Optional["AlertCondition"] = None
+    next_condition_or: Optional["AlertCondition"] = None
 
 
 @dataclass
