@@ -2,7 +2,6 @@
 Simulation endpoints for Monte Carlo retirement planning.
 """
 
-import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
