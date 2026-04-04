@@ -77,7 +77,7 @@ async def get_api_key_by_hash(db: AsyncSession, key: str) -> Optional[ApiKey]:
     result = await db.execute(
         select(ApiKey).where(
             ApiKey.key_hash == key_hash,
-            ApiKey.is_active == True,
+            ApiKey.is_active,
         )
     )
     api_key = result.scalar_one_or_none()

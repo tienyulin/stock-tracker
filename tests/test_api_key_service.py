@@ -8,8 +8,6 @@ These tests use mocks to avoid needing full SQLAlchemy setup.
 import hashlib
 import secrets
 
-import pytest
-
 
 class TestApiKeyGeneration:
     """Test API key generation functionality."""
