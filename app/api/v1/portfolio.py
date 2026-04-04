@@ -1039,14 +1039,6 @@ async def run_portfolio_backtest(
     """
     from app.services.backtesting_service import PortfolioBacktestingService
 
-    # Extract user ID from token (optional for backtest)
-    user_id = None
-    if authorization and authorization.startswith("Bearer "):
-        token = authorization.replace("Bearer ", "")
-        payload = decode_access_token(token)
-        if payload and "sub" in payload:
-            user_id = payload["sub"]
-
     # Get historical data
     yfinance = YFinanceService()
     try:
