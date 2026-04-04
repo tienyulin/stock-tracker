@@ -8,8 +8,6 @@ Provides multi-currency support for portfolio tracking:
 """
 
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
 
 
 # Supported currencies
