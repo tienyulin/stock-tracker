@@ -174,7 +174,7 @@ Assistant:"""
         """List all conversations for a user."""
         return self.db.query(AIConversation).filter(
             AIConversation.user_id == user_id,
-            AIConversation.is_active == True,
+            AIConversation.is_active,
         ).order_by(AIConversation.updated_at.desc()).all()
 
     def get_conversation(self, conversation_id: str, user_id: str) -> Optional[AIConversation]:
