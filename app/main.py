@@ -8,10 +8,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.api.v1.router import router as api_v1_router
 from app.api.v1 import websocket
 from app.core.init_db import init_db
+from app.core.rate_limiter import limiter, rate_limit_exceeded_handler
 
 # Configure structured logging
 logging.basicConfig(
@@ -34,9 +37,38 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Stock Tracker API",
-    description="API for tracking stock prices, managing watchlists and alerts",
+    description="""
+## Stock Tracker REST API
+
+A comprehensive API for tracking stock prices, managing watchlists, and setting price alerts.
+
+## Authentication
+
+Most endpoints require JWT Bearer token authentication. 
+Use the `/api/v1/auth/login` endpoint to obtain a token.
+
+## Rate Limiting
+
+API requests are rate-limited to ensure fair usage:
+- Default: 100 requests/minute per API key or IP
+- Authenticated users: 100 requests/minute
+- Public endpoints: 30 requests/minute
+
+Rate limit headers are included in all responses:
+- `X-RateLimit-Limit`: Maximum requests allowed
+- `X-RateLimit-Remaining`: Requests remaining in window
+- `X-RateLimit-Reset`: Time when the limit resets (Unix timestamp)
+
+## API Keys
+
+Generate API keys via the `/api-keys` endpoints for programmatic access.
+API keys should be passed in the `Authorization: Bearer <key>` header.
+    """,
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
 )
 
 # CORS middleware for frontend-backend separation
@@ -47,6 +79,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
 # Include API v1 routes
 app.include_router(api_v1_router)
