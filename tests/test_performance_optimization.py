@@ -4,9 +4,7 @@ Tests for Performance Optimization (Phase 16).
 Tests caching, lazy loading configuration, and async optimizations.
 """
 
-import pytest
 import asyncio
-import time
 
 
 class TestCacheService:
@@ -117,7 +115,6 @@ class TestViteConfig:
     def test_vite_config_lazy_loading_enabled(self):
         """Verify lazy loading is configured."""
         import os
-        from vite import defineConfig
         
         # Just verify the config can be loaded
         config_path = os.path.join(
