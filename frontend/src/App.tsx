@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Portfolio from './pages/Portfolio'
 import PortfolioSignals from './pages/PortfolioSignals'
+import RetirementSimulation from './pages/RetirementSimulation'
 import './App.css'
 
 function LanguageSwitcher() {
@@ -42,6 +43,7 @@ function NavBar() {
         <li><NavLink to="/alerts" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.alerts')}</NavLink></li>
         <li><NavLink to="/portfolio" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolio')}</NavLink></li>
         <li><NavLink to="/portfolio-signals" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolio')}</NavLink></li>
+        <li><NavLink to="/retirement" className={({ isActive }) => isActive ? 'active' : ''}>🎲 {t('nav.retirement', 'Retirement')}</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
       </ul>
       <div className="nav-auth">
@@ -84,6 +86,7 @@ function AppRoutes() {
       <Route path="/alerts" element={<RequireAuth><Alerts /></RequireAuth>} />
       <Route path="/portfolio" element={<RequireAuth><Portfolio /></RequireAuth>} />
       <Route path="/portfolio-signals" element={<RequireAuth><PortfolioSignals /></RequireAuth>} />
+      <Route path="/retirement" element={<RequireAuth><RetirementSimulation /></RequireAuth>} />
       <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
     </Routes>
   )
