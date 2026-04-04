@@ -16,9 +16,6 @@ class TestApiKeyGeneration:
 
     def test_generate_api_key_format(self):
         """Generated API key should start with 'st_' prefix."""
-        import hashlib
-        import secrets
-        
         # Simulate generate_api_key
         full_key = f"st_{secrets.token_urlsafe(32)}"
         key_hash = hashlib.sha256(full_key.encode()).hexdigest()
@@ -31,8 +28,6 @@ class TestApiKeyGeneration:
 
     def test_generate_api_key_uniqueness(self):
         """Each generated API key should be unique."""
-        import secrets
-        
         keys = [secrets.token_urlsafe(32) for _ in range(100)]
         unique_keys = set(keys)
         
@@ -40,8 +35,6 @@ class TestApiKeyGeneration:
 
     def test_generate_api_key_prefix_consistency(self):
         """Key prefix should correctly identify the full key."""
-        import secrets
-        
         full_key = f"st_{secrets.token_urlsafe(32)}"
         key_prefix = full_key[:12]
         
@@ -54,8 +47,6 @@ class TestApiKeyHashing:
 
     def test_hash_api_key_deterministic(self):
         """Same key should always produce same hash."""
-        import hashlib
-        
         key = "st_testkey123456789"
         hash1 = hashlib.sha256(key.encode()).hexdigest()
         hash2 = hashlib.sha256(key.encode()).hexdigest()
@@ -64,8 +55,6 @@ class TestApiKeyHashing:
 
     def test_hash_api_key_different_for_different_keys(self):
         """Different keys should produce different hashes."""
-        import hashlib
-        
         key1 = "st_testkey1"
         key2 = "st_testkey2"
         
@@ -76,8 +65,6 @@ class TestApiKeyHashing:
 
     def test_hash_not_reversible(self):
         """Hash should not allow recovering the original key."""
-        import hashlib
-        
         key = "st_super_secret_key_12345"
         key_hash = hashlib.sha256(key.encode()).hexdigest()
         
