@@ -10,8 +10,12 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Float, fu
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from typing import TYPE_CHECKING
+
 from app.core.database import Base
-from app.models.models import User
+
+if TYPE_CHECKING:
+    from app.models.models import User
 
 
 class UserProfile(Base):
