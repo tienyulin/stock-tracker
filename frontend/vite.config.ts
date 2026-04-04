@@ -26,8 +26,8 @@ export default defineConfig({
         },
       },
     },
-    // Enable minification
-    minify: 'terser',
+    // Enable minification (esbuild is built-in, no terser needed)
+    minify: 'esbuild',
     // Enable source maps for production debugging
     sourcemap: false,
   },
