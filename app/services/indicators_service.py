@@ -154,4 +154,111 @@ class TechnicalIndicatorsService:
         for period in periods.get("ema", [12, 26]):
             result["ema"][f"ema_{period}"] = TechnicalIndicatorsService.calculate_ema(prices, period)
 
+        # Bollinger Bands
+        result["bollinger_bands"] = TechnicalIndicatorsService.calculate_bollinger_bands(prices)
+
+        # Williams %R (requires at least 14 periods)
+        if len(prices) >= 14:
+            # For Williams %R, we need highs and lows - use prices as approximation
+            result["williams_r"] = TechnicalIndicatorsService.calculate_williams_r(prices)
+
+        # Pivot Points (requires 3 prices: high, low, close - use high=close*1.02, low=close*0.98 approximation)
+        if len(prices) >= 1:
+            result["pivot_points"] = TechnicalIndicatorsService.calculate_pivot_points(prices)
+
         return result
+
+    @staticmethod
+    def calculate_bollinger_bands(prices: list[float], period: int = 20, std_dev: int = 2) -> dict:
+        """
+        Calculate Bollinger Bands.
+
+        Args:
+            prices: List of closing prices
+            period: Moving average period (default 20)
+            std_dev: Standard deviations for bands (default 2)
+
+        Returns:
+            Dict with upper, middle, lower bands and bandwidth
+        """
+        if len(prices) < period:
+            return {"error": f"Insufficient data for period {period}"}
+
+        middle = sum(prices[-period:]) / period
+        variance = sum((p - middle) ** 2 for p in prices[-period:]) / period
+        std = variance ** 0.5
+        upper = middle + (std_dev * std)
+        lower = middle - (std_dev * std)
+        bandwidth = (upper - lower) / middle if middle > 0 else 0
+
+        return {
+            "upper": round(upper, 2),
+            "middle": round(middle, 2),
+            "lower": round(lower, 2),
+            "bandwidth": round(bandwidth, 4),
+        }
+
+    @staticmethod
+    def calculate_williams_r(prices: list[float], period: int = 14) -> dict:
+        """
+        Calculate Williams %R.
+
+        Args:
+            prices: List of prices (used as close; highs/lows approximated)
+
+        Returns:
+            Dict with williams_r value and signal
+        """
+        if len(prices) < period:
+            return {"error": f"Insufficient data for period {period}"}
+
+        # Approximate highs and lows using price range
+        recent_prices = prices[-period:]
+        high_max = max(recent_prices)
+        low_min = min(recent_prices)
+        close = prices[-1]
+
+        if high_max == low_min:
+            williams_r = -50.0
+        else:
+            williams_r = (high_max - close) / (high_max - low_min) * -100
+
+        signal = "OVERBOUGHT" if williams_r > -20 else "OVERSOLD" if williams_r < -80 else "NEUTRAL"
+
+        return {
+            "williams_r": round(williams_r, 2),
+            "signal": signal,
+        }
+
+    @staticmethod
+    def calculate_pivot_points(prices: list[float]) -> dict:
+        """
+        Calculate Pivot Points.
+
+        Args:
+            prices: List of prices (last price used as close)
+
+        Returns:
+            Dict with pivot and support/resistance levels
+        """
+        if len(prices) < 1:
+            return {"error": "Insufficient data"}
+
+        close = prices[-1]
+        # Approximate high and low
+        high = close * 1.02
+        low = close * 0.98
+
+        pivot = (high + low + close) / 3
+        r1 = 2 * pivot - low
+        s1 = 2 * pivot - high
+        r2 = pivot + (high - low)
+        s2 = pivot - (high - low)
+
+        return {
+            "pivot": round(pivot, 2),
+            "r1": round(r1, 2),
+            "r2": round(r2, 2),
+            "s1": round(s1, 2),
+            "s2": round(s2, 2),
+        }

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
 import logging
+import uuid
 
 from app.core.database import get_db
 from app.models.models import User
@@ -186,7 +187,7 @@ async def get_discord_webhook_status(
 ):
     """Get Discord webhook configuration status."""
     result = await db.execute(
-        select(User.discord_webhook_url).where(User.id == user_id)
+        select(User.discord_webhook_url).where(User.id == uuid.UUID(user_id))
     )
     webhook_url = result.scalar_one_or_none()
     

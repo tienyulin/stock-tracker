@@ -15,6 +15,7 @@ from app.models.models import User, UserHolding
 from app.utils.auth import decode_access_token
 from app.services.stock_service import StockService
 from app.services.signal_engine_service import SignalEngineService, SignalType
+from app.services.yfinance_service import YFinanceService
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 logger = logging.getLogger(__name__)
@@ -628,3 +629,390 @@ async def get_portfolio_pdf(
             "Content-Disposition": "attachment; filename=portfolio-report.pdf"
         }
     )
+
+
+# Risk Analytics endpoint
+@router.get("/risk-analytics", response_model=dict)
+async def get_portfolio_risk_analytics(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+    lookback_days: int = 90,
+):
+    """
+    Get portfolio risk analytics.
+
+    Calculates VaR, Sharpe Ratio, Max Drawdown, and vs S&P 500 comparison.
+
+    Args:
+        lookback_days: Number of days of historical data to use (default 90).
+
+    Returns:
+        Risk metrics including VaR, Sharpe Ratio, Max Drawdown.
+    """
+    from app.services.risk_analytics_service import RiskAnalyticsService
+    from app.services.yfinance_service import YFinanceService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload.get("sub")
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {
+            "portfolio_value": 0,
+            "var_95": 0,
+            "var_99": 0,
+            "sharpe_ratio": 0,
+            "max_drawdown": 0,
+            "max_drawdown_percent": 0,
+            "vs_sp500_return": 0,
+            "sp500_return": 0,
+            "portfolio_return": 0,
+            "volatility": 0,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+    # Prepare holdings data
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Get historical prices
+    historical_prices = {}
+    try:
+        for symbol in symbols:
+            try:
+                history = await yfinance.get_historical(
+                    symbol=symbol,
+                    period=f"{lookback_days}d",
+                )
+                if history and history.closes:
+                    historical_prices[symbol] = history.closes
+            except Exception:
+                pass
+    finally:
+        await yfinance.close()
+
+    # Get S&P 500 historical data
+    sp500_historical = []
+    try:
+        sp500_history = await yfinance.get_historical(
+            symbol="^GSPC",
+            period=f"{lookback_days}d",
+        )
+        if sp500_history and sp500_history.closes:
+            sp500_historical = sp500_history.closes
+    except Exception:
+        pass
+
+    # Calculate risk metrics
+    risk_service = RiskAnalyticsService()
+    metrics = await risk_service.calculate_risk_metrics(
+        holdings=holdings_data,
+        prices=prices,
+        historical_prices=historical_prices,
+        sp500_historical=sp500_historical,
+    )
+
+    return {
+        "portfolio_value": metrics.portfolio_value,
+        "var_95": metrics.var_95,
+        "var_99": metrics.var_99,
+        "sharpe_ratio": metrics.sharpe_ratio,
+        "max_drawdown": metrics.max_drawdown,
+        "max_drawdown_percent": metrics.max_drawdown_percent,
+        "vs_sp500_return": metrics.vs_sp500_return,
+        "sp500_return": metrics.sp500_return,
+        "portfolio_return": metrics.portfolio_return,
+        "volatility": metrics.volatility,
+        "timestamp": metrics.timestamp,
+    }
+
+
+@router.get("/drift-detection", response_model=dict)
+async def get_portfolio_drift_detection(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Get portfolio drift detection analysis.
+
+    Compares current holdings against AI Signal recommendations
+    and provides rebalancing suggestions.
+
+    Returns:
+        Drift analysis with holding details and rebalancing trades.
+    """
+    from app.services.drift_detection_service import DriftDetectionService
+    from app.services.signal_engine_service import SignalEngineService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {
+            "total_value": 0,
+            "drift_score": 0,
+            "holdings": [],
+            "rebalancing_trades": [],
+            "rebalancing_total_buy": 0,
+            "rebalancing_total_sell": 0,
+            "timestamp": "",
+        }
+
+    # Prepare holdings data
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Calculate portfolio value
+    portfolio_value = sum(
+        h["quantity"] * prices.get(h["symbol"], 0)
+        for h in holdings_data
+    )
+
+    # Get signals for each holding
+    signal_engine = SignalEngineService()
+    signals = {}
+
+    try:
+        for symbol in symbols:
+            try:
+                signal = await signal_engine.get_signal(symbol)
+                if signal:
+                    signals[symbol] = {
+                        "signal": signal.overall_signal.value,
+                        "confidence": signal.confidence,
+                    }
+                else:
+                    signals[symbol] = {"signal": "HOLD", "confidence": 0.5}
+            except Exception:
+                signals[symbol] = {"signal": "HOLD", "confidence": 0.5}
+    finally:
+        await signal_engine.close()
+
+    # Calculate drift
+    drift_service = DriftDetectionService()
+    drift_result = await drift_service.calculate_drift(
+        holdings=holdings_data,
+        prices=prices,
+        signals=signals,
+        portfolio_value=portfolio_value,
+    )
+
+    return {
+        "total_value": drift_result.total_value,
+        "drift_score": drift_result.drift_score,
+        "holdings": [
+            {
+                "symbol": h.symbol,
+                "current_quantity": h.current_quantity,
+                "current_value": h.current_value,
+                "current_weight": h.current_weight,
+                "recommended_signal": h.recommended_signal,
+                "recommended_weight": h.recommended_weight,
+                "drift_percentage": h.drift_percentage,
+                "action": h.action,
+                "action_quantity": h.action_quantity,
+                "action_value": h.action_value,
+            }
+            for h in drift_result.holdings
+        ],
+        "rebalancing_trades": [
+            {
+                "symbol": h.symbol,
+                "action": h.action,
+                "quantity": h.action_quantity,
+                "value": h.action_value,
+            }
+            for h in drift_result.rebalancing_trades
+        ],
+        "rebalancing_total_buy": drift_result.rebalancing_total_buy,
+        "rebalancing_total_sell": drift_result.rebalancing_total_sell,
+        "timestamp": drift_result.timestamp,
+    }
+
+
+@router.get("/tax-loss-harvesting", response_model=dict)
+async def get_tax_loss_harvesting(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+    risk_tolerance: str = "MEDIUM",
+):
+    """
+    Get tax-loss harvesting opportunities.
+
+    Identifies positions with unrealized losses that could be harvested
+    for tax benefits, while avoiding wash sale rule violations.
+
+    Args:
+        risk_tolerance: User's risk tolerance (LOW, MEDIUM, HIGH)
+
+    Returns:
+        Tax-loss harvesting analysis with candidates and suggestions.
+    """
+    from app.services.tax_loss_harvesting_service import TaxLossHarvestingService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Get user holdings
+    result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user_id)
+    )
+    holdings = result.scalars().all()
+
+    if not holdings:
+        return {
+            "total_unrealized_loss": 0,
+            "total_estimated_tax_savings": 0,
+            "candidates": [],
+            "harvesting_trades": [],
+            "total_harvest_value": 0,
+            "replacement_suggestions": [],
+            "capital_gains_rate": 0.20,
+            "timestamp": "",
+        }
+
+    # Prepare holdings data
+    holdings_data = [
+        {
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+        }
+        for h in holdings
+    ]
+
+    # Get current prices
+    yfinance = YFinanceService()
+    prices = {}
+    symbols = [h.symbol for h in holdings]
+
+    try:
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                prices[symbol] = quote.price
+            except Exception:
+                prices[symbol] = 0
+    finally:
+        await yfinance.close()
+
+    # Calculate tax-loss harvesting opportunities
+    tax_service = TaxLossHarvestingService()
+    result_data = tax_service.calculate_harvesting_opportunities(
+        holdings=holdings_data,
+        prices=prices,
+        risk_tolerance=risk_tolerance,
+    )
+
+    return {
+        "total_unrealized_loss": result_data.total_unrealized_loss,
+        "total_estimated_tax_savings": result_data.total_estimated_tax_savings,
+        "candidates": [
+            {
+                "symbol": c.symbol,
+                "quantity": c.quantity,
+                "current_price": c.current_price,
+                "avg_cost": c.avg_cost,
+                "unrealized_loss": c.unrealized_loss,
+                "unrealized_loss_percent": c.unrealized_loss_percent,
+                "estimated_tax_savings": c.estimated_tax_savings,
+                "wash_sale_risk": c.wash_sale_risk,
+                "replacement_candidate": c.replacement_candidate,
+                "action": c.action,
+            }
+            for c in result_data.candidates
+        ],
+        "harvesting_trades": [
+            {
+                "symbol": c.symbol,
+                "quantity": c.quantity,
+                "unrealized_loss": c.unrealized_loss,
+                "estimated_tax_savings": c.estimated_tax_savings,
+                "replacement_candidate": c.replacement_candidate,
+            }
+            for c in result_data.harvesting_trades
+        ],
+        "total_harvest_value": result_data.total_harvest_value,
+        "replacement_suggestions": result_data.replacement_suggestions,
+        "capital_gains_rate": result_data.capital_gains_rate,
+        "timestamp": result_data.timestamp,
+    }
+
+

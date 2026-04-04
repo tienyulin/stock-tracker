@@ -4,7 +4,6 @@
     "watchlist": "Watchlist",
     "alerts": "Alerts",
     "portfolio": "Portfolio",
-    "retirement": "Retirement",
     "settings": "Settings",
     "logout": "Logout"
   },
@@ -91,18 +90,5 @@
     "email": "Email",
     "password": "Password",
     "welcome": "Welcome back"
-  },
-  "retirement": {
-    "title": "Monte Carlo Retirement Simulator",
-    "formTitle": "Simulation Parameters",
-    "resultsTitle": "Simulation Results",
-    "currentAge": "Current Age",
-    "retirementAge": "Target Retirement Age",
-    "currentSavings": "Current Portfolio Value ($)",
-    "monthlyContribution": "Monthly Contribution ($)",
-    "desiredIncome": "Desired Monthly Retirement Income ($)",
-    "riskProfile": "Risk Profile",
-    "portfolioAllocation": "Portfolio Allocation (%)",
-    "numSimulations": "Number of Simulations"
   }
 }

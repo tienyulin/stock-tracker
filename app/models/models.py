@@ -31,6 +31,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
     line_notify_token: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    discord_webhook_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     # Relationships
     watchlists: Mapped[list["Watchlist"]] = relationship(
@@ -42,8 +43,13 @@ class User(Base):
     holdings: Mapped[list["UserHolding"]] = relationship(
         "UserHolding", back_populates="user", cascade="all, delete-orphan"
     )
+<<<<<<< HEAD
     ai_conversations: Mapped[list["AIConversation"]] = relationship(
         "AIConversation", back_populates="user", cascade="all, delete-orphan"
+=======
+    api_keys: Mapped[list["ApiKey"]] = relationship(
+        "ApiKey", back_populates="user", cascade="all, delete-orphan"
+>>>>>>> origin/develop
     )
 
 
@@ -187,10 +193,17 @@ class UserHolding(Base):
     user: Mapped["User"] = relationship("User", back_populates="holdings")
 
 
+<<<<<<< HEAD
 class AIConversation(Base):
     """AI conversation history model."""
 
     __tablename__ = "ai_conversations"
+=======
+class ApiKey(Base):
+    """API Key model for rate limiting and authentication."""
+
+    __tablename__ = "api_keys"
+>>>>>>> origin/develop
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -198,6 +211,7 @@ class AIConversation(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
+<<<<<<< HEAD
     role: Mapped[str] = mapped_column(String(20), nullable=False)  # 'user' or 'assistant'
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -206,3 +220,18 @@ class AIConversation(Base):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="ai_conversations")
+=======
+    key_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    key_prefix: Mapped[str] = mapped_column(String(20), nullable=False)  # First 8 chars for identification
+    name: Mapped[str] = mapped_column(String(100), nullable=False)  # e.g., "Postman", "Trading Bot"
+    rate_limit: Mapped[int] = mapped_column(default=100)  # requests per minute
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="api_keys")
+>>>>>>> origin/develop
