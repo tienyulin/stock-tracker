@@ -406,7 +406,7 @@ def get_activity_feed(
         User, TradeActivity.user_id == User.id
     ).filter(
         TradeActivity.user_id.in_(following_ids),
-        TradeActivity.is_public == True
+        TradeActivity.is_public.is_(True)
     )
 
     # Filter by period
@@ -458,7 +458,7 @@ def get_leaderboard(
 
     # Get public profiles
     public_user_ids = db.query(UserProfile.user_id).filter(
-        UserProfile.is_portfolio_public == True
+        UserProfile.is_portfolio_public.is_(True)
     ).subquery()
 
     # Calculate performance for each user (simplified calculation)

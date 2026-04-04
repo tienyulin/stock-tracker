@@ -228,3 +228,8 @@ class ApiKey(Base):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="api_keys")
+
+
+# Import social models to ensure relationships are resolved
+# These must be imported after all model definitions
+from app.models.social import Follow, LeaderboardEntry, TradeActivity, UserProfile
