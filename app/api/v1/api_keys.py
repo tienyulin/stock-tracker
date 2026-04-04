@@ -16,7 +16,6 @@ from app.services.api_key_service import (
     get_user_api_keys,
     update_api_key,
     delete_api_key,
-    get_api_key_by_hash,
 )
 from app.api.v1.auth import get_current_user
 
