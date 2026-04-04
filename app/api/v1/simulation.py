@@ -5,7 +5,7 @@ Simulation endpoints for Monte Carlo retirement planning.
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.core.rate_limiter import limiter, DEFAULT_RATE_LIMIT
 from app.services.monte_carlo_service import (
@@ -29,13 +29,22 @@ class AllocationInput(BaseModel):
 class RetirementSimulationRequest(BaseModel):
     """Request model for retirement simulation."""
     current_age: int = Field(default=30, ge=18, le=100)
-    retirement_age: int = Field(default=65, ge=current_age, le=100)
-    life_expectancy: int = Field(default=95, ge=retirement_age, le=120)
+    retirement_age: int = Field(default=65, ge=18, le=100)
+    life_expectancy: int = Field(default=95, ge=18, le=120)
     current_portfolio: float = Field(default=100000, ge=0)
     monthly_contribution: float = Field(default=1000, ge=0)
     desired_annual_income: float = Field(default=60000, ge=0)
     social_security_monthly: float = Field(default=0, ge=0)
     allocation: AllocationInput = Field(default_factory=AllocationInput)
+
+    @model_validator(mode="after")
+    def validate_ages(self):
+        """Validate that retirement_age > current_age and life_expectancy > retirement_age."""
+        if self.retirement_age <= self.current_age:
+            raise ValueError("retirement_age must be greater than current_age")
+        if self.life_expectancy <= self.retirement_age:
+            raise ValueError("life_expectancy must be greater than retirement_age")
+        return self
 
 
 class YearlyOutcome(BaseModel):
