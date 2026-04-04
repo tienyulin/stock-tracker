@@ -5,10 +5,10 @@ Tests API key generation, hashing, and service functions.
 These tests use mocks to avoid needing full SQLAlchemy setup.
 """
 
+import hashlib
+import secrets
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-from datetime import datetime, timedelta
-import uuid
 
 
 class TestApiKeyGeneration:
@@ -40,7 +40,6 @@ class TestApiKeyGeneration:
 
     def test_generate_api_key_prefix_consistency(self):
         """Key prefix should correctly identify the full key."""
-        import hashlib
         import secrets
         
         full_key = f"st_{secrets.token_urlsafe(32)}"
