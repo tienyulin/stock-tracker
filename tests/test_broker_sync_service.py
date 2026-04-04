@@ -2,14 +2,20 @@
 Tests for Broker Sync Service.
 """
 
+import asyncio
+
+from app.services.broker_sync_service import (
+    BrokerSyncService,
+    Brokerage,
+    ConnectionStatus,
+)
+
 
 class TestBrokerageEnum:
     """Test Brokerage enum."""
 
     def test_brokerage_values(self):
         """Test all brokerages are defined."""
-        from app.services.broker_sync_service import Brokerage
-        
         assert Brokerage.ROBINHOOD.value == "robinhood"
         assert Brokerage.FIDELITY.value == "fidelity"
         assert Brokerage.SCHWAB.value == "schwab"
@@ -23,8 +29,6 @@ class TestConnectionStatus:
 
     def test_status_values(self):
         """Test all statuses are defined."""
-        from app.services.broker_sync_service import ConnectionStatus
-        
         assert ConnectionStatus.PENDING.value == "pending"
         assert ConnectionStatus.CONNECTED.value == "connected"
         assert ConnectionStatus.SYNCING.value == "syncing"
@@ -37,19 +41,15 @@ class TestBrokerSyncService:
 
     def test_service_initialization(self):
         """Test service initializes correctly."""
-        from app.services.broker_sync_service import BrokerSyncService
-        
         service = BrokerSyncService(client_id="test", client_secret="secret")
         assert service.client_id == "test"
         assert service.client_secret == "secret"
 
     def test_create_connection(self):
         """Test creating a broker connection."""
-        from app.services.broker_sync_service import BrokerSyncService, Brokerage, ConnectionStatus
-        
         service = BrokerSyncService()
         
-        connection = service._run_until_complete(
+        connection = asyncio.run(
             service.create_connection(
                 user_id="user123",
                 brokerage=Brokerage.ROBINHOOD,
@@ -66,12 +66,10 @@ class TestBrokerSyncService:
 
     def test_get_user_connections(self):
         """Test retrieving user connections."""
-        from app.services.broker_sync_service import BrokerSyncService, Brokerage
-        
         service = BrokerSyncService()
         
         # Create a connection
-        service._run_until_complete(
+        asyncio.run(
             service.create_connection(
                 user_id="user123",
                 brokerage=Brokerage.FIDELITY,
@@ -81,7 +79,7 @@ class TestBrokerSyncService:
             )
         )
         
-        connections = service._run_until_complete(
+        connections = asyncio.run(
             service.get_user_connections("user123")
         )
         
@@ -90,12 +88,10 @@ class TestBrokerSyncService:
 
     def test_delete_connection(self):
         """Test deleting a connection."""
-        from app.services.broker_sync_service import BrokerSyncService, Brokerage
-        
         service = BrokerSyncService()
         
         # Create connection
-        conn = service._run_until_complete(
+        conn = asyncio.run(
             service.create_connection(
                 user_id="user123",
                 brokerage=Brokerage.SCHWAB,
@@ -106,7 +102,7 @@ class TestBrokerSyncService:
         )
         
         # Delete it
-        deleted = service._run_until_complete(
+        deleted = asyncio.run(
             service.delete_connection(conn.connection_id, "user123")
         )
         
@@ -115,8 +111,6 @@ class TestBrokerSyncService:
 
     def test_map_brokerage_holdings(self):
         """Test mapping brokerage holdings to our format."""
-        from app.services.broker_sync_service import BrokerSyncService
-        
         service = BrokerSyncService()
         
         result = service.map_brokerage_holdings(
@@ -133,8 +127,6 @@ class TestBrokerSyncService:
 
     def test_map_brokerage_holdings_symbol_normalization(self):
         """Test symbol normalization (BRK.B -> BRK-B)."""
-        from app.services.broker_sync_service import BrokerSyncService
-        
         service = BrokerSyncService()
         
         result = service.map_brokerage_holdings(
