@@ -4,11 +4,8 @@ Monte Carlo Simulation Service for Retirement Planning.
 Provides stochastic simulation of retirement portfolio outcomes.
 """
 
-import asyncio
-import math
 import random
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 

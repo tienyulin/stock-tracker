@@ -2,7 +2,6 @@
 Tests for Monte Carlo Retirement Simulation Service.
 """
 
-import pytest
 import asyncio
 
 
@@ -13,7 +12,6 @@ class TestMonteCarloService:
         """Verify Monte Carlo service produces expected result structure."""
         from app.services.monte_carlo_service import (
             MonteCarloService,
-            PortfolioAllocation,
             RetirementParams,
         )
         
