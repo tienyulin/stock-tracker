@@ -1,0 +1,373 @@
+{
+  "info": {
+    "name": "Stock Tracker API v1",
+    "description": "API for tracking stock prices, managing watchlists and alerts. Includes rate limiting and API key management.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Register a new user account"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login and obtain JWT token. Save the token in the variable."
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Keys",
+      "item": [
+        {
+          "name": "Create API Key",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"name\": \"Postman\",\n    \"rate_limit\": 100,\n    \"expires_in_days\": 90\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api-keys",
+              "path": ["api", "v1", "api-keys"]
+            },
+            "description": "Create a new API key. The full key is returned only once - save it securely!"
+          }
+        },
+        {
+          "name": "List API Keys",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api-keys",
+              "path": ["api", "v1", "api-keys"]
+            },
+            "description": "List all API keys for the authenticated user"
+          }
+        },
+        {
+          "name": "Update API Key",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"name\": \"Updated Name\",\n    \"rate_limit\": 200\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api-keys/:key_id",
+              "path": ["api", "v1", "api-keys", ":key_id"]
+            },
+            "description": "Update an API key's name, rate limit, or active status"
+          }
+        },
+        {
+          "name": "Delete API Key",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api-keys/:key_id",
+              "path": ["api", "v1", "api-keys", ":key_id"]
+            },
+            "description": "Delete an API key"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stocks",
+      "item": [
+        {
+          "name": "Search Stocks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stocks/search?query=AAPL",
+              "path": ["api", "v1", "stocks", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "AAPL"
+                }
+              ]
+            },
+            "description": "Search for stocks by symbol or company name"
+          }
+        },
+        {
+          "name": "Get Stock Quote",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stocks/AAPL/quote",
+              "path": ["api", "v1", "stocks", "AAPL", "quote"]
+            },
+            "description": "Get current quote for a stock symbol"
+          }
+        },
+        {
+          "name": "Get Stock History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stocks/AAPL/history?period=1mo",
+              "path": ["api", "v1", "stocks", "AAPL", "history"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "1mo"
+                }
+              ]
+            },
+            "description": "Get historical price data for a stock"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Watchlists",
+      "item": [
+        {
+          "name": "Get Watchlists",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/watchlists",
+              "path": ["api", "v1", "watchlists"]
+            },
+            "description": "Get all watchlists for the authenticated user"
+          }
+        },
+        {
+          "name": "Create Watchlist",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"name\": \"Tech Stocks\",\n    \"is_default\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/watchlists",
+              "path": ["api", "v1", "watchlists"]
+            },
+            "description": "Create a new watchlist"
+          }
+        },
+        {
+          "name": "Add to Watchlist",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"symbol\": \"AAPL\",\n    \"notes\": \"Strong buy candidate\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/watchlists/:watchlist_id/items",
+              "path": ["api", "v1", "watchlists", ":watchlist_id", "items"]
+            },
+            "description": "Add a stock to a watchlist"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "Get Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/alerts",
+              "path": ["api", "v1", "alerts"]
+            },
+            "description": "Get all alerts for the authenticated user"
+          }
+        },
+        {
+          "name": "Create Alert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"symbol\": \"AAPL\",\n    \"condition_type\": \"above\",\n    \"threshold\": 200.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/alerts",
+              "path": ["api", "v1", "alerts"]
+            },
+            "description": "Create a price alert. condition_type can be: above, below, change_pct"
+          }
+        },
+        {
+          "name": "Delete Alert",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/alerts/:alert_id",
+              "path": ["api", "v1", "alerts", ":alert_id"]
+            },
+            "description": "Delete an alert"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Portfolio",
+      "item": [
+        {
+          "name": "Get Portfolio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/portfolio",
+              "path": ["api", "v1", "portfolio"]
+            },
+            "description": "Get the user's portfolio with holdings"
+          }
+        },
+        {
+          "name": "Add Holding",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"symbol\": \"AAPL\",\n    \"quantity\": 100,\n    \"avg_cost\": 150.00,\n    \"asset_type\": \"STOCK\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/portfolio/holdings",
+              "path": ["api", "v1", "portfolio", "holdings"]
+            },
+            "description": "Add a stock holding to the portfolio"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "path": ["api", "v1", "users", "me"]
+            },
+            "description": "Get the authenticated user's profile"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "json",
+              "raw": "{\n    \"line_notify_token\": \"your_line_token\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "path": ["api", "v1", "users", "me"]
+            },
+            "description": "Update the user's profile and notification settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "path": ["health"]
+            },
+            "description": "Check API health status"
+          }
+        },
+        {
+          "name": "API Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/docs",
+              "path": ["docs"]
+            },
+            "description": "Access Swagger UI documentation"
+          }
+        }
+      ]
+    }
+  ]
+}

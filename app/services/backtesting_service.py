@@ -6,7 +6,6 @@ Backtests trading strategies against historical data to evaluate performance.
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 import math
 
 

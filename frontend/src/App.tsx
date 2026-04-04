@@ -1,17 +1,20 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { lazy, Suspense } from 'react'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
-import Dashboard from './pages/Dashboard'
-import Watchlist from './pages/Watchlist'
-import Alerts from './pages/Alerts'
-import StockSearch from './pages/StockSearch'
-import Settings from './pages/Settings'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import Portfolio from './pages/Portfolio'
-import PortfolioSignals from './pages/PortfolioSignals'
 import './App.css'
+
+// Lazy load all page components for better performance
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Watchlist = lazy(() => import('./pages/Watchlist'))
+const Alerts = lazy(() => import('./pages/Alerts'))
+const StockSearch = lazy(() => import('./pages/StockSearch'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
+const Portfolio = lazy(() => import('./pages/Portfolio'))
+const PortfolioSignals = lazy(() => import('./pages/PortfolioSignals'))
 
 function LanguageSwitcher() {
   const { i18n } = useTranslation()
@@ -67,25 +70,31 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   const { isAuthenticated, isLoading } = useAuth()
   
   if (isLoading) {
-    return <div className="loading">Loading...</div>
+    return <LoadingFallback />
   }
   
   return isAuthenticated ? children : <Navigate to="/login" replace />
 }
 
+function LoadingFallback() {
+  return <div className="loading">Loading...</div>
+}
+
 function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
-      <Route path="/search" element={<RequireAuth><StockSearch /></RequireAuth>} />
-      <Route path="/watchlist" element={<RequireAuth><Watchlist /></RequireAuth>} />
-      <Route path="/alerts" element={<RequireAuth><Alerts /></RequireAuth>} />
-      <Route path="/portfolio" element={<RequireAuth><Portfolio /></RequireAuth>} />
-      <Route path="/portfolio-signals" element={<RequireAuth><PortfolioSignals /></RequireAuth>} />
-      <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
-    </Routes>
+    <Suspense fallback={<LoadingFallback />}>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+        <Route path="/search" element={<RequireAuth><StockSearch /></RequireAuth>} />
+        <Route path="/watchlist" element={<RequireAuth><Watchlist /></RequireAuth>} />
+        <Route path="/alerts" element={<RequireAuth><Alerts /></RequireAuth>} />
+        <Route path="/portfolio" element={<RequireAuth><Portfolio /></RequireAuth>} />
+        <Route path="/portfolio-signals" element={<RequireAuth><PortfolioSignals /></RequireAuth>} />
+        <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+      </Routes>
+    </Suspense>
   )
 }
 
