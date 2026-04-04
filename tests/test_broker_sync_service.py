@@ -4,7 +4,7 @@ Tests for Broker Sync Service.
 
 import asyncio
 
-from app.services.broker_sync_service import (
+from app.services.broker_sync_service import (  # noqa: F401
     BrokerSyncService,
     Brokerage,
     ConnectionStatus,
