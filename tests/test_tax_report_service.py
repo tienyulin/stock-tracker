@@ -2,7 +2,6 @@
 Tests for Tax Report Service.
 """
 
-import pytest
 from datetime import datetime
 
 

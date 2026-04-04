@@ -12,7 +12,6 @@ from app.core.rate_limiter import limiter, DEFAULT_RATE_LIMIT
 from app.services.tax_report_service import (
     TaxReportService,
     TaxLotMethod,
-    IRS8949Entry,
 )
 from app.api.v1.auth import get_current_user
 
