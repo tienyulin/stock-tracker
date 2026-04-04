@@ -1,0 +1,8 @@
+[project]
+name = "stock-tracker"
+version = "0.1.0"
+description = "Stock tracking application"
+requires-python = ">=3.12"
+
+[tool.ruff]
+ignore = ["F401"]
