@@ -301,8 +301,6 @@ class TaxReportService:
         
         for disp in dispositions:
             for lot in disp.lots:
-                proceeds = lot.proceeds
-                cost_basis = lot.quantity * lot.cost_per_share
                 gain_loss = lot.gain_loss
                 
                 if gain_loss > 0:
