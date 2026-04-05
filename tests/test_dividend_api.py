@@ -21,26 +21,26 @@ class TestDividendAPIEndpoints:
         from app.api.v1.dividends import router
 
         routes = [r.path for r in router.routes]
-        assert "/payments" in routes
-        assert "/holdings" in routes
-        assert "/dashboard" in routes
-        assert "/growth/{symbol}" in routes
-        assert "/calendar" in routes
+        assert "/dividends/payments" in routes
+        assert "/dividends/holdings" in routes
+        assert "/dividends/dashboard" in routes
+        assert "/dividends/growth/{symbol}" in routes
+        assert "/dividends/calendar" in routes
 
     def test_get_payments_method(self):
         from app.api.v1.dividends import router
 
         routes = {r.path: r.methods for r in router.routes}
-        assert "GET" in routes.get("/payments", set())
-        assert "POST" in routes.get("/payments", set())
+        assert "GET" in routes.get("/dividends/payments", set())
+        assert "POST" in routes.get("/dividends/payments", set())
 
     def test_holdings_crud_methods(self):
         from app.api.v1.dividends import router
 
         routes = {r.path: r.methods for r in router.routes}
-        assert "GET" in routes.get("/holdings", set())
-        assert "PUT" in routes.get("/holdings/{symbol}", set())
-        assert "DELETE" in routes.get("/holdings/{symbol}", set())
+        assert "GET" in routes.get("/dividends/holdings", set())
+        assert "PUT" in routes.get("/dividends/holdings/{symbol}", set())
+        assert "DELETE" in routes.get("/dividends/holdings/{symbol}", set())
 
 
 class TestDividendCalendarCRUD:
@@ -50,9 +50,9 @@ class TestDividendCalendarCRUD:
         from app.api.v1.dividends import router
 
         routes = {r.path: r.methods for r in router.routes}
-        assert "GET" in routes.get("/calendar", set())
-        assert "POST" in routes.get("/calendar", set())
-        assert "DELETE" in routes.get("/calendar/{entry_id}", set())
+        assert "GET" in routes.get("/dividends/calendar", set())
+        assert "POST" in routes.get("/dividends/calendar", set())
+        assert "DELETE" in routes.get("/dividends/calendar/{entry_id}", set())
 
 
 class TestDividendModelsExport:
