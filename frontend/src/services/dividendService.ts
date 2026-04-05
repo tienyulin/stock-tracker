@@ -1,5 +1,4 @@
-import axios from './axios'
-import { AxiosError } from 'axios'
+import axios from 'axios'
 
 export interface DividendPayment {
   id: string
