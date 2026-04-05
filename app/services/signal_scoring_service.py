@@ -233,8 +233,7 @@ class SignalScoringService:
             else:
                 score -= 10  # Below long-term trend
 
-        # Golden/Death cross detection
-        sma_200 = sma.get("sma_200")
+        # Golden/Death cross detection (SMA20 vs SMA50)
         if sma_20 and sma_50:
             if sma_20 > sma_50 and sma_50 > (sma_20 * 0.99):
                 score += 10  # Golden cross forming
