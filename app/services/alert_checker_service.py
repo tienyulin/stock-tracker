@@ -47,7 +47,7 @@ class AlertCheckerService:
             # Get all active alerts
             result = await db.execute(
                 select(Alert, User).join(User, Alert.user_id == User.id).where(
-                    and_(Alert.is_active == True)
+                    and_(Alert.is_active)
                 )
             )
 

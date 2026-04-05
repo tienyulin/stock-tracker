@@ -8,7 +8,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -259,8 +259,6 @@ async def get_alert_dashboard(
     Returns:
         Dashboard with counts of active, triggered, and total alerts.
     """
-    from sqlalchemy import func
-
     # Total alerts
     total_result = await db.execute(
         select(func.count(Alert.id)).where(Alert.user_id == user_id)
@@ -270,7 +268,7 @@ async def get_alert_dashboard(
     # Active alerts
     active_result = await db.execute(
         select(func.count(Alert.id)).where(
-            and_(Alert.user_id == user_id, Alert.is_active == True)
+            and_(Alert.user_id == user_id, Alert.is_active)
         )
     )
     active_alerts = active_result.scalar() or 0
@@ -278,7 +276,7 @@ async def get_alert_dashboard(
     # Triggered alerts (has triggered_at)
     triggered_result = await db.execute(
         select(func.count(Alert.id)).where(
-            and_(Alert.user_id == user_id, Alert.triggered_at != None)
+            and_(Alert.user_id == user_id, Alert.triggered_at.isnot(None))
         )
     )
     triggered_alerts = triggered_result.scalar() or 0
@@ -286,7 +284,7 @@ async def get_alert_dashboard(
     # Get unique symbols with active alerts
     symbols_result = await db.execute(
         select(Alert.symbol)
-        .where(and_(Alert.user_id == user_id, Alert.is_active == True))
+        .where(and_(Alert.user_id == user_id, Alert.is_active))
         .distinct()
     )
     monitored_symbols = [row[0] for row in symbols_result.fetchall()]
