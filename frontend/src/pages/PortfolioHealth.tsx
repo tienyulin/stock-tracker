@@ -136,8 +136,6 @@ const PortfolioHealth: React.FC = () => {
     <div className="portfolio-health">
       <h1>{t('health.title')}</h1>
 
-      {error && <div className="error-message">{error}</div>}
-
       {healthScore && (
         <>
           <div className="health-score-card">
