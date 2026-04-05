@@ -8,8 +8,6 @@ import math
 import random
 from dataclasses import dataclass
 
-import numpy as np
-
 from app.schemas.schemas import (
     RetirementSimulationRequest,
     RetirementSimulationResponse,
@@ -172,7 +170,7 @@ class MonteCarloService:
 
         for _ in range(years * 12):
             # Random monthly return using normal distribution
-            monthly_return = np.random.normal(monthly_mean, monthly_std)
+            monthly_return = self._rng.normalvariate(monthly_mean, monthly_std)
             portfolio = portfolio * (1 + monthly_return) + monthly_contribution
 
         return max(portfolio, 0)  # Can't go below 0
