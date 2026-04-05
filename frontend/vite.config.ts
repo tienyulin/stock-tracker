@@ -7,21 +7,27 @@ export default defineConfig({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        // Manual chunking for better code splitting
-        manualChunks: {
-          // Vendor chunk for React and its libraries
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Chart library chunk
-          'vendor-charts': ['recharts'],
-          // i18n chunk
-          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
-          // Axios chunk
-          'vendor-axios': ['axios'],
+        // Manual chunking for better code splitting (function format for rolldown)
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor-react';
+            }
+            if (id.includes('recharts')) {
+              return 'vendor-charts';
+            }
+            if (id.includes('i18next') || id.includes('react-i18next')) {
+              return 'vendor-i18n';
+            }
+            if (id.includes('axios')) {
+              return 'vendor-axios';
+            }
+          }
         },
       },
     },
-    // Enable minification
-    minify: 'terser',
+    // Enable minification (esbuild is built-in, no terser needed)
+    minify: 'esbuild',
     // Enable source maps for production debugging
     sourcemap: false,
   },

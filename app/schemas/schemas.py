@@ -4,6 +4,7 @@ Pydantic schemas for request/response validation.
 
 from datetime import datetime
 from typing import Optional
+import uuid
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -156,3 +157,68 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user_id: str
+
+
+# AI Chat schemas
+class AIChatMessage(BaseModel):
+    """Schema for a single chat message."""
+
+    role: str = Field(..., pattern="^(user|assistant|system)$")
+    content: str
+
+
+class AIChatRequest(BaseModel):
+    """Schema for AI chat request."""
+
+    message: str = Field(..., min_length=1, max_length=4000)
+    conversation_history: list[AIChatMessage] = Field(default_factory=list)
+
+
+class AIChatResponse(BaseModel):
+    """Schema for AI chat response."""
+
+    response: str
+    conversation_id: Optional[uuid.UUID] = None
+    disclaimer: str = "This is not financial advice. Always do your own research."
+
+
+# Monte Carlo Retirement Simulation schemas
+class RetirementSimulationRequest(BaseModel):
+    """Schema for Monte Carlo retirement simulation request."""
+
+    current_age: int = Field(..., ge=18, le=80)
+    retirement_age: int = Field(..., ge=19, le=90)
+    current_savings: float = Field(..., ge=0)
+    monthly_contribution: float = Field(..., ge=0)
+    desired_monthly_income: float = Field(..., ge=0)
+    portfolio_allocation: dict[str, float] = Field(
+        default_factory=lambda: {"stocks": 0.7, "bonds": 0.2, "cash": 0.1}
+    )
+    num_simulations: int = Field(default=1000, ge=100, le=10000)
+    years_to_simulate: Optional[int] = Field(default=None, ge=1, le=50)
+
+
+class SimulationOutcome(BaseModel):
+    """Single simulation outcome."""
+
+    final_portfolio_value: float
+    total_contributions: float
+    total_growth: float
+    monthly_income_sustainable: bool
+
+
+class RetirementSimulationResponse(BaseModel):
+    """Schema for Monte Carlo retirement simulation response."""
+
+    success_probability: float  # 0.0 to 1.0
+    median_outcome: float
+    percentile_10: float
+    percentile_25: float
+    percentile_75: float
+    percentile_90: float
+    average_outcome: float
+    worst_outcome: float
+    best_outcome: float
+    total_simulations: int
+    years_until_retirement: int
+    assumptions: dict[str, float]
