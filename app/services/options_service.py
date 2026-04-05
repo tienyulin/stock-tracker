@@ -34,9 +34,19 @@ def calc_delta(S: float, K: float, T: float, r: float, sigma: float, option_type
     """Calculate Delta."""
     if T <= 0:
         if option_type == "CALL":
-            return 1.0 if S > K else 0.0
+            if S > K:
+                return 1.0
+            elif S < K:
+                return 0.0
+            else:
+                return 0.5  # S == K, ATM
         else:
-            return -1.0 if S < K else 0.0
+            if S < K:
+                return -1.0
+            elif S > K:
+                return 0.0
+            else:
+                return -0.5  # S == K, ATM
     d1_val = _d1(S, K, T, r, sigma)
     if option_type == "CALL":
         return norm.cdf(d1_val)
