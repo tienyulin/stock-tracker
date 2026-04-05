@@ -204,7 +204,7 @@ def check_health_alerts(
 
     alerts = db.query(HealthScoreAlert).filter(
         HealthScoreAlert.user_id == current_user.id,
-        HealthScoreAlert.is_active == True
+        HealthScoreAlert.is_active.is_(True)
     ).all()
 
     return [

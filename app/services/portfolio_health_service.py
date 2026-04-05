@@ -10,7 +10,7 @@ import math
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from app.models import User, UserHolding, PortfolioHealthScore, HealthScoreAlert
+from app.models import User, UserHolding
 from app.models.portfolio_health import PortfolioHealthScore, HealthScoreAlert
 
 
@@ -213,7 +213,7 @@ class PortfolioHealthService:
         """Check if any health score alerts should be triggered."""
         alerts = self.db.query(HealthScoreAlert).filter(
             HealthScoreAlert.user_id == self.user_id,
-            HealthScoreAlert.is_active == True
+            HealthScoreAlert.is_active.is_(True)
         ).all()
 
         triggered = []
