@@ -91,7 +91,6 @@ class MonteCarloService:
         avg_outcome = sum(outcomes) / num_sims
 
         # Success = can withdraw desired monthly income for 30 years
-        withdrawal_rate = (request.desired_monthly_income * 12) / median_outcome if median_outcome > 0 else 0
         safe_withdrawal_rate = 0.04  # 4% rule
         success_count = sum(
             1 for v in outcomes if v > 0 and (v * safe_withdrawal_rate) >= request.desired_monthly_income * 12
