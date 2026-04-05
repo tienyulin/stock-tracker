@@ -4,6 +4,8 @@
     "watchlist": "Watchlist",
     "alerts": "Alerts",
     "portfolio": "Portfolio",
+    "portfolioSignals": "Signals",
+    "portfolioHealth": "Health",
     "settings": "Settings",
     "logout": "Logout"
   },
@@ -90,5 +92,25 @@
     "email": "Email",
     "password": "Password",
     "welcome": "Welcome back"
+  },
+  "health": {
+    "title": "Portfolio Health Score",
+    "score": "Score",
+    "scoreBreakdown": "Score Breakdown",
+    "diversification": "Diversification",
+    "risk": "Risk",
+    "performance": "Performance",
+    "trend": "Trend",
+    "history": "Score History (30 days)",
+    "alerts": "Health Alerts",
+    "threshold": "Threshold",
+    "createAlert": "Create Alert",
+    "alertThreshold": "Alert when below",
+    "noAlerts": "No alerts configured",
+    "excellent": "Excellent",
+    "good": "Good",
+    "fair": "Fair",
+    "poor": "Poor",
+    "critical": "Critical"
   }
 }
