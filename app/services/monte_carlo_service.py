@@ -1,225 +1,179 @@
 """
-Monte Carlo Simulation Service for Retirement Planning.
+Monte Carlo Retirement Simulation Service
 
-Provides stochastic simulation of retirement portfolio outcomes.
+Runs Monte Carlo simulations for retirement planning.
 """
 
+import math
 import random
 from dataclasses import dataclass
 
 import numpy as np
 
-
-@dataclass
-class PortfolioAllocation:
-    """Portfolio asset allocation."""
-    stocks: float = 0.6  # 60% stocks
-    bonds: float = 0.3   # 30% bonds
-    cash: float = 0.05   # 5% cash
-    real_estate: float = 0.05  # 5% REITs
+from app.schemas.schemas import (
+    RetirementSimulationRequest,
+    RetirementSimulationResponse,
+)
 
 
-@dataclass
-class MarketAssumptions:
-    """Historical market assumptions for simulation."""
-    stock_return: float = 0.10      # 10% annual return
-    stock_volatility: float = 0.18  # 18% annual volatility
-    bond_return: float = 0.04       # 4% annual return
-    bond_volatility: float = 0.06   # 6% annual volatility
-    cash_return: float = 0.02       # 2% annual return
-    real_estate_return: float = 0.07  # 7% annual return
-    real_estate_volatility: float = 0.12  # 12% annual volatility
-    inflation_rate: float = 0.025    # 2.5% annual inflation
-
-
-@dataclass
-class RetirementParams:
-    """Parameters for retirement simulation."""
-    current_age: int = 30
-    retirement_age: int = 65
-    life_expectancy: int = 95
-    current_portfolio: float = 100000.0
-    monthly_contribution: float = 1000.0
-    desired_annual_income: float = 60000.0
-    social_security_monthly: float = 0.0
-    allocation: PortfolioAllocation = None
-    
-    def __post_init__(self):
-        if self.allocation is None:
-            self.allocation = PortfolioAllocation()
+# Historical market assumptions (annual returns and volatility by asset class)
+MARKET_ASSUMPTIONS = {
+    "stocks": {"mean": 0.10, "std": 0.18},  # S&P 500 historical
+    "bonds": {"mean": 0.05, "std": 0.06},  # Bond index historical
+    "cash": {"mean": 0.02, "std": 0.01},  # Money market / T-bills
+    "real_estate": {"mean": 0.08, "std": 0.12},  # REITs historical
+}
 
 
 @dataclass
 class SimulationResult:
-    """Result of Monte Carlo simulation."""
-    success_rate: float  # Percentage of simulations that didn't run out of money
-    median_ending_balance: float
-    percentile_10: float
-    percentile_25: float
-    percentile_75: float
-    percentile_90: float
-    yearly_outcomes: list[dict]  # Year-by-year median outcomes
-    total_contributions: float
-    total_growth: float
+    """Result of a single Monte Carlo simulation path."""
+
+    final_value: float
+    yearly_values: list[float]
 
 
 class MonteCarloService:
-    """Monte Carlo simulation for retirement planning."""
+    """Service for Monte Carlo retirement simulations."""
 
-    def __init__(self):
-        """Initialize Monte Carlo service."""
-        self.market = MarketAssumptions()
-        self.num_simulations = 10000
-        self.random_seed = 42
+    def __init__(self, seed: int | None = None):
+        """Initialize Monte Carlo Service.
 
-    def set_seed(self, seed: int) -> None:
-        """Set random seed for reproducibility."""
-        self.random_seed = seed
-        random.seed(seed)
-        np.random.seed(seed)
-
-    async def simulate(self, params: RetirementParams) -> SimulationResult:
-        """
-        Run Monte Carlo simulation.
-        
         Args:
-            params: Retirement planning parameters.
-            
-        Returns:
-            SimulationResult with success rate and percentile outcomes.
+            seed: Random seed for reproducibility in testing.
         """
-        # Set seed for reproducibility
-        random.seed(self.random_seed)
-        np.random.seed(self.random_seed)
-        
-        years_to_retirement = params.retirement_age - params.current_age
-        years_in_retirement = params.life_expectancy - params.retirement_age
-        total_years = years_to_retirement + years_in_retirement
-        
-        # Initialize arrays for all simulations
-        ending_balances = np.zeros(self.num_simulations)
-        success_count = 0
-        
-        # Year-by-year tracking for median calculation
-        yearly_balances = [[] for _ in range(total_years + 1)]
-        
-        allocation = params.allocation
-        m = self.market
-        
-        for sim in range(self.num_simulations):
-            balance = params.current_portfolio
-            
-            # Accumulation phase (working years)
-            for year in range(years_to_retirement):
-                # Generate annual returns using normal distribution
-                stock_return = np.random.normal(m.stock_return, m.stock_volatility)
-                bond_return = np.random.normal(m.bond_return, m.bond_volatility)
-                cash_return = m.cash_return
-                re_return = np.random.normal(m.real_estate_return, m.real_estate_volatility)
-                
-                # Calculate weighted portfolio return
-                portfolio_return = (
-                    allocation.stocks * stock_return +
-                    allocation.bonds * bond_return +
-                    allocation.cash * cash_return +
-                    allocation.real_estate * re_return
-                )
-                
-                # Monthly contributions (assume annual, adjusted for return)
-                annual_contribution = params.monthly_contribution * 12
-                balance = balance * (1 + portfolio_return) + annual_contribution
-                
-                yearly_balances[year].append(balance)
-            
-            # Withdrawal phase (retirement years)
-            for year in range(years_in_retirement):
-                # Generate returns
-                stock_return = np.random.normal(m.stock_return, m.stock_volatility)
-                bond_return = np.random.normal(m.bond_return, m.bond_volatility)
-                cash_return = m.cash_return
-                re_return = np.random.normal(m.real_estate_return, m.real_estate_volatility)
-                
-                portfolio_return = (
-                    allocation.stocks * stock_return +
-                    allocation.bonds * bond_return +
-                    allocation.cash * cash_return +
-                    allocation.real_estate * re_return
-                )
-                
-                # Calculate annual withdrawal (inflation-adjusted)
-                years_in_ret = year + years_to_retirement
-                inflation_factor = (1 + m.inflation_rate) ** years_in_ret
-                annual_withdrawal = params.desired_annual_income * inflation_factor
-                
-                # Subtract social security
-                annual_withdrawal -= params.social_security_monthly * 12 * inflation_factor
-                annual_withdrawal = max(0, annual_withdrawal)
-                
-                balance = balance * (1 + portfolio_return) - annual_withdrawal
-                
-                if balance < 0:
-                    balance = 0
-                    # Record failure
-                    for remaining_year in range(year, years_in_retirement):
-                        yearly_balances[years_to_retirement + remaining_year].append(0)
-                    break
-                
-                yearly_balances[years_to_retirement + year].append(balance)
-            
-            ending_balances[sim] = max(0, balance)
-            if balance > 0:
-                success_count += 1
-        
+        self._rng = random.Random(seed) if seed is not None else random.Random()
+
+    def run_retirement_simulation(
+        self, request: RetirementSimulationRequest
+    ) -> RetirementSimulationResponse:
+        """Run Monte Carlo simulation for retirement planning.
+
+        Args:
+            request: Simulation parameters.
+
+        Returns:
+            Simulation results with probability distribution.
+        """
+        years_to_retirement = request.retirement_age - request.current_age
+        if years_to_retirement <= 0:
+            raise ValueError("Retirement age must be greater than current age.")
+
+        years = years_to_retirement + (request.years_to_simulate or 10)
+        num_sims = request.num_simulations
+
+        # Calculate blended portfolio return parameters
+        portfolio_mean, portfolio_std = self._blended_portfolio_params(
+            request.portfolio_allocation
+        )
+
+        # Run simulations
+        outcomes: list[float] = []
+        for _ in range(num_sims):
+            final_value = self._single_simulation(
+                current_savings=request.current_savings,
+                monthly_contribution=request.monthly_contribution,
+                years=years,
+                mean=portfolio_mean,
+                std=portfolio_std,
+            )
+            outcomes.append(final_value)
+
+        outcomes.sort()
+
         # Calculate statistics
-        success_rate = (success_count / self.num_simulations) * 100
-        
-        # Sort ending balances for percentiles
-        sorted_balances = np.sort(ending_balances)
-        
-        median_idx = self.num_simulations // 2
-        p10_idx = int(self.num_simulations * 0.10)
-        p25_idx = int(self.num_simulations * 0.25)
-        p75_idx = int(self.num_simulations * 0.75)
-        p90_idx = int(self.num_simulations * 0.90)
-        
-        median_ending = sorted_balances[median_idx]
-        p10 = sorted_balances[p10_idx]
-        p25 = sorted_balances[p25_idx]
-        p75 = sorted_balances[p75_idx]
-        p90 = sorted_balances[p90_idx]
-        
-        # Calculate year-by-year median outcomes
-        yearly_outcomes = []
-        for year_idx, year_balances in enumerate(yearly_balances):
-            if year_balances:
-                sorted_year = np.sort(year_balances)
-                median = sorted_year[len(sorted_year) // 2]
-                yearly_outcomes.append({
-                    "year": year_idx,
-                    "age": params.current_age + year_idx,
-                    "median_balance": round(median, 2),
-                    "is_retirement": year_idx >= years_to_retirement
-                })
-        
-        # Calculate totals
-        total_contributions = (
-            params.current_portfolio +
-            params.monthly_contribution * 12 * years_to_retirement
+        percentile_10_idx = int(num_sims * 0.10)
+        percentile_25_idx = int(num_sims * 0.25)
+        percentile_75_idx = int(num_sims * 0.75)
+        percentile_90_idx = int(num_sims * 0.90)
+
+        median_outcome = outcomes[num_sims // 2]
+        avg_outcome = sum(outcomes) / num_sims
+
+        # Success = can withdraw desired monthly income for 30 years
+        withdrawal_rate = (request.desired_monthly_income * 12) / median_outcome if median_outcome > 0 else 0
+        safe_withdrawal_rate = 0.04  # 4% rule
+        success_count = sum(
+            1 for v in outcomes if v > 0 and (v * safe_withdrawal_rate) >= request.desired_monthly_income * 12
         )
-        total_growth = median_ending - total_contributions
-        
-        return SimulationResult(
-            success_rate=round(success_rate, 1),
-            median_ending_balance=round(median_ending, 2),
-            percentile_10=round(p10, 2),
-            percentile_25=round(p25, 2),
-            percentile_75=round(p75, 2),
-            percentile_90=round(p90, 2),
-            yearly_outcomes=yearly_outcomes,
-            total_contributions=round(total_contributions, 2),
-            total_growth=round(total_growth, 2)
+        success_probability = success_count / num_sims
+
+        return RetirementSimulationResponse(
+            success_probability=round(success_probability, 4),
+            median_outcome=round(median_outcome, 2),
+            percentile_10=round(outcomes[percentile_10_idx], 2),
+            percentile_25=round(outcomes[percentile_25_idx], 2),
+            percentile_75=round(outcomes[percentile_75_idx], 2),
+            percentile_90=round(outcomes[percentile_90_idx], 2),
+            average_outcome=round(avg_outcome, 2),
+            worst_outcome=round(min(outcomes), 2),
+            best_outcome=round(max(outcomes), 2),
+            total_simulations=num_sims,
+            years_until_retirement=years_to_retirement,
+            assumptions={
+                "portfolio_mean": round(portfolio_mean, 4),
+                "portfolio_std": round(portfolio_std, 4),
+                "inflation_rate": 0.03,
+                "withdrawal_years": 30,
+            },
         )
 
+    def _blended_portfolio_params(self, allocation: dict[str, float]) -> tuple[float, float]:
+        """Calculate blended portfolio mean and std from allocation.
 
-# Global instance
-monte_carlo_service = MonteCarloService()
+        Args:
+            allocation: Dict of asset class -> weight.
+
+        Returns:
+            Tuple of (blended_mean, blended_std).
+        """
+        total_weight = sum(allocation.values())
+        if not math.isclose(total_weight, 1.0, rel_tol=1e-5):
+            raise ValueError(f"Portfolio allocation must sum to 1.0, got {total_weight}")
+
+        blended_mean = 0.0
+        blended_var = 0.0
+
+        for asset, weight in allocation.items():
+            if asset not in MARKET_ASSUMPTIONS:
+                raise ValueError(f"Unknown asset class: {asset}")
+            params = MARKET_ASSUMPTIONS[asset]
+            blended_mean += weight * params["mean"]
+            blended_var += (weight * params["std"]) ** 2
+
+        blended_std = math.sqrt(blended_var)
+        return blended_mean, blended_std
+
+    def _single_simulation(
+        self,
+        current_savings: float,
+        monthly_contribution: float,
+        years: int,
+        mean: float,
+        std: float,
+    ) -> float:
+        """Run a single Monte Carlo simulation path.
+
+        Uses geometric Brownian motion with monthly steps.
+
+        Args:
+            current_savings: Starting portfolio value.
+            monthly_contribution: Monthly contribution amount.
+            years: Number of years to simulate.
+            mean: Annual mean return.
+            std: Annual volatility.
+
+        Returns:
+            Final portfolio value.
+        """
+        monthly_mean = mean / 12
+        monthly_std = std / math.sqrt(12)
+
+        portfolio = current_savings
+
+        for _ in range(years * 12):
+            # Random monthly return using normal distribution
+            monthly_return = np.random.normal(monthly_mean, monthly_std)
+            portfolio = portfolio * (1 + monthly_return) + monthly_contribution
+
+        return max(portfolio, 0)  # Can't go below 0

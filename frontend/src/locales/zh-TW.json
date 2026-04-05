@@ -4,8 +4,7 @@
     "watchlist": "關注列表",
     "alerts": "價格警報",
     "portfolio": "投資組合",
-    "portfolioSignals": "信號",
-    "portfolioHealth": "健康分數",
+    "retirement": "退休模擬",
     "settings": "設定",
     "logout": "登出"
   },
@@ -93,24 +92,17 @@
     "password": "密碼",
     "welcome": "歡迎回來"
   },
-  "health": {
-    "title": "投資組合健康分數",
-    "score": "分數",
-    "scoreBreakdown": "分數分析",
-    "diversification": "分散程度",
-    "risk": "風險",
-    "performance": "表現",
-    "trend": "趨勢",
-    "history": "分數歷史（30天）",
-    "alerts": "健康警報",
-    "threshold": "門檻值",
-    "createAlert": "建立警報",
-    "alertThreshold": "低於此值時警報",
-    "noAlerts": "尚未設定警報",
-    "excellent": "極佳",
-    "good": "良好",
-    "fair": "普通",
-    "poor": "不佳",
-    "critical": "危急"
+  "retirement": {
+    "title": "蒙地卡羅退休模擬器",
+    "formTitle": "模擬參數",
+    "resultsTitle": "模擬結果",
+    "currentAge": "目前年齡",
+    "retirementAge": "目標退休年齡",
+    "currentSavings": "目前投資組合價值 ($)",
+    "monthlyContribution": "每月投入金額 ($)",
+    "desiredIncome": "退休後每月期望收入 ($)",
+    "riskProfile": "風險偏好",
+    "portfolioAllocation": "投資組合配置 (%)",
+    "numSimulations": "模擬次數"
   }
 }

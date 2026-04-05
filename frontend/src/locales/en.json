@@ -4,8 +4,7 @@
     "watchlist": "Watchlist",
     "alerts": "Alerts",
     "portfolio": "Portfolio",
-    "portfolioSignals": "Signals",
-    "portfolioHealth": "Health",
+    "retirement": "Retirement",
     "settings": "Settings",
     "logout": "Logout"
   },
@@ -93,24 +92,17 @@
     "password": "Password",
     "welcome": "Welcome back"
   },
-  "health": {
-    "title": "Portfolio Health Score",
-    "score": "Score",
-    "scoreBreakdown": "Score Breakdown",
-    "diversification": "Diversification",
-    "risk": "Risk",
-    "performance": "Performance",
-    "trend": "Trend",
-    "history": "Score History (30 days)",
-    "alerts": "Health Alerts",
-    "threshold": "Threshold",
-    "createAlert": "Create Alert",
-    "alertThreshold": "Alert when below",
-    "noAlerts": "No alerts configured",
-    "excellent": "Excellent",
-    "good": "Good",
-    "fair": "Fair",
-    "poor": "Poor",
-    "critical": "Critical"
+  "retirement": {
+    "title": "Monte Carlo Retirement Simulator",
+    "formTitle": "Simulation Parameters",
+    "resultsTitle": "Simulation Results",
+    "currentAge": "Current Age",
+    "retirementAge": "Target Retirement Age",
+    "currentSavings": "Current Portfolio Value ($)",
+    "monthlyContribution": "Monthly Contribution ($)",
+    "desiredIncome": "Desired Monthly Retirement Income ($)",
+    "riskProfile": "Risk Profile",
+    "portfolioAllocation": "Portfolio Allocation (%)",
+    "numSimulations": "Number of Simulations"
   }
 }
