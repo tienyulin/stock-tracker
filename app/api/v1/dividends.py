@@ -46,6 +46,7 @@ def calculate_yield_on_cost(cost_basis: float, shares: float, annual_dividend: f
 
 
 # ============ Dividend Payments ============
+# Phase 28: Dividend Growth Tracker - Backend API
 
 @router.get("/payments", response_model=list[DividendPaymentResponse])
 async def get_dividend_payments(
