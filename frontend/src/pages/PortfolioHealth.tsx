@@ -35,7 +35,6 @@ const PortfolioHealth: React.FC = () => {
   const [history, setHistory] = useState<HealthHistory[]>([]);
   const [alerts, setAlerts] = useState<HealthAlert[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [alertThreshold, setAlertThreshold] = useState<string>('50');
 
   useEffect(() => {
@@ -214,8 +213,11 @@ const PortfolioHealth: React.FC = () => {
                   />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
                   <Tooltip
-                    labelFormatter={formatDate}
-                    formatter={(value: number) => [`${value.toFixed(1)}`, t('health.score')]}
+                    labelFormatter={(label) => formatDate(String(label))}
+                    formatter={(value) => {
+                      const num = typeof value === 'number' ? value : 0;
+                      return [`${num.toFixed(1)}`, t('health.score')];
+                    }}
                   />
                   <Area
                     type="monotone"
