@@ -1,13 +1,15 @@
 """
 Stock Service - Basic Stock Price Query
 
-Provides stock information and price data retrieval.
+Provides stock information and price data retrieval with caching.
 """
 
+import asyncio
 from dataclasses import dataclass
 from typing import Optional
 
 from app.exceptions import ValidationError
+from app.services.cache_service import stock_quote_cache
 
 
 @dataclass
@@ -41,11 +43,11 @@ class PriceData:
 
 
 class StockService:
-    """Service for stock information and price queries."""
+    """Service for stock information and price queries with caching."""
 
     def __init__(self):
         """Initialize Stock Service."""
-        self._cache: dict[str, dict] = {}
+        pass
 
     def validate_symbol(self, symbol: str) -> bool:
         """
@@ -67,7 +69,7 @@ class StockService:
 
     async def _fetch_quote(self, symbol: str) -> Optional[dict]:
         """
-        Fetch quote data from Yahoo Finance.
+        Fetch quote data from Yahoo Finance (with caching).
 
         Args:
             symbol: Stock symbol.
@@ -75,6 +77,12 @@ class StockService:
         Returns:
             Quote data dict or None if not found.
         """
+        # Try cache first
+        cache_key = f"quote:{symbol}"
+        cached = await stock_quote_cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         # Import here to avoid circular dependency
         from app.services.yfinance_service import YFinanceService
 
@@ -83,11 +91,15 @@ class StockService:
             if quote is None:
                 return None
 
-            return {
+            result = {
                 "symbol": quote.symbol,
                 "regularMarketPrice": quote.price,
                 "regularMarketVolume": quote.volume,
             }
+
+            # Cache the result
+            await stock_quote_cache.set(cache_key, result, ttl=30.0)
+            return result
 
     async def get_stock_info(self, symbol: str) -> Optional[StockInfo]:
         """
@@ -148,7 +160,7 @@ class StockService:
 
     async def get_multiple_quotes(self, symbols: list[str]) -> dict[str, PriceData]:
         """
-        Get price data for multiple stocks.
+        Get price data for multiple stocks (with caching).
 
         Args:
             symbols: List of stock symbols.
@@ -156,11 +168,15 @@ class StockService:
         Returns:
             Dict mapping symbol to PriceData.
         """
-        results: dict[str, PriceData] = {}
-
-        for symbol in symbols:
+        # Use asyncio.gather for concurrent fetching
+        async def fetch_one(symbol: str) -> tuple[str, Optional[PriceData]]:
             price = await self.get_price_data(symbol)
-            if price:
-                results[symbol] = price
+            return (symbol, price)
 
-        return results
+        results_list = await asyncio.gather(*[fetch_one(s) for s in symbols])
+        
+        return {
+            symbol: price 
+            for symbol, price in results_list 
+            if price is not None
+        }

@@ -31,6 +31,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
     line_notify_token: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    discord_webhook_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     # Relationships
     watchlists: Mapped[list["Watchlist"]] = relationship(
@@ -38,6 +39,12 @@ class User(Base):
     )
     alerts: Mapped[list["Alert"]] = relationship(
         "Alert", back_populates="user", cascade="all, delete-orphan"
+    )
+    holdings: Mapped[list["UserHolding"]] = relationship(
+        "UserHolding", back_populates="user", cascade="all, delete-orphan"
+    )
+    api_keys: Mapped[list["ApiKey"]] = relationship(
+        "ApiKey", back_populates="user", cascade="all, delete-orphan"
     )
 
 
@@ -149,3 +156,59 @@ class AlertNotification(Base):
 
     # Relationships
     alert: Mapped["Alert"] = relationship("Alert", back_populates="notifications")
+
+
+class UserHolding(Base):
+    """User stock holding model."""
+
+    __tablename__ = "user_holdings"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    symbol: Mapped[str] = mapped_column(String(20), nullable=False)
+    quantity: Mapped[float] = mapped_column(nullable=False)
+    avg_cost: Mapped[float] = mapped_column(nullable=False)  # average cost per share
+    asset_type: Mapped[str] = mapped_column(String(20), nullable=False, default="STOCK")
+    sector: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    dividend_yield: Mapped[Optional[float]] = mapped_column(nullable=True)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
+    dividend_frequency: Mapped[str] = mapped_column(String(20), nullable=False, default="NONE")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="holdings")
+
+
+class ApiKey(Base):
+    """API Key model for rate limiting and authentication."""
+
+    __tablename__ = "api_keys"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    key_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    key_prefix: Mapped[str] = mapped_column(String(20), nullable=False)  # First 8 chars for identification
+    name: Mapped[str] = mapped_column(String(100), nullable=False)  # e.g., "Postman", "Trading Bot"
+    rate_limit: Mapped[int] = mapped_column(default=100)  # requests per minute
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="api_keys")

@@ -2,15 +2,18 @@
 Alert API routes.
 """
 
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.models import Alert
+from app.utils.auth import decode_access_token
+from app.models import Alert, User
 from app.schemas import AlertCreate, AlertResponse, AlertUpdate
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
@@ -190,6 +193,28 @@ async def trigger_alert(
         import logging
         logging.getLogger(__name__).warning(f"Failed to send LINE notification: {e}")
 
+    # Send Discord notification (async, non-blocking)
+    from app.services.discord_notify_service import notify_discord_alert_triggered
+    try:
+        # Get user's Discord webhook URL
+        user_result = await db.execute(
+            select(User.discord_webhook_url).where(User.id == alert.user_id)
+        )
+        discord_webhook_url = user_result.scalar_one_or_none()
+        
+        if discord_webhook_url:
+            await notify_discord_alert_triggered(
+                webhook_url=discord_webhook_url,
+                symbol=alert.symbol,
+                condition_type=alert.condition_type,
+                threshold=alert.threshold,
+                current_price=float(current_price)
+            )
+    except Exception as e:
+        # Log but don't fail the request
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to send Discord notification: {e}")
+
     return AlertResponse(
         id=alert.id,
         symbol=alert.symbol,
@@ -200,3 +225,148 @@ async def trigger_alert(
         created_at=alert.created_at,
         updated_at=alert.updated_at,
     )
+
+
+# === Alerts Expansion Endpoints ===
+
+
+class AlertConditionRequest(BaseModel):
+    """Single alert condition."""
+    metric: str
+    operator: str
+    value: float
+
+
+class CreateExpandedAlertRequest(BaseModel):
+    """Request to create an expanded alert."""
+    symbol: str
+    name: str
+    conditions: List[AlertConditionRequest]
+    notification_channels: List[str] = ["LINE"]
+    custom_message: Optional[str] = None
+
+
+class AlertResponse(BaseModel):
+    """Alert response."""
+    id: str
+    symbol: str
+    name: str
+    conditions: List[dict]
+    notification_channels: List[str]
+    custom_message: str
+    is_active: bool
+    created_at: str
+
+
+@router.post("/expanded", response_model=dict)
+async def create_expanded_alert(
+    request: CreateExpandedAlertRequest,
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Create an expanded alert with multiple conditions.
+
+    Supports:
+    - Multiple alert types (price, percent, RSI, MACD)
+    - AND/OR condition logic
+    - Custom notification messages
+    - Multiple notification channels
+    """
+    from app.services.alerts_expansion_service import AlertsExpansionService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload["sub"]
+
+    # Create alert (placeholder)
+    _alert_service = AlertsExpansionService()
+
+    conditions = [
+        {"metric": c.metric, "operator": c.operator, "value": c.value}
+        for c in request.conditions
+    ]
+
+    alert_data = {
+        "id": f"alert_{user_id[:8]}_{request.symbol}_{int(datetime.now().timestamp())}",
+        "user_id": user_id,
+        "symbol": request.symbol,
+        "name": request.name,
+        "conditions": conditions,
+        "notification_channels": request.notification_channels,
+        "custom_message": request.custom_message or f"Alert triggered for {request.symbol}",
+        "is_active": True,
+        "created_at": datetime.now().isoformat(),
+    }
+
+    return alert_data
+
+
+@router.post("/expanded/evaluate", response_model=dict)
+async def evaluate_alerts(
+    db: AsyncSession = Depends(get_db),
+    authorization: str = Header(...),
+):
+    """
+    Evaluate all active alerts against current market data.
+    """
+    from app.services.alerts_expansion_service import AlertsExpansionService
+    from app.services.yfinance_service import YFinanceService
+
+    # Extract user ID from token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    _user_id = payload["sub"]
+
+    # Get user's active alerts (placeholder - would query database)
+    alerts = []
+
+    # Get current market data for user's watchlist
+    yfinance = YFinanceService()
+    current_data = {}
+
+    try:
+        # Get quotes for all symbols in alerts
+        symbols = list(set(a.get("symbol") for a in alerts if a.get("symbol")))
+        for symbol in symbols:
+            try:
+                quote = await yfinance.get_quote(symbol)
+                current_data[symbol] = {
+                    "price": quote.price,
+                    "percent_change": getattr(quote, "change_percent", 0),
+                }
+            except Exception:
+                pass
+    finally:
+        await yfinance.close()
+
+    # Evaluate alerts
+    alert_service = AlertsExpansionService()
+    results = await alert_service.evaluate_alerts(alerts, current_data)
+
+    return {
+        "evaluated_at": datetime.now().isoformat(),
+        "results": [
+            {
+                "alert_id": r.alert_id,
+                "symbol": r.symbol,
+                "triggered": r.triggered,
+                "triggered_conditions": r.triggered_conditions,
+                "current_values": r.current_values,
+            }
+            for r in results
+        ],
+    }

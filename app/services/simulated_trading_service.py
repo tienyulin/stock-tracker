@@ -4,9 +4,8 @@ Simulated Trading Service
 Provides paper trading simulation based on signals.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 import uuid
 

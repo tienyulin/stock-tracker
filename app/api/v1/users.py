@@ -2,12 +2,12 @@
 User management endpoints.
 """
 
-from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
 import logging
+import uuid
 
 from app.core.database import get_db
 from app.models.models import User
@@ -28,6 +28,19 @@ class LineTokenUpdate(BaseModel):
 class LineTokenTestResult(BaseModel):
     success: bool
     message: str
+
+
+class DiscordWebhookTestResult(BaseModel):
+    success: bool
+    message: str
+
+
+class DiscordWebhookUpdate(BaseModel):
+    discord_webhook_url: str
+
+
+class DiscordWebhookResponse(BaseModel):
+    discord_webhook_configured: bool
 
 
 async def get_current_user_id(authorization: str = Header(None)) -> str:
@@ -136,3 +149,91 @@ You will receive stock alerts here.
             success=False, 
             message="Failed to send test message. Please check your LINE Notify token."
         )
+
+
+@router.post("/me/discord-webhook/test", response_model=DiscordWebhookTestResult)
+async def test_discord_webhook(
+    webhook_data: DiscordWebhookUpdate,
+    user_id: str = Depends(get_current_user_id)
+):
+    """Test Discord webhook by sending a test message."""
+    from app.services.discord_notify_service import send_discord_webhook
+    
+    test_message = """
+📢 **Stock Tracker Discord Integration Test**
+
+Your Discord webhook is working! 
+You will receive stock alerts here.
+    """.strip()
+    
+    success = await send_discord_webhook(webhook_data.discord_webhook_url, test_message)
+    
+    if success:
+        return DiscordWebhookTestResult(
+            success=True, 
+            message="Test message sent! Check your Discord channel."
+        )
+    else:
+        return DiscordWebhookTestResult(
+            success=False, 
+            message="Failed to send test message. Please check your Discord webhook URL."
+        )
+
+
+@router.get("/me/discord-webhook", response_model=DiscordWebhookResponse)
+async def get_discord_webhook_status(
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Get Discord webhook configuration status."""
+    result = await db.execute(
+        select(User.discord_webhook_url).where(User.id == uuid.UUID(user_id))
+    )
+    webhook_url = result.scalar_one_or_none()
+    
+    return DiscordWebhookResponse(discord_webhook_configured=bool(webhook_url))
+
+
+@router.put("/me/discord-webhook", response_model=DiscordWebhookResponse)
+async def update_discord_webhook(
+    webhook_data: DiscordWebhookUpdate,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Update Discord webhook URL for the current user."""
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.discord_webhook_url = webhook_data.discord_webhook_url
+    await db.commit()
+    
+    logger.info("User %s updated Discord webhook URL", user_id)
+    
+    return DiscordWebhookResponse(discord_webhook_configured=bool(webhook_data.discord_webhook_url))
+
+
+@router.delete("/me/discord-webhook", response_model=DiscordWebhookResponse)
+async def delete_discord_webhook(
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Remove Discord webhook URL (disconnect Discord notifications)."""
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.discord_webhook_url = None
+    await db.commit()
+    
+    logger.info("User %s disconnected Discord webhook", user_id)
+    
+    return DiscordWebhookResponse(discord_webhook_configured=False)
