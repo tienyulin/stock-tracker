@@ -6,7 +6,10 @@
     "portfolio": "投資組合",
     "retirement": "退休模擬",
     "settings": "設定",
-    "logout": "登出"
+    "logout": "登出",
+    "portfolioOverview": "總覽",
+    "portfolioSignals": "AI 信號",
+    "portfolioHealth": "健康"
   },
   "dashboard": {
     "title": "儀表板",
@@ -60,7 +63,8 @@
     "gainLoss": "損益",
     "aiSignal": "AI 信號",
     "exportPdf": "匯出 PDF",
-    "noHoldings": "尚無持倉資料"
+    "noHoldings": "尚無持倉資料",
+    "overview": "投資組合總指揮中心"
   },
   "settings": {
     "title": "設定",
@@ -104,5 +108,21 @@
     "riskProfile": "風險偏好",
     "portfolioAllocation": "投資組合配置 (%)",
     "numSimulations": "模擬次數"
+  },
+  "overview": {
+    "netWorth": "淨資產",
+    "today": "今日",
+    "assetAllocation": "資產配置",
+    "aiSignals": "AI 信號摘要",
+    "topGainers": "最大贏家",
+    "topLosers": "最大輸家",
+    "upcomingDividends": "即將發放股息 (30天)",
+    "optionsGreeks": "選擇權希臘字母",
+    "recentAlerts": "近期警報",
+    "noHoldings": "尚無持倉",
+    "noData": "暫無資料",
+    "noAlerts": "近期無警報",
+    "change": "漲跌 %",
+    "value": "市值"
   }
 }

@@ -4,6 +4,9 @@
     "watchlist": "Watchlist",
     "alerts": "Alerts",
     "portfolio": "Portfolio",
+    "portfolioOverview": "Overview",
+    "portfolioSignals": "Signals",
+    "portfolioHealth": "Health",
     "retirement": "Retirement",
     "settings": "Settings",
     "logout": "Logout"
@@ -60,7 +63,8 @@
     "gainLoss": "Gain/Loss",
     "aiSignal": "AI Signal",
     "exportPdf": "Export PDF",
-    "noHoldings": "No holdings found"
+    "noHoldings": "No holdings found",
+    "overview": "Portfolio Command Center"
   },
   "settings": {
     "title": "Settings",
@@ -104,5 +108,21 @@
     "riskProfile": "Risk Profile",
     "portfolioAllocation": "Portfolio Allocation (%)",
     "numSimulations": "Number of Simulations"
+  },
+  "overview": {
+    "netWorth": "Net Worth",
+    "today": "Today",
+    "assetAllocation": "Asset Allocation",
+    "aiSignals": "AI Signal Summary",
+    "topGainers": "Top Gainers",
+    "topLosers": "Top Losers",
+    "upcomingDividends": "Upcoming Dividends (30d)",
+    "optionsGreeks": "Options Greeks Summary",
+    "recentAlerts": "Recent Alerts",
+    "noHoldings": "No holdings yet.",
+    "noData": "No data available",
+    "noAlerts": "No recent alerts",
+    "change": "Change %",
+    "value": "Value"
   }
 }
