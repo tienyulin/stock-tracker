@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "watchlist": "ウォッチリスト",
+    "alerts": "アラート",
+    "portfolio": "ポートフォリオ",
+    "retirement": "退職シミュレーション",
+    "settings": "設定",
+    "logout": "ログアウト"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "totalValue": "総資産",
+    "dayChange": "前日比",
+    "stocks": "株式",
+    "etfs": "ETF",
+    "bonds": "債券",
+    "aiSignals": "AIシグナル",
+    "signal": "シグナル",
+    "confidence": "信頼度",
+    "price": "価格",
+    "change": "変動",
+    "buy": "買い",
+    "sell": "売り",
+    "hold": "保有"
+  },
+  "watchlist": {
+    "title": "ウォッチリスト",
+    "addSymbol": "銘柄を追加",
+    "symbol": "銘柄コード",
+    "price": "価格",
+    "change": "変動",
+    "actions": "操作",
+    "delete": "削除",
+    "noItems": "ウォッチリストは空です"
+  },
+  "alerts": {
+    "title": "価格アラート",
+    "create": "アラート作成",
+    "symbol": "銘柄コード",
+    "condition": "条件",
+    "targetPrice": "目標価格",
+    "currentPrice": "現在価格",
+    "status": "ステータス",
+    "active": "有効",
+    "triggered": "発動済",
+    "delete": "削除",
+    "noAlerts": "アラートは設定されていません"
+  },
+  "portfolio": {
+    "title": "ポートフォリオ概要",
+    "holdings": "保有銘柄",
+    "totalValue": "総資産",
+    "totalGain": "総損益",
+    "sector": "業種",
+    "assetType": "資産タイプ",
+    "quantity": "数量",
+    "avgCost": "平均取得単価",
+    "currentPrice": "現在価格",
+    "gainLoss": "損益",
+    "aiSignal": "AIシグナル",
+    "exportPdf": "PDF出力",
+    "noHoldings": "保有銘柄がありません"
+  },
+  "settings": {
+    "title": "設定",
+    "account": "アカウント",
+    "discord": "Discord通知",
+    "discordWebhook": "Discord Webhook URL",
+    "testWebhook": "テスト",
+    "save": "保存",
+    "delete": "削除",
+    "language": "言語"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "retry": "再試行",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "close": "閉じる",
+    "search": "検索"
+  },
+  "auth": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "welcome": "おかえりなさい"
+  },
+  "retirement": {
+    "title": "モンテカルロ退職シミュレーター",
+    "formTitle": "シミュレーションパラメータ",
+    "resultsTitle": "シミュレーション結果",
+    "currentAge": "現在の年齢",
+    "retirementAge": "目標退職年齢",
+    "currentSavings": "現在のポートフォリオ価値 ($)",
+    "monthlyContribution": "毎月の積立金額 ($)",
+    "desiredIncome": "退職後希望月収 ($)",
+    "riskProfile": "リスク許容度",
+    "portfolioAllocation": "ポートフォリオ配分 (%)",
+    "numSimulations": "シミュレーション回数"
+  }
+}

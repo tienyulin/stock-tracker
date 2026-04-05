@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "watchlist": "관심종목",
+    "alerts": "알림",
+    "portfolio": "포트폴리오",
+    "retirement": "퇴직 시뮬레이션",
+    "settings": "설정",
+    "logout": "로그아웃"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "totalValue": "총 자산",
+    "dayChange": "일일 변동",
+    "stocks": "주식",
+    "etfs": "ETF",
+    "bonds": "채권",
+    "aiSignals": "AI 시그널",
+    "signal": "시그널",
+    "confidence": "신뢰도",
+    "price": "가격",
+    "change": "변동",
+    "buy": "매수",
+    "sell": "매도",
+    "hold": "보유"
+  },
+  "watchlist": {
+    "title": "관심종목",
+    "addSymbol": "종목 추가",
+    "symbol": "종목코드",
+    "price": "가격",
+    "change": "변동",
+    "actions": "작업",
+    "delete": "삭제",
+    "noItems": "관심종목이 없습니다"
+  },
+  "alerts": {
+    "title": "가격 알림",
+    "create": "알림 생성",
+    "symbol": "종목코드",
+    "condition": "조건",
+    "targetPrice": "목표 가격",
+    "currentPrice": "현재 가격",
+    "status": "상태",
+    "active": "활성",
+    "triggered": "발동됨",
+    "delete": "삭제",
+    "noAlerts": "설정된 알림이 없습니다"
+  },
+  "portfolio": {
+    "title": "포트폴리오 개요",
+    "holdings": "보유 종목",
+    "totalValue": "총 자산",
+    "totalGain": "총 손익",
+    "sector": "섹터",
+    "assetType": "자산 유형",
+    "quantity": "수량",
+    "avgCost": "평균 매입단가",
+    "currentPrice": "현재 가격",
+    "gainLoss": "손익",
+    "aiSignal": "AI 시그널",
+    "exportPdf": "PDF 내보내기",
+    "noHoldings": "보유 종목이 없습니다"
+  },
+  "settings": {
+    "title": "설정",
+    "account": "계정",
+    "discord": "Discord 알림",
+    "discordWebhook": "Discord Webhook URL",
+    "testWebhook": "테스트",
+    "save": "저장",
+    "delete": "삭제",
+    "language": "언어"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "재시도",
+    "save": "저장",
+    "cancel": "취소",
+    "confirm": "확인",
+    "delete": "삭제",
+    "edit": "편집",
+    "add": "추가",
+    "close": "닫기",
+    "search": "검색"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "email": "이메일",
+    "password": "비밀번호",
+    "welcome": "돌아오신 것을 환영합니다"
+  },
+  "retirement": {
+    "title": "몬테카를로 퇴직 시뮬레이터",
+    "formTitle": "시뮬레이션 매개변수",
+    "resultsTitle": "시뮬레이션 결과",
+    "currentAge": "현재 나이",
+    "retirementAge": "목표 퇴직 나이",
+    "currentSavings": "현재 포트폴리오 가치 ($)",
+    "monthlyContribution": "월 투자 금액 ($)",
+    "desiredIncome": "퇴직 후 희망 월 수입 ($)",
+    "riskProfile": "위험 허용범위",
+    "portfolioAllocation": "포트폴리오 배분 (%)",
+    "numSimulations": "시뮬레이션 횟수"
+  }
+}
