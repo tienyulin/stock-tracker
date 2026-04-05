@@ -42,7 +42,11 @@ class MonteCarloService:
         Args:
             seed: Random seed for reproducibility in testing.
         """
-        self._rng = random.Random(seed) if seed is not None else random.Random()
+        if seed is not None:
+            self._rng = random.Random(seed)
+            np.random.seed(seed)
+        else:
+            self._rng = random.Random()
 
     def run_retirement_simulation(
         self, request: RetirementSimulationRequest
