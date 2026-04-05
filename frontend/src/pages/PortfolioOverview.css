@@ -1,0 +1,315 @@
+/* Portfolio Overview — Phase 29 */
+
+.portfolio-overview {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.portfolio-overview h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+/* ── Header ── */
+.overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.refresh-time {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refresh-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.refresh-btn:hover {
+  background: var(--hover-bg);
+}
+
+/* ── Loading / Error ── */
+.overview-loading,
+.overview-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+  color: var(--text-secondary);
+}
+
+.overview-error button {
+  padding: 8px 16px;
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ── Card Grid ── */
+.overview-row {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.row-3col { grid-template-columns: repeat(3, 1fr); }
+.row-2col { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 900px) {
+  .row-3col { grid-template-columns: 1fr; }
+  .row-2col { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+}
+
+.card h3 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Net Worth ── */
+.net-worth-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.net-worth-change {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.change-label {
+  font-size: 12px;
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+/* ── Health Badge ── */
+.health-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid;
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-top: 8px;
+}
+
+.health-score {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.health-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ── Allocation ── */
+.allocation-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.alloc-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Signal Bar ── */
+.signal-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.signal-bar {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--border-color);
+}
+
+.signal-segment {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.signal-segment.buy { background: #4ade80; }
+.signal-segment.hold { background: #fbbf24; }
+.signal-segment.sell { background: #f87171; }
+
+.signal-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.signal-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+}
+
+/* ── Tables ── */
+.performers-table,
+.dividends-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.performers-table th,
+.dividends-table th {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.performers-table td,
+.dividends-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-color, #f0f0f0);
+  color: var(--text-primary);
+}
+
+.performers-table tr:last-child td,
+.dividends-table tr:last-child td {
+  border-bottom: none;
+}
+
+.symbol {
+  font-weight: 600;
+}
+
+.change {
+  font-weight: 500;
+}
+
+.no-data {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 20px 0;
+}
+
+/* ── Greeks ── */
+.greeks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.greek-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.greek-label {
+  width: 48px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.greek-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.greek-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.greek-value {
+  width: 70px;
+  text-align: right;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+/* ── Alerts ── */
+.alerts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 6px 8px;
+  background: var(--hover-bg);
+  border-radius: 6px;
+}
+
+.alert-symbol {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.alert-condition {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.alert-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
