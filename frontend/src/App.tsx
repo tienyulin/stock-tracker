@@ -17,17 +17,27 @@ const Portfolio = lazy(() => import('./pages/Portfolio'))
 const PortfolioSignals = lazy(() => import('./pages/PortfolioSignals'))
 const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
 
+const LANGUAGES = [
+  { code: 'en', label: 'EN', native: 'English' },
+  { code: 'zh-TW', label: '繁', native: '繁體中文' },
+  { code: 'ja', label: '日', native: '日本語' },
+  { code: 'ko', label: '한', native: '한국어' },
+]
+
 function LanguageSwitcher() {
   const { i18n } = useTranslation()
 
-  const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'zh-TW' : 'en'
-    i18n.changeLanguage(newLang)
+  const currentLang = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0]
+
+  const cycleLanguage = () => {
+    const currentIndex = LANGUAGES.findIndex(l => l.code === i18n.language)
+    const nextIndex = (currentIndex + 1) % LANGUAGES.length
+    i18n.changeLanguage(LANGUAGES[nextIndex].code)
   }
 
   return (
-    <button onClick={toggleLanguage} className="btn-lang-switch" title="Toggle Language">
-      {i18n.language === 'en' ? '中文' : 'EN'}
+    <button onClick={cycleLanguage} className="btn-lang-switch" title={currentLang.native}>
+      {currentLang.label}
     </button>
   )
 }
