@@ -85,7 +85,7 @@ class TestGreekLetters:
     def test_zero_time_to_expiry(self):
         """At T=0, greeks should handle gracefully."""
         d = calc_delta(self.S, self.K, 0, self.r, self.sigma, "CALL")
-        assert d == 1.0  # CALL at S=K, T=0: in-the-money by definition
+        assert d == 0.5  # CALL at S=K, T=0: at-the-money limit
 
     def test_zero_volatility(self):
         """At sigma=0, should not divide by zero."""
