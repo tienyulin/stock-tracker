@@ -2,6 +2,8 @@
 SQLAlchemy models for Stock Tracker.
 """
 
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
 from typing import Optional
@@ -48,6 +50,9 @@ class User(Base):
     )
     ai_conversations: Mapped[list["AIConversation"]] = relationship(
         "AIConversation", back_populates="user", cascade="all, delete-orphan"
+    )
+    option_positions: Mapped[list["OptionPosition"]] = relationship(
+        "OptionPosition", back_populates="user", cascade="all, delete-orphan"
     )
 
 

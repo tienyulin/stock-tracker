@@ -8,12 +8,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.utils.auth import decode_access_token
-from app.models import Alert, User
+from app.models import Alert, AlertNotification, User
 from app.schemas import AlertCreate, AlertResponse, AlertUpdate
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
@@ -147,6 +147,154 @@ async def delete_alert(
 
     await db.delete(alert)
     await db.commit()
+
+
+class AlertNotificationResponse(BaseModel):
+    """Alert notification history response."""
+
+    id: UUID
+    alert_id: UUID
+    channel: str
+    status: str
+    sent_at: Optional[datetime] = None
+    error_message: Optional[str] = None
+    symbol: str
+    condition_type: str
+    threshold: float
+    triggered_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+@router.get("/history", response_model=List[AlertNotificationResponse])
+async def get_alert_history(
+    user_id: UUID,
+    limit: int = 50,
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+) -> List[AlertNotificationResponse]:
+    """
+    Get alert notification history for a user.
+
+    Returns the history of triggered alert notifications,
+    including the alert details and notification status.
+    """
+    # Get user's alerts first
+    alerts_result = await db.execute(
+        select(Alert.id).where(Alert.user_id == user_id)
+    )
+    alert_ids = [row[0] for row in alerts_result.fetchall()]
+
+    if not alert_ids:
+        return []
+
+    # Get notifications for user's alerts, ordered by most recent
+    result = await db.execute(
+        select(AlertNotification, Alert)
+        .join(Alert, AlertNotification.alert_id == Alert.id)
+        .where(Alert.id.in_(alert_ids))
+        .order_by(AlertNotification.sent_at.desc())
+        .offset(offset)
+        .limit(limit)
+    )
+
+    notifications = []
+    for notification, alert in result.fetchall():
+        notifications.append(
+            AlertNotificationResponse(
+                id=notification.id,
+                alert_id=notification.alert_id,
+                channel=notification.channel,
+                status=notification.status,
+                sent_at=notification.sent_at,
+                error_message=notification.error_message,
+                symbol=alert.symbol,
+                condition_type=alert.condition_type,
+                threshold=alert.threshold,
+                triggered_at=alert.triggered_at,
+            )
+        )
+
+    return notifications
+
+
+class AlertCheckerResponse(BaseModel):
+    """Response from alert checker run."""
+
+    checked: int
+    triggered: int
+    errors: int
+    checked_at: str
+
+
+@router.post("/check", response_model=AlertCheckerResponse)
+async def check_alerts(
+    db: AsyncSession = Depends(get_db),
+) -> AlertCheckerResponse:
+    """
+    Manually trigger alert checker.
+
+    This endpoint checks all active alerts against current market prices
+    and sends notifications for any triggered alerts.
+
+    In production, this would be called by a scheduler every N minutes.
+    """
+    from app.services.alert_checker_service import AlertCheckerService
+
+    checker = AlertCheckerService()
+    result = await checker.check_all_alerts(db)
+
+    return AlertCheckerResponse(**result)
+
+
+@router.get("/dashboard", response_model=dict)
+async def get_alert_dashboard(
+    user_id: UUID,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """
+    Get alert dashboard summary for a user.
+
+    Returns:
+        Dashboard with counts of active, triggered, and total alerts.
+    """
+    # Total alerts
+    total_result = await db.execute(
+        select(func.count(Alert.id)).where(Alert.user_id == user_id)
+    )
+    total_alerts = total_result.scalar() or 0
+
+    # Active alerts
+    active_result = await db.execute(
+        select(func.count(Alert.id)).where(
+            and_(Alert.user_id == user_id, Alert.is_active)
+        )
+    )
+    active_alerts = active_result.scalar() or 0
+
+    # Triggered alerts (has triggered_at)
+    triggered_result = await db.execute(
+        select(func.count(Alert.id)).where(
+            and_(Alert.user_id == user_id, Alert.triggered_at.isnot(None))
+        )
+    )
+    triggered_alerts = triggered_result.scalar() or 0
+
+    # Get unique symbols with active alerts
+    symbols_result = await db.execute(
+        select(Alert.symbol)
+        .where(and_(Alert.user_id == user_id, Alert.is_active))
+        .distinct()
+    )
+    monitored_symbols = [row[0] for row in symbols_result.fetchall()]
+
+    return {
+        "total_alerts": total_alerts,
+        "active_alerts": active_alerts,
+        "triggered_alerts": triggered_alerts,
+        "monitored_symbols": monitored_symbols,
+    }
 
 
 @router.post("/{alert_id}/trigger", response_model=AlertResponse)

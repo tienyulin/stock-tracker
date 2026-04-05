@@ -222,3 +222,94 @@ class RetirementSimulationResponse(BaseModel):
     total_simulations: int
     years_until_retirement: int
     assumptions: dict[str, float]
+
+
+# Dividend schemas
+class DividendPaymentCreate(BaseModel):
+    """Schema for creating a dividend payment record."""
+
+    symbol: str = Field(..., min_length=1, max_length=20)
+    ex_dividend_date: datetime
+    payment_date: datetime
+    amount_per_share: float = Field(..., ge=0)
+    shares_owned: float = Field(default=0, ge=0)
+    total_amount: Optional[float] = None  # Auto-calculated if not provided
+    currency: str = Field(default="USD", max_length=3)
+
+
+class DividendPaymentResponse(BaseModel):
+    """Response schema for a dividend payment."""
+
+    id: UUID
+    symbol: str
+    ex_dividend_date: datetime
+    payment_date: datetime
+    amount_per_share: float
+    shares_owned: float
+    total_amount: float
+    currency: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class DividendHoldingUpdate(BaseModel):
+    """Schema for updating dividend holding information."""
+
+    shares_owned: Optional[float] = Field(None, ge=0)
+    cost_basis: Optional[float] = Field(None, ge=0)
+    annual_dividend: Optional[float] = Field(None, ge=0)
+
+
+class DividendHoldingResponse(BaseModel):
+    """Response schema for a dividend holding."""
+
+    id: UUID
+    symbol: str
+    shares_owned: float
+    cost_basis: float
+    annual_dividend: float
+    dividend_yield: float
+    yield_on_cost: float
+    last_dividend_date: Optional[datetime]
+    dividend_growth_rate: float
+    updated_at: datetime
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class DividendCalendarEntry(BaseModel):
+    """Schema for an upcoming dividend date entry."""
+
+    symbol: str
+    ex_dividend_date: datetime
+    payment_date: datetime
+    amount_per_share: float
+
+
+class DividendDashboardResponse(BaseModel):
+    """Response schema for dividend dashboard."""
+
+    total_dividends_received: float
+    dividends_this_year: float
+    dividends_last_year: float
+    year_over_year_growth: float
+    portfolio_dividend_yield: float
+    yield_on_cost: float
+    recent_payments: list[DividendPaymentResponse]
+    upcoming_ex_dividends: list[DividendCalendarEntry]
+
+
+class DividendGrowthResponse(BaseModel):
+    """Response schema for dividend growth analytics."""
+
+    symbol: str
+    annual_dividend: float
+    previous_annual_dividend: float
+    dividend_growth_rate: float
+    yield_on_cost: float
+    current_yield: float
+    years_of_growth: int
