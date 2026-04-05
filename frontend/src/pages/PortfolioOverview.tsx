@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as LineTooltip, ResponsiveContainer as LineResponsive } from 'recharts';
 import './PortfolioOverview.css';
 
 const API = '/api/v1';
@@ -71,7 +70,6 @@ interface PortfolioOverview {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const GREEK_COLORS = ['#4ade80', '#60a5fa', '#f97316', '#a78bfa'];
-const GREEK_LABELS = ['Delta', 'Gamma', 'Theta', 'Vega'];
 const ALLOCATION_COLORS = ['#4ade80', '#f97316', '#60a5fa'];
 const SIGNAL_COLORS = { buy: '#4ade80', hold: '#fbbf24', sell: '#f87171' };
 
@@ -235,7 +233,7 @@ const PortfolioOverview: React.FC = () => {
                     <Cell key={i} fill={ALLOCATION_COLORS[i % ALLOCATION_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(v: number) => `$${v.toLocaleString('en-US', { minimumFractionDigits: 2 })}`} />
+                <Tooltip formatter={(v) => `$${Number(v).toLocaleString('en-US', { minimumFractionDigits: 2 })}`} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
