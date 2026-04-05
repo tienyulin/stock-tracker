@@ -1,4 +1,11 @@
-import axios from './api'
+import axios from 'axios'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+})
 
 export interface RetirementSimulationRequest {
   current_age: number
@@ -30,7 +37,7 @@ export const simulationService = {
   async runRetirementSimulation(
     request: RetirementSimulationRequest
   ): Promise<RetirementSimulationResponse> {
-    const { data } = await axios.post<RetirementSimulationResponse>(
+    const { data } = await apiClient.post<RetirementSimulationResponse>(
       '/simulation/retirement',
       request
     )
