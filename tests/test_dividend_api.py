@@ -22,39 +22,40 @@ class TestDividendAPIEndpoints:
         with open("app/api/v1/dividends.py") as f:
             content = f.read()
 
-        assert '@router.get("/payments"' in content
-        assert '@router.post("/payments"' in content
-        assert '@router.delete("/payments/{payment_id}")' in content
+        # Use broader pattern to catch endpoints regardless of formatting
+        assert re.search(r'@router\.get\s*\(\s*["\']\/payments["\']', content)
+        assert re.search(r'@router\.post\s*\(\s*["\']\/payments["\']', content)
+        assert re.search(r'@router\.delete\s*\(\s*["\']\/payments\/\{payment_id\}["\']', content)
 
     def test_holdings_endpoints_exist(self):
         """Verify holdings endpoints are defined in the source."""
         with open("app/api/v1/dividends.py") as f:
             content = f.read()
 
-        assert '@router.get("/holdings"' in content
-        assert '@router.put("/holdings/{symbol}")' in content
-        assert '@router.delete("/holdings/{symbol}")' in content
+        assert re.search(r'@router\.get\s*\(\s*["\']\/holdings["\']', content)
+        assert re.search(r'@router\.put\s*\(\s*["\']\/holdings\/\{symbol\}["\']', content)
+        assert re.search(r'@router\.delete\s*\(\s*["\']\/holdings\/\{symbol\}["\']', content)
 
     def test_dashboard_endpoint_exists(self):
         with open("app/api/v1/dividends.py") as f:
             content = f.read()
 
-        assert '@router.get("/dashboard")' in content
+        assert re.search(r'@router\.get\s*\(\s*["\']\/dashboard["\']', content)
 
     def test_growth_endpoint_exists(self):
         with open("app/api/v1/dividends.py") as f:
             content = f.read()
 
-        assert '@router.get("/growth/{symbol}")' in content
+        assert re.search(r'@router\.get\s*\(\s*["\']\/growth\/\{symbol\}["\']', content)
 
     def test_calendar_endpoints_exist(self):
         """Verify calendar endpoints are defined in the source."""
         with open("app/api/v1/dividends.py") as f:
             content = f.read()
 
-        assert '@router.get("/calendar")' in content
-        assert '@router.post("/calendar")' in content
-        assert '@router.delete("/calendar/{entry_id}")' in content
+        assert re.search(r'@router\.get\s*\(\s*["\']\/calendar["\']', content)
+        assert re.search(r'@router\.post\s*\(\s*["\']\/calendar["\']', content)
+        assert re.search(r'@router\.delete\s*\(\s*["\']\/calendar\/\{entry_id\}["\']', content)
 
     def test_router_included_in_api_v1(self):
         """Verify dividends router is included in API v1."""
