@@ -8,8 +8,6 @@ import math
 import random
 from dataclasses import dataclass
 
-import numpy as np
-
 from app.schemas.schemas import (
     RetirementSimulationRequest,
     RetirementSimulationResponse,
@@ -91,7 +89,6 @@ class MonteCarloService:
         avg_outcome = sum(outcomes) / num_sims
 
         # Success = can withdraw desired monthly income for 30 years
-        withdrawal_rate = (request.desired_monthly_income * 12) / median_outcome if median_outcome > 0 else 0
         safe_withdrawal_rate = 0.04  # 4% rule
         success_count = sum(
             1 for v in outcomes if v > 0 and (v * safe_withdrawal_rate) >= request.desired_monthly_income * 12
@@ -173,7 +170,7 @@ class MonteCarloService:
 
         for _ in range(years * 12):
             # Random monthly return using normal distribution
-            monthly_return = np.random.normal(monthly_mean, monthly_std)
+            monthly_return = self._rng.normalvariate(monthly_mean, monthly_std)
             portfolio = portfolio * (1 + monthly_return) + monthly_contribution
 
         return max(portfolio, 0)  # Can't go below 0

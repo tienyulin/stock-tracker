@@ -49,7 +49,6 @@ class User(Base):
     ai_conversations: Mapped[list["AIConversation"]] = relationship(
         "AIConversation", back_populates="user", cascade="all, delete-orphan"
     )
-    )
 
 
 class Watchlist(Base):
