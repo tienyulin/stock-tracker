@@ -79,6 +79,18 @@ export interface StockSignal {
   interval: string
 }
 
+// AI Signal Score types (Phase 25)
+export interface SignalScore {
+  symbol: string
+  score: number  // 1-100
+  verdict: 'Buy' | 'Sell' | 'Hold'
+  confidence: 'High' | 'Medium' | 'Low'
+  key_drivers: string[]
+  indicator_scores: Record<string, number>
+  period: string
+  interval: string
+}
+
 // Watchlist types
 export interface WatchlistItem {
   id: string
@@ -183,6 +195,30 @@ export const stockService = {
       return response.data
     } catch (err) {
       console.error('Failed to get stock signal:', err)
+      if (axios.isAxiosError(err)) {
+        console.error('Axios error details:', {
+          message: err.message,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data,
+        })
+      }
+      return null
+    }
+  },
+
+  async getSignalScore(
+    symbol: string,
+    period: string = '3mo',
+    interval: string = '1d'
+  ): Promise<SignalScore | null> {
+    try {
+      const response = await apiClient.get(`/signals/${symbol}/score`, {
+        params: { period, interval },
+      })
+      return response.data
+    } catch (err) {
+      console.error('Failed to get signal score:', err)
       if (axios.isAxiosError(err)) {
         console.error('Axios error details:', {
           message: err.message,
