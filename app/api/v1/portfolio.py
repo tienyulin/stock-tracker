@@ -16,6 +16,7 @@ from app.utils.auth import decode_access_token
 from app.services.stock_service import StockService
 from app.services.signal_engine_service import SignalEngineService, SignalType
 from app.services.yfinance_service import YFinanceService
+from app.services.options_service import OptionsService
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 logger = logging.getLogger(__name__)
@@ -530,6 +531,231 @@ def _get_signal_label(signal: SignalType) -> str:
         SignalType.STRONG_SELL: "強烈賣出",
     }
     return labels.get(signal, "未知")
+
+
+# ============ Portfolio Overview (Phase 29) ============
+
+@router.get("/overview", response_model=dict)
+async def get_portfolio_overview(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Unified Portfolio Overview Dashboard — Phase 29.
+    
+    Aggregates: total value, daily change, asset allocation, top gainers/losers,
+    upcoming dividends, AI signals summary, portfolio health score,
+    recent alerts, and options Greeks summary.
+    """
+    from datetime import timedelta
+    from app.models import DividendPayment, ExDividendCalendar
+    from app.models.options import OptionPosition
+    from sqlalchemy import desc, and_
+    from app.services.portfolio_health_service import PortfolioHealthService
+
+    # 1. Get all holdings with current prices
+    holdings_result = await db.execute(
+        select(UserHolding).where(UserHolding.user_id == user.id)
+    )
+    holdings = holdings_result.scalars().all()
+
+    holdings_with_prices = []
+    total_value = 0.0
+    total_cost = 0.0
+    stock_value = 0.0
+    options_value = 0.0
+    dividends_value = 0.0
+
+    for h in holdings:
+        current_price = await _get_current_price(h.symbol)
+        current_val = current_price * h.quantity if current_price else None
+        cost_basis = h.avg_cost * h.quantity
+        gain_loss = current_val - cost_basis if current_val else None
+        gain_loss_pct = (gain_loss / cost_basis * 100) if gain_loss and cost_basis else None
+
+        total_cost += cost_basis
+        if current_val:
+            total_value += current_val
+
+        # Asset type breakdown
+        if h.asset_type == "STOCK":
+            stock_value += current_val or 0
+        elif h.asset_type in ("ETF", "BOND"):
+            dividends_value += current_val or 0
+
+        holdings_with_prices.append({
+            "symbol": h.symbol,
+            "quantity": h.quantity,
+            "avg_cost": h.avg_cost,
+            "current_price": current_price,
+            "current_value": current_val,
+            "gain_loss": gain_loss,
+            "gain_loss_pct": gain_loss_pct,
+            "asset_type": h.asset_type,
+        })
+
+    # 2. Daily change — compare with yesterday's close (approximate via same-day open/close)
+    # For now, use the daily_change_pct from yfinance for the portfolio overall
+    # Heuristic: use the first holding's daily change as a proxy, or calculate weighted
+    daily_change = None
+    daily_change_pct = None
+    if holdings_with_prices:
+        try:
+            stock_svc = StockService()
+            sample = holdings_with_prices[0]
+            if sample["current_price"]:
+                quote = await stock_svc._fetch_quote(sample["symbol"])
+                if quote:
+                    prev_close = quote.get("previousClose")
+                    if prev_close and prev_close > 0:
+                        daily_change_pct = ((sample["current_price"] - prev_close) / prev_close) * 100
+                        daily_change = (sample["current_price"] - prev_close) * sample["quantity"]
+        except Exception:
+            pass
+
+    # 3. Asset allocation
+    asset_allocation = {
+        "stocks": round(stock_value, 2),
+        "options": round(options_value, 2),
+        "dividends": round(dividends_value, 2),
+    }
+
+    # 4. Top gainers and losers
+    sorted_by_gain = sorted(
+        [h for h in holdings_with_prices if h["gain_loss_pct"] is not None],
+        key=lambda x: x["gain_loss_pct"],
+        reverse=True,
+    )
+    top_gainers = [
+        {"symbol": h["symbol"], "gain_loss_pct": round(h["gain_loss_pct"], 2), "current_value": h["current_value"]}
+        for h in sorted_by_gain[:5]
+    ]
+    top_losers = [
+        {"symbol": h["symbol"], "gain_loss_pct": round(h["gain_loss_pct"], 2), "current_value": h["current_value"]}
+        for h in sorted_by_gain[-5:] if h["gain_loss_pct"] is not None
+    ]
+
+    # 5. Upcoming dividends (next 30 days)
+    now = datetime.utcnow()
+    thirty_days_later = now + timedelta(days=30)
+    div_cal_result = await db.execute(
+        select(ExDividendCalendar)
+        .where(
+            ExDividendCalendar.user_id == user.id,
+            ExDividendCalendar.ex_dividend_date >= now,
+            ExDividendCalendar.ex_dividend_date <= thirty_days_later,
+        )
+        .order_by(ExDividendCalendar.ex_dividend_date)
+        .limit(10)
+    )
+    upcoming_dividends = []
+    for d in div_cal_result.scalars().all():
+        upcoming_dividends.append({
+            "symbol": d.symbol,
+            "ex_dividend_date": d.ex_dividend_date.isoformat() if d.ex_dividend_date else None,
+            "amount": d.amount,
+        })
+
+    # 6. AI Signals summary
+    ai_signals = {"buy": 0, "hold": 0, "sell": 0}
+    try:
+        signal_svc = SignalEngineService()
+        for h in holdings_with_prices:
+            if h["asset_type"] == "STOCK":
+                sig = await signal_svc.get_signal(h["symbol"])
+                if sig:
+                    sig_val = sig.overall_signal.value.lower()
+                    if "buy" in sig_val:
+                        ai_signals["buy"] += 1
+                    elif "sell" in sig_val:
+                        ai_signals["sell"] += 1
+                    else:
+                        ai_signals["hold"] += 1
+    except Exception:
+        pass
+
+    # 7. Portfolio health score
+    portfolio_health_score = 0
+    try:
+        health_svc = PortfolioHealthService(db, user.id)
+        score_data = health_svc.calculate_health_score()
+        portfolio_health_score = score_data.get("score", 0)
+    except Exception:
+        pass
+
+    # 8. Recent alerts (last 5 triggered)
+    from app.models import Alert
+    from sqlalchemy import desc as sql_desc
+    alerts_result = await db.execute(
+        select(Alert)
+        .where(Alert.user_id == user.id)
+        .order_by(sql_desc(Alert.created_at))
+        .limit(5)
+    )
+    recent_alerts = []
+    for a in alerts_result.scalars().all():
+        recent_alerts.append({
+            "id": str(a.id),
+            "symbol": a.symbol,
+            "alert_type": a.alert_type,
+            "condition": a.condition,
+            "target_value": a.target_value,
+            "current_value": getattr(a, "current_value", None),
+            "is_triggered": getattr(a, "is_triggered", False),
+            "created_at": a.created_at.isoformat() if a.created_at else None,
+        })
+
+    # 9. Options Greeks summary
+    options_greeks = {"delta": 0.0, "gamma": 0.0, "theta": 0.0, "vega": 0.0}
+    try:
+        opts_result = await db.execute(
+            select(OptionPosition).where(OptionPosition.user_id == user.id)
+        )
+        opts_positions = opts_result.scalars().all()
+        if opts_positions:
+            opts_svc = OptionsService()
+            total_delta = 0.0
+            total_gamma = 0.0
+            total_theta = 0.0
+            total_vega = 0.0
+            count = 0
+            for pos in opts_positions:
+                greeks = await opts_svc.get_greeks(
+                    pos.underlying_symbol,
+                    pos.strike_price,
+                    pos.expiry_date,
+                    pos.option_type,
+                )
+                if greeks:
+                    multiplier = pos.quantity  # 1 contract = 100 shares but quantity is already share-equivalent
+                    total_delta += greeks.delta * multiplier
+                    total_gamma += greeks.gamma * multiplier
+                    total_theta += greeks.theta * multiplier
+                    total_vega += greeks.vega * multiplier
+                    count += 1
+            if count > 0:
+                options_greeks = {
+                    "delta": round(total_delta / count, 4),
+                    "gamma": round(total_gamma / count, 4),
+                    "theta": round(total_theta / count, 4),
+                    "vega": round(total_vega / count, 4),
+                }
+    except Exception:
+        pass
+
+    return {
+        "total_value": round(total_value, 2),
+        "daily_change": round(daily_change, 2) if daily_change else 0.0,
+        "daily_change_pct": round(daily_change_pct, 2) if daily_change_pct else 0.0,
+        "asset_allocation": asset_allocation,
+        "top_gainers": top_gainers,
+        "top_losers": top_losers,
+        "upcoming_dividends": upcoming_dividends,
+        "ai_signals_summary": ai_signals,
+        "portfolio_health_score": portfolio_health_score,
+        "recent_alerts": recent_alerts,
+        "options_greeks": options_greeks,
+    }
 
 
 @router.get("/report/pdf")
