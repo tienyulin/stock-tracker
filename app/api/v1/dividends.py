@@ -293,7 +293,7 @@ async def get_dividend_dashboard(
     upcoming = db.query(ExDividendCalendar).filter(
         ExDividendCalendar.user_id == current_user.id,
         ExDividendCalendar.ex_dividend_date >= now,
-        ExDividendCalendar.is_upcoming == True
+        ExDividendCalendar.is_upcoming
     ).order_by(ExDividendCalendar.ex_dividend_date).limit(10).all()
 
     return DividendDashboardResponse(
@@ -383,7 +383,7 @@ async def get_ex_dividend_calendar(
         ExDividendCalendar.user_id == current_user.id,
         ExDividendCalendar.ex_dividend_date >= now,
         ExDividendCalendar.ex_dividend_date <= end_date,
-        ExDividendCalendar.is_upcoming == True
+        ExDividendCalendar.is_upcoming
     ).order_by(ExDividendCalendar.ex_dividend_date).all()
 
     return [
