@@ -53,7 +53,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userInfo)
       localStorage.setItem(USER_KEY, JSON.stringify(userInfo))
     } catch (err: any) {
-      const message = err.response?.data?.detail || 'Login failed'
+      const detail = err.response?.data?.detail
+      let message = 'Login failed'
+      if (typeof detail === 'string') {
+        message = detail
+      } else if (Array.isArray(detail)) {
+        message = detail.map((e: any) => e.msg || JSON.stringify(e)).join(', ')
+      }
       setError(message)
       throw new Error(message)
     } finally {
@@ -74,7 +80,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userInfo)
       localStorage.setItem(USER_KEY, JSON.stringify(userInfo))
     } catch (err: any) {
-      const message = err.response?.data?.detail || 'Signup failed'
+      const detail = err.response?.data?.detail
+      let message = 'Signup failed'
+      if (typeof detail === 'string') {
+        message = detail
+      } else if (Array.isArray(detail)) {
+        message = detail.map((e: any) => e.msg || JSON.stringify(e)).join(', ')
+      }
       setError(message)
       throw new Error(message)
     } finally {
