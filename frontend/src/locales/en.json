@@ -4,10 +4,12 @@
     "watchlist": "Watchlist",
     "alerts": "Alerts",
     "portfolio": "Portfolio",
+    "portfolioOverview": "Overview",
+    "portfolioSignals": "Signals",
+    "portfolioHealth": "Health",
     "retirement": "Retirement",
     "settings": "Settings",
-    "logout": "Logout",
-    "agentDashboard": "AI Agent"
+    "logout": "Logout"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -61,7 +63,8 @@
     "gainLoss": "Gain/Loss",
     "aiSignal": "AI Signal",
     "exportPdf": "Export PDF",
-    "noHoldings": "No holdings found"
+    "noHoldings": "No holdings found",
+    "overview": "Portfolio Command Center"
   },
   "settings": {
     "title": "Settings",
@@ -84,11 +87,7 @@
     "edit": "Edit",
     "add": "Add",
     "close": "Close",
-    "search": "Search",
-    "refresh": "Refresh",
-    "saving": "Saving...",
-    "yes": "Yes",
-    "no": "No"
+    "search": "Search"
   },
   "auth": {
     "login": "Login",
@@ -110,78 +109,20 @@
     "portfolioAllocation": "Portfolio Allocation (%)",
     "numSimulations": "Number of Simulations"
   },
-  "agent": {
-    "dashboard": {
-      "subtitle": "Your intelligent portfolio assistant",
-      "stopMonitoring": "Stop Monitoring",
-      "startMonitoring": "Start Monitoring",
-      "goals": "Goals",
-      "alerts": "Alerts",
-      "startedAt": "Started"
-    },
-    "goals": {
-      "title": "Investment Goals",
-      "add": "+ Add Goal",
-      "name": "Goal Name",
-      "namePlaceholder": "e.g., Retirement Savings",
-      "targetValue": "Target Value",
-      "currentValue": "Current Value",
-      "threshold": "Threshold %",
-      "thresholdLabel": "Threshold",
-      "save": "Save Goal",
-      "current": "Current",
-      "target": "Target",
-      "empty": "No goals set yet. Add your first goal!"
-    },
-    "alerts": {
-      "title": "AI Agent Alerts",
-      "unacknowledged": "Unacknowledged",
-      "all": "All",
-      "empty": "No alerts",
-      "typePrice": "Price",
-      "typeAllocation": "Allocation",
-      "typeDiversification": "Diversification",
-      "typeRebalance": "Rebalance",
-      "typeTaxLoss": "Tax Loss",
-      "severity": "Severity",
-      "type": "Type",
-      "message": "Message",
-      "time": "Time",
-      "actions": "Actions",
-      "acknowledge": "Acknowledge",
-      "acknowledged": "Acknowledged",
-      "justNow": "just now",
-      "minsAgo": "{{n}}m ago",
-      "hoursAgo": "{{n}}h ago",
-      "daysAgo": "{{n}}d ago"
-    },
-    "rebalance": {
-      "title": "Rebalancing Actions",
-      "proposed": "Proposed Trades",
-      "history": "History",
-      "noProposed": "No proposed trades pending review",
-      "quantity": "Qty",
-      "approve": "Approve",
-      "reject": "Reject"
-    },
-    "tax": {
-      "title": "Tax Impact Visualizer",
-      "estimatedSavings": "Estimated Tax Savings",
-      "harvestedLossesLabel": "Harvested Losses",
-      "washSaleRisk": "Wash Sale Risk",
-      "savings": "Est. Tax Savings",
-      "harvestedLosses": "Harvested Losses",
-      "calculatedAt": "Calculated at"
-    },
-    "openFinance": {
-      "title": "Open Finance Connect",
-      "pilotBanks": "Pilot Banks",
-      "connectedAccounts": "Connected Accounts",
-      "connect": "Connect",
-      "disconnect": "Disconnect",
-      "syncNow": "Sync Now",
-      "lastSync": "Last sync",
-      "notSynced": "Not synced yet"
-    }
+  "overview": {
+    "netWorth": "Net Worth",
+    "today": "Today",
+    "assetAllocation": "Asset Allocation",
+    "aiSignals": "AI Signal Summary",
+    "topGainers": "Top Gainers",
+    "topLosers": "Top Losers",
+    "upcomingDividends": "Upcoming Dividends (30d)",
+    "optionsGreeks": "Options Greeks Summary",
+    "recentAlerts": "Recent Alerts",
+    "noHoldings": "No holdings yet.",
+    "noData": "No data available",
+    "noAlerts": "No recent alerts",
+    "change": "Change %",
+    "value": "Value"
   }
 }

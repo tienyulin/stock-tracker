@@ -17,6 +17,9 @@ const Portfolio = lazy(() => import('./pages/Portfolio'))
 const PortfolioSignals = lazy(() => import('./pages/PortfolioSignals'))
 const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
 const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'))
+const PortfolioOverview = lazy(() => import('./pages/PortfolioOverview'))
+const PassiveIncomeDashboard = lazy(() => import('./pages/PassiveIncomeDashboard'))
+const DividendTracker = lazy(() => import('./pages/DividendTracker'))
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', native: 'English' },
@@ -59,6 +62,9 @@ function NavBar() {
         <li><NavLink to="/portfolio-signals" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioSignals')}</NavLink></li>
         <li><NavLink to="/portfolio-health" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioHealth')}</NavLink></li>
         <li><NavLink to="/portfolio/agent" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
+        <li><NavLink to="/portfolio-overview" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioOverview', 'Overview')}</NavLink></li>
+        <li><NavLink to="/dividends" className={({ isActive }) => isActive ? 'active' : ''}>Dividends</NavLink></li>
+        <li><NavLink to="/passive-income" className={({ isActive }) => isActive ? 'active' : ''}>Passive Income</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
       </ul>
       <div className="nav-auth">
@@ -108,6 +114,9 @@ function AppRoutes() {
         <Route path="/portfolio-signals" element={<RequireAuth><PortfolioSignals /></RequireAuth>} />
         <Route path="/portfolio-health" element={<RequireAuth><PortfolioHealth /></RequireAuth>} />
         <Route path="/portfolio/agent" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
+        <Route path="/portfolio-overview" element={<RequireAuth><PortfolioOverview /></RequireAuth>} />
+        <Route path="/passive-income" element={<RequireAuth><PassiveIncomeDashboard /></RequireAuth>} />
+        <Route path="/dividends" element={<RequireAuth><DividendTracker /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
       </Routes>
     </Suspense>
