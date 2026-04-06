@@ -11,6 +11,7 @@ from sqlalchemy import text
 from app.core.database import engine, Base, AsyncSessionLocal
 from app.models import Alert, AlertNotification, User, Watchlist, WatchlistItem  # noqa: F401 - imported for side effect (Base.metadata)
 from app.models.passive_income import FireGoal, PassiveIncomeRecord, PassiveIncomeSource  # noqa: F401 - imported for side effect (Base.metadata)
+from app.models.esg import ControversyAlert, EsgScore, EsgTrend, ExclusionList  # noqa: F401 - imported for side effect (Base.metadata)
 
 logger = logging.getLogger(__name__)
 

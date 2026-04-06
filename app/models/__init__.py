@@ -11,6 +11,7 @@ from app.models.passive_income import (
 )
 from app.models.fixed_income import Bond, TermDeposit
 from app.models.commodities import CommodityPosition, FuturesContract
+from app.models.esg import ControversyAlert, EsgScore, EsgTrend, ExclusionList
 
 __all__ = [
     "Alert",
@@ -38,5 +39,9 @@ __all__ = [
     "UserProfile",
     "Watchlist",
     "WatchlistItem",
+    "EsgScore",
+    "ControversyAlert",
+    "ExclusionList",
+    "EsgTrend",
 ]
 
