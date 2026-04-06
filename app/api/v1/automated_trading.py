@@ -282,7 +282,7 @@ async def list_executions(
     logs = service.get_execution_logs(
         current_user.id, rule_id=rid, start_date=start_date, end_date=end_date, limit=limit
     )
-    return [AutomationLogResponse.model_validate(l) for l in logs]
+    return [AutomationLogResponse.model_validate(log) for log in logs]
 
 
 @router.get("/stats", response_model=ExecutionStatsResponse)
