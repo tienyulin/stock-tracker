@@ -576,3 +576,84 @@ export const authService = {
     return response.data
   },
 }
+
+// Agent Service
+export const agentService = {
+  async getState(): Promise<import('../types/agent').AgentStateResponse> {
+    const response = await apiClient.get('/agent/state', { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async startMonitoring(): Promise<{ success: boolean }> {
+    const response = await apiClient.post('/agent/start', {}, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async stopMonitoring(): Promise<{ success: boolean }> {
+    const response = await apiClient.post('/agent/stop', {}, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async getGoals(): Promise<import('../types/agent').Goal[]> {
+    const response = await apiClient.get('/agent/goals', { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async createGoal(goal: import('../types/agent').GoalCreate): Promise<import('../types/agent').Goal> {
+    const response = await apiClient.post('/agent/goals', goal, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async deleteGoal(goalId: string): Promise<void> {
+    await apiClient.delete(`/agent/goals/${goalId}`, { headers: getAuthHeaders() })
+  },
+
+  async getAlerts(): Promise<import('../types/agent').Alert[]> {
+    const response = await apiClient.get('/agent/alerts', { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async acknowledgeAlert(alertId: string): Promise<import('../types/agent').Alert> {
+    const response = await apiClient.post(`/agent/alerts/${alertId}/acknowledge`, {}, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async getRebalanceActions(): Promise<import('../types/agent').RebalanceAction[]> {
+    const response = await apiClient.get('/agent/rebalance', { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async approveRebalanceAction(actionId: string): Promise<import('../types/agent').RebalanceAction> {
+    const response = await apiClient.post(`/agent/rebalance/${actionId}/approve`, {}, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async rejectRebalanceAction(actionId: string): Promise<import('../types/agent').RebalanceAction> {
+    const response = await apiClient.post(`/agent/rebalance/${actionId}/reject`, {}, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async getTaxImpact(): Promise<import('../types/agent').TaxImpactSummary> {
+    const response = await apiClient.get('/agent/tax-impact', { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async getOpenFinanceConnections(): Promise<import('../types/agent').OpenFinanceConnection[]> {
+    const response = await apiClient.get('/agent/open-finance/connections', { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async connectOpenFinanceBank(bankCode: string): Promise<{ auth_url: string }> {
+    const response = await apiClient.post('/agent/open-finance/connect', { bank_code: bankCode }, { headers: getAuthHeaders() })
+    return response.data
+  },
+
+  async disconnectOpenFinanceBank(connectionId: string): Promise<void> {
+    await apiClient.delete(`/agent/open-finance/connections/${connectionId}`, { headers: getAuthHeaders() })
+  },
+
+  async syncOpenFinanceAccount(connectionId: string): Promise<{ success: boolean; synced_at: string }> {
+    const response = await apiClient.post(`/agent/open-finance/connections/${connectionId}/sync`, {}, { headers: getAuthHeaders() })
+    return response.data
+  },
+}

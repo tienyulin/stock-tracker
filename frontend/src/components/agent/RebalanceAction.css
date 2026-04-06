@@ -1,0 +1,234 @@
+.rebalance-action {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.rebalance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.rebalance-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: 0;
+}
+
+.btn-refresh {
+  background: none;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary, #555);
+}
+
+.btn-refresh:hover {
+  background: var(--bg-secondary, #f0f0f0);
+}
+
+.proposed-section h4,
+.processed-section h4 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary, #555);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.proposed-section {
+  margin-bottom: 20px;
+}
+
+.processed-section {
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  padding-top: 16px;
+}
+
+.no-actions {
+  text-align: center;
+  color: var(--text-secondary, #888);
+  padding: 20px;
+  font-size: 14px;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 8px;
+}
+
+.actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actions-list.processed {
+  opacity: 0.7;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-secondary, #f8f9fa);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.action-buy {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.action-sell {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.action-swap {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.action-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.action-symbol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.action-symbol strong {
+  font-size: 15px;
+  color: var(--text-primary, #333);
+}
+
+.type-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.type-badge.action-buy {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.type-badge.action-sell {
+  background: #ffcdd2;
+  color: #c62828;
+}
+
+.type-badge.action-swap {
+  background: #bbdefb;
+  color: #1565c0;
+}
+
+.action-values {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-secondary, #555);
+}
+
+.action-reason {
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+.action-time {
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-approve {
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-approve:hover {
+  opacity: 0.85;
+}
+
+.btn-reject {
+  background: #fff;
+  color: #c62828;
+  border: 1px solid #c62828;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reject:hover {
+  background: #c62828;
+  color: #fff;
+}
+
+.action-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.status-approved {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-rejected {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status-proposed {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.rebalance-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary, #888);
+}

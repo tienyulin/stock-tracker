@@ -1,0 +1,105 @@
+.tax-impact {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.tax-impact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tax-impact-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: 0;
+}
+
+.btn-refresh {
+  background: none;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary, #555);
+}
+
+.btn-refresh:hover {
+  background: var(--bg-secondary, #f0f0f0);
+}
+
+.tax-summary-cards {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 140px;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-card.savings {
+  border-left: 4px solid #2e7d32;
+}
+
+.summary-card.losses {
+  border-left: 4px solid #c62828;
+}
+
+.summary-card.wash-sale {
+  border-left: 4px solid #9e9e9e;
+}
+
+.summary-card.wash-sale.at-risk {
+  border-left-color: #ff9800;
+  background: #fff3e0;
+}
+
+.card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #555);
+}
+
+.card-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary, #333);
+}
+
+.savings .card-value { color: #2e7d32; }
+.losses .card-value { color: #c62828; }
+.wash-sale.at-risk .card-value { color: #e65100; }
+
+.tax-chart-container {
+  margin: 16px 0;
+}
+
+.tax-footer {
+  text-align: right;
+}
+
+.tax-timestamp {
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+}
+
+.tax-impact-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary, #888);
+}
