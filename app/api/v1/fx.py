@@ -132,7 +132,7 @@ async def calculate_natural_hedge(request: FXHedgeRequest):
     """
     service = FXService()
     assets = [a.model_dump() for a in request.assets]
-    liabilities = [l.model_dump() for l in request.liabilities]
+    liabilities = [liability.model_dump() for liability in request.liabilities]
     result = service.calculate_natural_hedge(assets, liabilities, request.base_currency)
     return result
 

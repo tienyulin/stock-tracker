@@ -10,7 +10,7 @@ from app.models.passive_income import (
     PassiveIncomeSource,
 )
 from app.models.fixed_income import Bond, TermDeposit
-from app.models.commodities import CommodityPosition, FuturesContract
+from app.models.commodities import CommodityPosition
 from app.models.futures import FuturesPosition, FuturesContract, FuturesPriceAlert
 from app.models.esg import ControversyAlert, EsgScore, EsgTrend, ExclusionList
 from app.models.family import Entity, EntityAccount, EntityMember, FamilyMember
