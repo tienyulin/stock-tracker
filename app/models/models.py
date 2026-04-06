@@ -79,6 +79,12 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    bonds: Mapped[list["Bond"]] = relationship(
+        "Bond", back_populates="user", cascade="all, delete-orphan"
+    )
+    term_deposits: Mapped[list["TermDeposit"]] = relationship(
+        "TermDeposit", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Watchlist(Base):
