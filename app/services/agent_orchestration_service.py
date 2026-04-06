@@ -616,6 +616,7 @@ class AgentOrchestrationService:
                 rationale=f"Current weight deviates from target. Estimated value: ${trade['value']:.2f}",
                 metadata=trade,
                 confidence=0.8,
+                created_at=datetime.now(),
             )
             for trade in drift.rebalancing_trades
         ]
@@ -896,6 +897,7 @@ class AgentOrchestrationService:
                     "wash_sale_risk": candidate.wash_sale_risk,
                 },
                 confidence=0.85,
+                created_at=datetime.now(),
             )
             for candidate in tax_result.harvesting_trades
         ]
@@ -939,6 +941,7 @@ class AgentOrchestrationService:
                     "success_probability": gap.success_probability,
                 },
                 confidence=0.80,
+                created_at=datetime.now(),
             )
         ]
 
@@ -983,6 +986,7 @@ class AgentOrchestrationService:
                             "monthly_needed": progress.monthly_needed,
                         },
                         confidence=0.75,
+                        created_at=datetime.now(),
                     )
                 ]
 

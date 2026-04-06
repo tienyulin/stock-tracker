@@ -626,7 +626,6 @@ class PlaidAdapter(BaseOpenFinanceAdapter):
             data = response.json()
             # Token obtained successfully (for future use with Plaid API)
             # Response data contains access_token and item_id needed for subsequent calls
-            access_token = data.get("access_token", "")
             item_id = data.get("item_id", str(uuid4()))
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 400:
