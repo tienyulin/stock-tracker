@@ -44,10 +44,18 @@ class UserProfile(Base):
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="profile")
     followers: Mapped[list["Follow"]] = relationship(
-        "Follow", foreign_keys="Follow.following_id", back_populates="following_user", cascade="all, delete-orphan"
+        "Follow",
+        foreign_keys="Follow.following_id",
+        primaryjoin="UserProfile.user_id == Follow.following_id",
+        viewonly=True,
+        cascade="all, delete-orphan",
     )
     following: Mapped[list["Follow"]] = relationship(
-        "Follow", foreign_keys="Follow.follower_id", back_populates="follower_user", cascade="all, delete-orphan"
+        "Follow",
+        foreign_keys="Follow.follower_id",
+        primaryjoin="UserProfile.user_id == Follow.follower_id",
+        viewonly=True,
+        cascade="all, delete-orphan",
     )
 
 

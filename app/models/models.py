@@ -57,6 +57,12 @@ class User(Base):
     profile: Mapped["UserProfile"] = relationship(
         "UserProfile", back_populates="user", uselist=False
     )
+    followers: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.following_id",
+        back_populates="following_user",
+        cascade="all, delete-orphan",
+    )
 
 
 class Watchlist(Base):
