@@ -3,7 +3,6 @@ import {
   passiveIncomeService,
   PassiveIncomeDashboard,
   PassiveIncomeSource,
-  FireProgress,
 } from '../services/passiveIncomeService'
 import { useAuth } from '../contexts/AuthContext'
 import './PassiveIncomeDashboard.css'

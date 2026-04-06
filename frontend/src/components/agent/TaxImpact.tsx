@@ -83,7 +83,7 @@ function TaxImpact() {
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`} />
                 <Tooltip
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                  formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
                   contentStyle={{ borderRadius: 8, border: '1px solid #e0e0e0', fontSize: 13 }}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
