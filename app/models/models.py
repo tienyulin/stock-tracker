@@ -395,3 +395,125 @@ class CexAccount(Base):
 
     # Relationships
     user: Mapped["User"] = relationship("User")
+
+
+class ReportTemplate(Base):
+    """Report template model — stores professional report templates."""
+
+    __tablename__ = "report_templates"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    template_type: Mapped[str] = mapped_column(String(50), nullable=False)  # monthly/quarterly/annual/gips
+    logo_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    primary_color: Mapped[str] = mapped_column(String(7), default="#1a1a2e")  # hex color
+    secondary_color: Mapped[str] = mapped_column(String(7), default="#16213e")
+    company_name: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+    company_address: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+
+
+class ComplianceDocument(Base):
+    """Compliance document model — stores regulatory filings and disclosures."""
+
+    __tablename__ = "compliance_documents"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    document_type: Mapped[str] = mapped_column(String(50), nullable=False)  # sec/fia/twse/gips
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    filing_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    period_covered: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # e.g., "Q1 2026"
+    status: Mapped[str] = mapped_column(String(20), default="draft")  # draft/pending/approved/filed
+    file_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+
+
+class KycRecord(Base):
+    """KYC (Know Your Customer) record model — tracks client suitability."""
+
+    __tablename__ = "kyc_records"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    client_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    client_email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    risk_tolerance: Mapped[str] = mapped_column(String(20), nullable=False)  # conservative/moderate/aggressive
+    investment_experience: Mapped[str] = mapped_column(String(20), nullable=False)  # none/basic/intermediate/advanced
+    investment_horizon: Mapped[str] = mapped_column(String(20), nullable=False)  # short/medium/long
+    annual_income_range: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    net_worth_range: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    liquidity_needs: Mapped[str] = mapped_column(String(20), default="medium")  # low/medium/high
+    suitability_score: Mapped[float] = mapped_column(default=0.0)  # 0-100
+    kyc_status: Mapped[str] = mapped_column(String(20), default="pending")  # pending/approved/rejected
+    last_reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    document_urls: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array of URLs
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+
+
+class FilingReminder(Base):
+    """Filing deadline reminder model."""
+
+    __tablename__ = "filing_reminders"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    filing_type: Mapped[str] = mapped_column(String(50), nullable=False)  # sec/fia/twse/quarterly/annual
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    deadline: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    jurisdiction: Mapped[str] = mapped_column(String(20), default="TWSE")  # SEC/FIA/TWSE
+    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending/sent/completed
+    notified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
