@@ -684,8 +684,13 @@ class AgentOrchestrationService:
             profile = await adapter.build_profile(uuid.UUID(user_id), connections)
         else:
             # Create empty profile if no connections
+            # Handle non-UUID user_ids gracefully
+            try:
+                profile_uuid = uuid.UUID(user_id)
+            except (ValueError, AttributeError):
+                profile_uuid = uuid.uuid4()
             profile = PersonalFinancialProfile(
-                user_id=uuid.UUID(user_id),
+                user_id=profile_uuid,
                 last_updated=datetime.now(),
             )
 

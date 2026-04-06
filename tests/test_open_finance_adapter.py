@@ -116,7 +116,7 @@ class TestESunBankAdapter:
                 response=mock_response,
             )
 
-            with pytest.raises(ProviderConnectionError):
+            with pytest.raises(ProviderAuthenticationError):
                 await adapter.connect(uuid4(), "invalid_code")
 
     @pytest.mark.asyncio

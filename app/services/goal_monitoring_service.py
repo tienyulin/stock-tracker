@@ -9,7 +9,7 @@ retirement gap calculation and triggers alerts when goals are at risk.
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from app.schemas.agent_schemas import (
     GoalDefinition,
@@ -113,7 +113,7 @@ class GoalMonitoringService:
             timestamp=now,
         )
 
-    def calculate_retirement_gap(
+    async def calculate_retirement_gap(
         self,
         goal: GoalDefinition,
         profile: PersonalFinancialProfile,
@@ -132,7 +132,7 @@ class GoalMonitoringService:
             RetirementGapResult with gap analysis.
         """
         if goal.goal_type != GoalType.RETIREMENT:
-            raise ValueError("Retirement gap calculation only valid for RETIREMENT goals")
+            raise ValueError("RETIREMENT goals only")
 
         current_savings = goal.current_amount
         monthly_contribution = goal.monthly_contribution or self._calculate_monthly_contribution(
@@ -225,7 +225,7 @@ class GoalMonitoringService:
         if progress.status == GoalStatus.BEHIND:
             alerts.append(
                 MonitoringAlert(
-                    alert_id=UUID,
+                    alert_id=uuid4(),
                     goal_id=goal.id,
                     alert_type="GOAL_OFF_TRACK",
                     severity="WARNING",
@@ -241,7 +241,7 @@ class GoalMonitoringService:
         elif progress.status == GoalStatus.AT_RISK:
             alerts.append(
                 MonitoringAlert(
-                    alert_id=UUID,
+                    alert_id=uuid4(),
                     goal_id=goal.id,
                     alert_type="GOAL_OFF_TRACK",
                     severity="CRITICAL",
@@ -257,7 +257,7 @@ class GoalMonitoringService:
         if progress.projected_completion and progress.projected_completion < (goal.target_date or date.max):
             alerts.append(
                 MonitoringAlert(
-                    alert_id=UUID,
+                    alert_id=uuid4(),
                     goal_id=goal.id,
                     alert_type="OPPORTUNITY",
                     severity="INFO",
@@ -277,7 +277,7 @@ class GoalMonitoringService:
                 if days_remaining < 3650:  # Less than 10 years
                     alerts.append(
                         MonitoringAlert(
-                            alert_id=UUID,
+                            alert_id=uuid4(),
                             goal_id=goal.id,
                             alert_type="RISK",
                             severity="CRITICAL",
@@ -397,7 +397,7 @@ class GoalMonitoringService:
         if not on_track:
             # Check how far behind
             if progress_percent < 50:
-                return GoalStatus.BEHHIND
+                return GoalStatus.BEHIND
             return GoalStatus.AT_RISK
 
         return GoalStatus.ON_TRACK
