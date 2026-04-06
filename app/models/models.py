@@ -54,6 +54,31 @@ class User(Base):
     option_positions: Mapped[list["OptionPosition"]] = relationship(
         "OptionPosition", back_populates="user", cascade="all, delete-orphan"
     )
+    profile: Mapped["UserProfile"] = relationship(
+        "UserProfile", back_populates="user", uselist=False
+    )
+    followers: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.following_id",
+        back_populates="following_user",
+        cascade="all, delete-orphan",
+    )
+    following: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.follower_id",
+        back_populates="follower_user",
+        cascade="all, delete-orphan",
+    )
+    trade_activities: Mapped[list["TradeActivity"]] = relationship(
+        "TradeActivity",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    leaderboard_entries: Mapped[list["LeaderboardEntry"]] = relationship(
+        "LeaderboardEntry",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
 
 class Watchlist(Base):
