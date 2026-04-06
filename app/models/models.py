@@ -54,6 +54,61 @@ class User(Base):
     option_positions: Mapped[list["OptionPosition"]] = relationship(
         "OptionPosition", back_populates="user", cascade="all, delete-orphan"
     )
+    profile: Mapped["UserProfile"] = relationship(
+        "UserProfile", back_populates="user", uselist=False
+    )
+    followers: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.following_id",
+        back_populates="following_user",
+        cascade="all, delete-orphan",
+    )
+    following: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.follower_id",
+        back_populates="follower_user",
+        cascade="all, delete-orphan",
+    )
+    trade_activities: Mapped[list["TradeActivity"]] = relationship(
+        "TradeActivity",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    leaderboard_entries: Mapped[list["LeaderboardEntry"]] = relationship(
+        "LeaderboardEntry",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    bonds: Mapped[list["Bond"]] = relationship(
+        "Bond", back_populates="user", cascade="all, delete-orphan"
+    )
+    term_deposits: Mapped[list["TermDeposit"]] = relationship(
+        "TermDeposit", back_populates="user", cascade="all, delete-orphan"
+    )
+    commodity_positions: Mapped[list["CommodityPosition"]] = relationship(
+        "CommodityPosition", back_populates="user", cascade="all, delete-orphan"
+    )
+    futures_contracts: Mapped[list["FuturesContract"]] = relationship(
+        "FuturesContract", back_populates="user", cascade="all, delete-orphan"
+    )
+    esg_scores: Mapped[list["EsgScore"]] = relationship(
+        "EsgScore", back_populates="user", cascade="all, delete-orphan"
+    )
+    controversy_alerts: Mapped[list["ControversyAlert"]] = relationship(
+        "ControversyAlert", back_populates="user", cascade="all, delete-orphan"
+    )
+    exclusion_lists: Mapped[list["ExclusionList"]] = relationship(
+        "ExclusionList", back_populates="user", cascade="all, delete-orphan"
+    )
+    esg_trends: Mapped[list["EsgTrend"]] = relationship(
+        "EsgTrend", back_populates="user", cascade="all, delete-orphan"
+    )
+    family_members: Mapped[list["FamilyMember"]] = relationship(
+        "FamilyMember", cascade="all, delete-orphan"
+    )
+    entities: Mapped[list["Entity"]] = relationship(
+        "Entity", cascade="all, delete-orphan"
+    )
 
 
 class Watchlist(Base):

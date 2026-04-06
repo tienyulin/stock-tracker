@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
+import FixedIncomeDashboard from './pages/FixedIncomeDashboard'
+import CommodityDashboard from './pages/CommodityDashboard'
+import EsgDashboard from './pages/EsgDashboard'
 import { useTranslation } from 'react-i18next'
 import { lazy, Suspense } from 'react'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -21,6 +24,7 @@ const PortfolioOverview = lazy(() => import('./pages/PortfolioOverview'))
 const PassiveIncomeDashboard = lazy(() => import('./pages/PassiveIncomeDashboard'))
 const CryptoDashboard = lazy(() => import('./pages/CryptoDashboard'))
 const DividendTracker = lazy(() => import('./pages/DividendTracker'))
+const IPODashboard = lazy(() => import('./pages/IPODashboard'))
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', native: 'English' },
@@ -67,6 +71,10 @@ function NavBar() {
         <li><NavLink to="/dividends" className={({ isActive }) => isActive ? 'active' : ''}>Dividends</NavLink></li>
         <li><NavLink to="/passive-income" className={({ isActive }) => isActive ? 'active' : ''}>Passive Income</NavLink></li>
         <li><NavLink to="/crypto" className={({ isActive }) => isActive ? 'active' : ''}>🦿 Crypto</NavLink></li>
+        <li><NavLink to="/fixed-income" className={({ isActive }) => isActive ? 'active' : ''}>Fixed Income</NavLink></li>
+        <li><NavLink to="/commodities" className={({ isActive }) => isActive ? 'active' : ''}>Commodities</NavLink></li>
+        <li><NavLink to="/esg" className={({ isActive }) => isActive ? 'active' : ''}>ESG</NavLink></li>
+        <li><NavLink to="/ipos" className={({ isActive }) => isActive ? 'active' : ''}>IPO Tracker</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
         <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
@@ -120,6 +128,10 @@ function AppRoutes() {
         <Route path="/portfolio-overview" element={<RequireAuth><PortfolioOverview /></RequireAuth>} />
         <Route path="/passive-income" element={<RequireAuth><PassiveIncomeDashboard /></RequireAuth>} />
         <Route path="/crypto" element={<RequireAuth><CryptoDashboard /></RequireAuth>} />
+        <Route path="/fixed-income" element={<RequireAuth><FixedIncomeDashboard /></RequireAuth>} />
+        <Route path="/commodities" element={<RequireAuth><CommodityDashboard /></RequireAuth>} />
+        <Route path="/esg" element={<RequireAuth><EsgDashboard /></RequireAuth>} />
+        <Route path="/ipos" element={<RequireAuth><IPODashboard /></RequireAuth>} />
         <Route path="/dividends" element={<RequireAuth><DividendTracker /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         <Route path="/agent-dashboard" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
