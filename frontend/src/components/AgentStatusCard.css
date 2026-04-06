@@ -1,0 +1,158 @@
+.agent-status-card {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 20px;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.agent-status-loading,
+.agent-status-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 120px;
+  color: #9ca3af;
+}
+
+.agent-status-error {
+  color: #ef4444;
+  flex-direction: column;
+}
+
+.agent-status-pulse {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.agent-status-retry {
+  background: #374151;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.agent-status-retry:hover {
+  background: #4b5563;
+}
+
+.agent-status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.agent-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agent-status-dot {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.agent-status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.agent-status-label {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.agent-status-state {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.agent-status-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agent-status-activity {
+  background: #262640;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.agent-activity-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d1d5db;
+}
+
+.agent-status-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.agent-active-tasks {
+  border-top: 1px solid #374151;
+  padding-top: 12px;
+}
+
+.agent-tasks-label {
+  font-size: 12px;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.agent-tasks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.agent-task-item {
+  font-size: 13px;
+  color: #d1d5db;
+  padding-left: 12px;
+  position: relative;
+}
+
+.agent-task-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #3b82f6;
+}

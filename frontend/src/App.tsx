@@ -17,6 +17,7 @@ const Portfolio = lazy(() => import('./pages/Portfolio'))
 const PortfolioSignals = lazy(() => import('./pages/PortfolioSignals'))
 const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
 const PortfolioOverview = lazy(() => import('./pages/PortfolioOverview'))
+const AgentDashboard = lazy(() => import('./pages/AgentDashboard'))
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', native: 'English' },
@@ -60,6 +61,7 @@ function NavBar() {
         <li><NavLink to="/portfolio-health" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioHealth')}</NavLink></li>
         <li><NavLink to="/portfolio-overview" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioOverview', 'Overview')}</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
+        <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
       <div className="nav-auth">
         <LanguageSwitcher />
@@ -109,6 +111,7 @@ function AppRoutes() {
         <Route path="/portfolio-health" element={<RequireAuth><PortfolioHealth /></RequireAuth>} />
         <Route path="/portfolio-overview" element={<RequireAuth><PortfolioOverview /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+        <Route path="/agent-dashboard" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
       </Routes>
     </Suspense>
   )

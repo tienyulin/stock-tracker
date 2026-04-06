@@ -1,0 +1,224 @@
+.openfinance-panel {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 20px;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.openfinance-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #9ca3af;
+}
+
+.openfinance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.openfinance-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.openfinance-upload-toggle {
+  background: #374151;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.openfinance-upload-toggle:hover {
+  background: #4b5563;
+}
+
+.openfinance-upload-section {
+  background: #262640;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.openfinance-upload-desc {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.openfinance-upload-dropzone {
+  border: 2px dashed #374151;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.openfinance-upload-dropzone:hover {
+  border-color: #3b82f6;
+}
+
+.openfinance-upload-input {
+  display: none;
+}
+
+.openfinance-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #d1d5db;
+}
+
+.openfinance-upload-icon {
+  font-size: 32px;
+}
+
+.openfinance-upload-hint {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.openfinance-banks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.openfinance-bank-card {
+  background: #262640;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.openfinance-bank-card.connected {
+  border-color: #22c55e;
+}
+
+.openfinance-bank-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.openfinance-bank-logo {
+  width: 48px;
+  height: 48px;
+  background: #374151;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bank-icon {
+  font-size: 24px;
+}
+
+.openfinance-bank-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.openfinance-bank-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.openfinance-bank-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.openfinance-bank-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.openfinance-connected-badge {
+  background: #22c55e;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.openfinance-account-count {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.openfinance-connect-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.openfinance-connect-btn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.openfinance-connect-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.openfinance-coming-soon {
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.openfinance-disconnect-btn {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: background 0.2s;
+}
+
+.openfinance-disconnect-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.openfinance-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #374151;
+}
+
+.openfinance-security-note {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+}

@@ -9,7 +9,8 @@
     "logout": "登出",
     "portfolioOverview": "總覽",
     "portfolioSignals": "AI 信號",
-    "portfolioHealth": "健康"
+    "portfolioHealth": "健康",
+    "agentDashboard": "AI 代理"
   },
   "dashboard": {
     "title": "儀表板",
@@ -124,5 +125,113 @@
     "noAlerts": "近期無警報",
     "change": "漲跌 %",
     "value": "市值"
+  },
+  "agent": {
+    "title": "AI 代理",
+    "loading": "載入代理狀態...",
+    "error": "無法連接代理",
+    "idle": "代理閒置中",
+    "lastActive": "上次活動",
+    "activeTasks": "進行中的任務",
+    "states": {
+      "IDLE": "閒置",
+      "MONITORING": "監控中",
+      "ANALYZING": "分析中",
+      "RECOMMENDING": "建議中",
+      "ACTING": "執行中"
+    },
+    "dashboard": {
+      "title": "AI 代理儀表板",
+      "subtitle": "您的智能投資助理"
+    },
+    "monitoring": {
+      "title": "活躍監控",
+      "empty": "沒有活躍的監控項目",
+      "types": {
+        "PORTFOLIODRIFT": "投資組合漂移",
+        "GOALPROGRESS": "目標進度",
+        "SALARYDEPOSIT": "薪資存款"
+      }
+    },
+    "rebalance": {
+      "title": "投資組合再平衡",
+      "notAvailable": "再平衡預覽不可用",
+      "totalDrift": "總漂移",
+      "buy": "買入",
+      "sell": "賣出",
+      "hold": "持有",
+      "holding": "持倉",
+      "current": "目前",
+      "target": "目標",
+      "drift": "漂移",
+      "action": "操作",
+      "noDrift": "您的投資組合已平衡良好，無需再平衡。",
+      "recommendation": "根據您的目標配置，建議進行再平衡。",
+      "execute": "執行再平衡",
+      "showDetails": "顯示詳情",
+      "hideDetails": "隱藏詳情",
+      "actions": {
+        "BUY": "買入",
+        "SELL": "賣出",
+        "HOLD": "持有"
+      }
+    },
+    "rebalancing": "重新平衡中...",
+    "recommendations": {
+      "title": "近期建議",
+      "empty": "尚無建議",
+      "accept": "接受",
+      "dismiss": "略過",
+      "priority": {
+        "LOW": "低",
+        "MEDIUM": "中",
+        "HIGH": "高"
+      },
+      "status": {
+        "PENDING": "待處理",
+        "ACCEPTED": "已接受",
+        "DISMISSED": "已略過"
+      }
+    },
+    "goals": {
+      "title": "投資目標",
+      "add": "新增目標",
+      "empty": "尚未設定目標。新增您的第一個投資目標。",
+      "goalType": "目標類型",
+      "targetAmount": "目標金額",
+      "targetDate": "目標日期",
+      "currentProgress": "目前進度",
+      "types": {
+        "RETIREMENT": "退休",
+        "HOUSE": "購屋",
+        "EDUCATION": "教育",
+        "OTHER": "其他"
+      },
+      "status": {
+        "ON_TRACK": "按計劃",
+        "BEHIND": "落後",
+        "AHEAD": "超前"
+      }
+    },
+    "openFinance": {
+      "title": "開放金融連線",
+      "connect": "連線",
+      "disconnect": "中斷連線",
+      "connected": "已連線",
+      "accounts": "個帳戶",
+      "comingSoon": "即將推出",
+      "manualUpload": "手動上傳",
+      "hideUpload": "隱藏上傳",
+      "uploadDesc": "若自動匯入不可用，您可以手動上傳銀行對帳單。",
+      "dropzone": "拖放檔案或點擊上傳",
+      "securityNote": "您的憑證會安全儲存，絕不會被分享。"
+    },
+    "quickActions": {
+      "title": "快速操作",
+      "rebalance": "再平衡",
+      "setGoal": "設定目標",
+      "connectBank": "連線銀行",
+      "viewReport": "查看報告"
+    }
   }
 }

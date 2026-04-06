@@ -1,0 +1,267 @@
+.goal-panel {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 20px;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.goal-panel-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #9ca3af;
+}
+
+.goal-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.goal-panel-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.goal-add-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.goal-add-btn:hover {
+  background: #2563eb;
+}
+
+.goal-form {
+  background: #262640;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.goal-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.goal-form-field label {
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.goal-form-field input,
+.goal-form-field select {
+  background: #1a1a2e;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #e5e7eb;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.goal-form-field input:focus,
+.goal-form-field select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.goal-form-field select {
+  cursor: pointer;
+}
+
+.goal-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.goal-cancel-btn {
+  background: #374151;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.goal-cancel-btn:hover {
+  background: #4b5563;
+}
+
+.goal-save-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.goal-save-btn:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.goal-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.goal-empty {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.goal-item {
+  background: #262640;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.goal-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goal-type-badge {
+  background: #374151;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.goal-status-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.goal-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.goal-amounts {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.goal-current {
+  font-size: 20px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.goal-separator {
+  color: #6b7280;
+}
+
+.goal-target {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.goal-progress-bar {
+  background: #374151;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.goal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.goal-progress-pct {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: right;
+}
+
+.goal-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #374151;
+  padding-top: 12px;
+}
+
+.goal-target-date {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.goal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.goal-edit-btn,
+.goal-delete-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.goal-edit-btn {
+  color: #3b82f6;
+}
+
+.goal-edit-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.goal-delete-btn {
+  color: #ef4444;
+}
+
+.goal-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
