@@ -141,7 +141,7 @@ def list_futures_positions(
     """List all futures positions for a user."""
     query = db.query(FuturesPosition).filter(FuturesPosition.user_id == user_id)
     if active_only:
-        query = query.filter(FuturesPosition.is_active == True)
+        query = query.filter(FuturesPosition.is_active)
     positions = query.order_by(FuturesPosition.expiry_date).all()
 
     return [
@@ -265,7 +265,7 @@ def get_futures_summary(
     """Get futures portfolio summary."""
     positions = db.query(FuturesPosition).filter(
         FuturesPosition.user_id == user_id,
-        FuturesPosition.is_active == True
+        FuturesPosition.is_active
     ).all()
 
     total_unrealized = sum(float(p.unrealized_pnl or 0) for p in positions)
@@ -298,7 +298,7 @@ def get_leverage_metrics(
     """Calculate leverage and margin metrics."""
     positions = db.query(FuturesPosition).filter(
         FuturesPosition.user_id == user_id,
-        FuturesPosition.is_active == True
+        FuturesPosition.is_active
     ).all()
 
     total_exposure = 0.0
