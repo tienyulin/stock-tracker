@@ -623,8 +623,10 @@ class PlaidAdapter(BaseOpenFinanceAdapter):
                 },
             )
             response.raise_for_status()
+            data = response.json()
             # Token obtained successfully (for future use with Plaid API)
             # Response data contains access_token and item_id needed for subsequent calls
+            item_id = data.get("item_id", str(uuid4()))
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 400:
                 raise ProviderAuthenticationError("Invalid Plaid public token")

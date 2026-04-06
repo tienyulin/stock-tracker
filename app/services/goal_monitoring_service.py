@@ -396,7 +396,8 @@ class GoalMonitoringService:
 
         if not on_track:
             # Check how far behind
-            if progress_percent < 50:
+            # AT_RISK: somewhat behind (25-50% progress); BEHIND: significantly behind (<25%)
+            if progress_percent < 25:
                 return GoalStatus.BEHIND
             return GoalStatus.AT_RISK
 

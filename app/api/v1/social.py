@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session, joinedload
@@ -329,13 +329,13 @@ def get_followers(
 
 @router.post("/activity", response_model=TradeActivityResponse)
 def create_trade_activity(
-    activity_type: str = Field(..., description="Type: buy, sell, dividend"),
-    symbol: str = Field(..., description="Stock symbol"),
-    quantity: Optional[float] = None,
-    price: Optional[float] = None,
-    total_value: Optional[float] = None,
-    currency: str = "USD",
-    notes: Optional[str] = None,
+    activity_type: str = Body(..., description="Type: buy, sell, dividend"),
+    symbol: str = Body(..., description="Stock symbol"),
+    quantity: Optional[float] = Body(None),
+    price: Optional[float] = Body(None),
+    total_value: Optional[float] = Body(None),
+    currency: str = Body("USD"),
+    notes: Optional[str] = Body(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):

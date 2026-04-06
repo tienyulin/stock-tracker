@@ -1,0 +1,159 @@
+.alert-list {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.alert-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.alert-list-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: 0;
+}
+
+.alert-filter-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-secondary, #f0f0f0);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.filter-tab {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary, #555);
+  transition: all 0.2s;
+}
+
+.filter-tab.active {
+  background: var(--card-bg, #fff);
+  color: var(--text-primary, #333);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-weight: 500;
+}
+
+.alerts-table-container {
+  overflow-x: auto;
+}
+
+.alerts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.alerts-table th {
+  text-align: left;
+  padding: 10px 12px;
+  color: var(--text-secondary, #666);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  white-space: nowrap;
+}
+
+.alerts-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color, #eee);
+  color: var(--text-primary, #333);
+}
+
+.alerts-table tr:last-child td {
+  border-bottom: none;
+}
+
+.alerts-table tr.acknowledged td {
+  opacity: 0.5;
+}
+
+.severity-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.severity-critical {
+  background: #fee;
+  color: #c00;
+}
+
+.severity-warning {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.severity-info {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.type-label {
+  font-size: 12px;
+  color: var(--text-secondary, #555);
+  background: var(--bg-secondary, #f0f0f0);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.message-cell {
+  max-width: 300px;
+  font-size: 13px;
+}
+
+.time-cell {
+  white-space: nowrap;
+  color: var(--text-secondary, #666);
+  font-size: 12px;
+}
+
+.btn-acknowledge {
+  background: none;
+  border: 1px solid var(--primary-color, #4a90e2);
+  color: var(--primary-color, #4a90e2);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-acknowledge:hover {
+  background: var(--primary-color, #4a90e2);
+  color: #fff;
+}
+
+.acknowledged-label {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+}
+
+.no-alerts {
+  text-align: center;
+  color: var(--text-secondary, #888);
+  padding: 32px;
+  font-size: 14px;
+}
+
+.alert-list-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary, #888);
+}
