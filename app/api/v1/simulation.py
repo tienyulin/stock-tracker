@@ -25,27 +25,16 @@ class AllocationInput(BaseModel):
 
 class RetirementSimulationRequest(BaseModel):
     """Request model for retirement simulation."""
-    current_age: int = Field(default=30, ge=18, le=100)
-    retirement_age: int = Field(default=65, ge=18, le=100)
-    life_expectancy: int = Field(default=95, ge=18, le=120)
+    current_age: int = Field(default=30, ge=18, le=80)
+    retirement_age: int = Field(default=65, ge=19, le=90)
     current_portfolio: float = Field(default=100000, ge=0)
     monthly_contribution: float = Field(default=1000, ge=0)
     desired_monthly_income: float = Field(default=5000, ge=0)
-    desired_annual_income: float = Field(default=60000, ge=0)
-    social_security_monthly: float = Field(default=0, ge=0)
-    num_simulations: int = Field(default=10000, ge=100, le=100000)
+    num_simulations: int = Field(default=1000, ge=100, le=10000)
     portfolio_allocation: dict[str, float] = Field(
-        default_factory=lambda: {"stocks": 0.6, "bonds": 0.3, "cash": 0.05, "real_estate": 0.05}
+        default_factory=lambda: {"stocks": 0.7, "bonds": 0.2, "cash": 0.1}
     )
-    years_to_simulate: int = Field(default=10, ge=0)
-
-    @model_validator(mode="after")
-    def validate_ages(self):
-        if self.retirement_age <= self.current_age:
-            raise ValueError("retirement_age must be greater than current_age")
-        if self.life_expectancy <= self.retirement_age:
-            raise ValueError("life_expectancy must be greater than retirement_age")
-        return self
+    years_to_simulate: int = Field(default=10, ge=1, le=50)
 
 
 class YearlyOutcome(BaseModel):
@@ -91,11 +80,9 @@ async def run_retirement_simulation(
     schema_req = SchemaRequest(
         current_age=body.current_age,
         retirement_age=body.retirement_age,
-        life_expectancy=body.life_expectancy,
         current_savings=body.current_portfolio,
         monthly_contribution=body.monthly_contribution,
         desired_monthly_income=body.desired_monthly_income,
-        social_security_monthly=body.social_security_monthly,
         num_simulations=body.num_simulations,
         portfolio_allocation=body.portfolio_allocation,
         years_to_simulate=body.years_to_simulate,
