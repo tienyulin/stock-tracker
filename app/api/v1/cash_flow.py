@@ -252,7 +252,7 @@ async def update_emergency_fund(
     service: EmergencyFundService = Depends(get_emergency_fund_service),
 ):
     """Create or update emergency fund amount."""
-    fund = service.upsert_fund(
+    service.upsert_fund(
         user_id=current_user.id,
         current_amount=request.current_amount,
         monthly_expenses_estimate=request.monthly_expenses_estimate,
