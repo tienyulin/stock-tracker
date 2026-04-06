@@ -241,3 +241,102 @@ class AIConversation(Base):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="ai_conversations")
+
+
+class CryptoWallet(Base):
+    """Crypto wallet model — tracks on-chain wallet balances."""
+
+    __tablename__ = "crypto_wallets"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    blockchain: Mapped[str] = mapped_column(String(20), nullable=False)  # ethereum/bsc/polygon/solana
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    balance: Mapped[float] = mapped_column(nullable, default=0.0)
+    usd_value: Mapped[float] = mapped_column(nullable, default=0.0)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    defi_positions: Mapped[list["DefiPosition"]] = relationship(
+        "DefiPosition", back_populates="wallet", cascade="all, delete-orphan"
+    )
+
+
+class DefiPosition(Base):
+    """DeFi position model — tracks LP tokens, staking, lending positions."""
+
+    __tablename__ = "defi_positions"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    wallet_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("crypto_wallets.id", ondelete="CASCADE"), nullable=True
+    )
+    protocol_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    position_type: Mapped[str] = mapped_column(String(20), nullable=False)  # lp/staking/lending
+    token_symbol: Mapped[str] = mapped_column(String(20), nullable=False)
+    token_address: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    quantity: Mapped[float] = mapped_column(nullable, default=0.0)
+    entry_price: Mapped[float] = mapped_column(nullable, default=0.0)
+    current_price: Mapped[float] = mapped_column(nullable, default=0.0)
+    current_value: Mapped[float] = mapped_column(nullable, default=0.0)
+    pnl: Mapped[float] = mapped_column(nullable, default=0.0)
+    pnl_percentage: Mapped[float] = mapped_column(nullable, default=0.0)
+    apy: Mapped[Optional[float]] = mapped_column(nullable, default=0.0)
+    rewards_token: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    estimated_rewards: Mapped[Optional[float]] = mapped_column(nullable, default=0.0)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    wallet: Mapped[Optional["CryptoWallet"]] = relationship("CryptoWallet", back_populates="defi_positions")
+
+
+class CexAccount(Base):
+    """CEX (Centralized Exchange) account model — stores encrypted API keys."""
+
+    __tablename__ = "cex_accounts"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    exchange: Mapped[str] = mapped_column(String(50), nullable=False)  # coinbase/binance/kraken
+    api_key_encrypted: Mapped[str] = mapped_column(String(500), nullable=False)
+    api_secret_encrypted: Mapped[str] = mapped_column(String(500), nullable=False)
+    label: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_sync_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")

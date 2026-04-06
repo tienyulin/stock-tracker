@@ -19,6 +19,7 @@ const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
 const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'))
 const PortfolioOverview = lazy(() => import('./pages/PortfolioOverview'))
 const PassiveIncomeDashboard = lazy(() => import('./pages/PassiveIncomeDashboard'))
+const CryptoDashboard = lazy(() => import('./pages/CryptoDashboard'))
 const DividendTracker = lazy(() => import('./pages/DividendTracker'))
 
 const LANGUAGES = [
@@ -65,6 +66,7 @@ function NavBar() {
         <li><NavLink to="/portfolio-overview" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioOverview', 'Overview')}</NavLink></li>
         <li><NavLink to="/dividends" className={({ isActive }) => isActive ? 'active' : ''}>Dividends</NavLink></li>
         <li><NavLink to="/passive-income" className={({ isActive }) => isActive ? 'active' : ''}>Passive Income</NavLink></li>
+        <li><NavLink to="/crypto" className={({ isActive }) => isActive ? 'active' : ''}>🦿 Crypto</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
         <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
@@ -117,6 +119,7 @@ function AppRoutes() {
         <Route path="/portfolio/agent" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
         <Route path="/portfolio-overview" element={<RequireAuth><PortfolioOverview /></RequireAuth>} />
         <Route path="/passive-income" element={<RequireAuth><PassiveIncomeDashboard /></RequireAuth>} />
+        <Route path="/crypto" element={<RequireAuth><CryptoDashboard /></RequireAuth>} />
         <Route path="/dividends" element={<RequireAuth><DividendTracker /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         <Route path="/agent-dashboard" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
