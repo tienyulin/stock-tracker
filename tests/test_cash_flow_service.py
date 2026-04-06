@@ -61,7 +61,6 @@ class TestCashFlowService:
         mock_expense.category = "housing"
         mock_expense.amount = Decimal("1500")
 
-        # Mock scalar_one_or_none to return a list-like
         def mock_execute(q):
             result = MagicMock()
             result.scalars.return_value.all.return_value = [mock_income, mock_expense]
@@ -140,9 +139,8 @@ class TestEmergencyFundService:
 
     def test_get_status_adequate_fund(self):
         from app.services.cash_flow_service import EmergencyFundService
-        from app.models.cash_flow_db import EmergencyFundModel
 
-        mock_fund = MagicMock(spec=EmergencyFundModel)
+        mock_fund = MagicMock()
         mock_fund.current_amount = Decimal("18000")
         mock_fund.monthly_expenses_estimate = Decimal("3000")
 

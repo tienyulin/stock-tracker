@@ -54,6 +54,9 @@ class User(Base):
     option_positions: Mapped[list["OptionPosition"]] = relationship(
         "OptionPosition", back_populates="user", cascade="all, delete-orphan"
     )
+    profile: Mapped["UserProfile"] = relationship(
+        "UserProfile", back_populates="user", uselist=False
+    )
 
 
 class Watchlist(Base):
