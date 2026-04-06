@@ -464,3 +464,132 @@ class PassiveIncomeDashboardResponse(BaseModel):
     monthly_summary: PassiveIncomeMonthlySummary
     annual_summary: PassiveIncomeAnnualSummary
     fire_progress: Optional[FireProgressResponse]
+
+
+# ─── Alternative Investments Schemas ─────────────────────────────────────────
+
+class AlternativeInvestmentCreate(BaseModel):
+    """Schema for creating an alternative investment."""
+    name: str = Field(..., min_length=1, max_length=200)
+    investment_type: str = Field(..., pattern="^(private_equity|venture_capital|private_credit|hedge_fund|reit_listed|reit_nonlisted|commodity|precious_metals|other)$")
+    ticker: Optional[str] = Field(None, max_length=20)
+    liquidity: str = Field(default="illiquid", pattern="^(liquid|semi_liquid|illiquid)$")
+    cost_basis: float = Field(default=0, ge=0)
+    currency: str = Field(default="USD", min_length=3, max_length=3)
+    purchase_date: Optional[datetime] = None
+    shares_units: Optional[float] = Field(None, ge=0)
+    committed_capital: Optional[float] = Field(None, ge=0)
+    deployed_capital: Optional[float] = Field(None, ge=0)
+    current_nav_per_share: Optional[float] = Field(None, ge=0)
+    current_value: Optional[float] = Field(None, ge=0)
+    current_price: Optional[float] = Field(None, ge=0)
+    rental_income_ytd: Optional[float] = Field(None, ge=0)
+    occupancy_rate: Optional[float] = Field(None, ge=0, le=100)
+    notes: Optional[str] = None
+
+
+class AlternativeInvestmentUpdate(BaseModel):
+    """Schema for updating an alternative investment."""
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    investment_type: Optional[str] = Field(None, pattern="^(private_equity|venture_capital|private_credit|hedge_fund|reit_listed|reit_nonlisted|commodity|precious_metals|other)$")
+    ticker: Optional[str] = Field(None, max_length=20)
+    liquidity: Optional[str] = Field(None, pattern="^(liquid|semi_liquid|illiquid)$")
+    cost_basis: Optional[float] = Field(None, ge=0)
+    purchase_date: Optional[datetime] = None
+    shares_units: Optional[float] = Field(None, ge=0)
+    committed_capital: Optional[float] = Field(None, ge=0)
+    deployed_capital: Optional[float] = Field(None, ge=0)
+    current_nav_per_share: Optional[float] = Field(None, ge=0)
+    current_value: Optional[float] = Field(None, ge=0)
+    current_price: Optional[float] = Field(None, ge=0)
+    rental_income_ytd: Optional[float] = Field(None, ge=0)
+    occupancy_rate: Optional[float] = Field(None, ge=0, le=100)
+    is_active: Optional[bool] = None
+    notes: Optional[str] = None
+
+
+class NAVHistoryResponse(BaseModel):
+    """NAV history record response."""
+    id: UUID
+    nav_date: datetime
+    nav_per_share: float
+    total_value: Optional[float]
+    unrealized_gain_loss: Optional[float]
+    notes: Optional[str]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class AlternativeInvestmentResponse(BaseModel):
+    """Alternative investment response."""
+    id: UUID
+    name: str
+    investment_type: str
+    ticker: Optional[str]
+    liquidity: str
+    cost_basis: float
+    currency: str
+    purchase_date: Optional[datetime]
+    shares_units: Optional[float]
+    committed_capital: Optional[float]
+    deployed_capital: Optional[float]
+    current_nav_per_share: Optional[float]
+    current_value: Optional[float]
+    current_price: Optional[float]
+    rental_income_ytd: Optional[float]
+    occupancy_rate: Optional[float]
+    unrealized_gain: Optional[float]
+    unrealized_gain_percent: Optional[float]
+    notes: Optional[str]
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class NAVUpdate(BaseModel):
+    """Schema for updating fund NAV."""
+    nav_date: datetime
+    nav_per_share: float = Field(..., ge=0)
+    total_value: Optional[float] = Field(None, ge=0)
+    notes: Optional[str] = None
+
+
+class LiquidityAnalysisResponse(BaseModel):
+    """Liquidity analysis for alternative investments."""
+    liquid_value: float
+    liquid_percent: float
+    semi_liquid_value: float
+    semi_liquid_percent: float
+    illiquid_value: float
+    illiquid_percent: float
+    total_value: float
+    currency: str
+
+
+class AlternativeInvestmentsSummaryResponse(BaseModel):
+    """Alternative investments dashboard summary."""
+    total_value: float
+    total_cost_basis: float
+    total_unrealized_gain: float
+    unrealized_gain_percent: float
+    by_type: dict[str, dict[str, float]]
+    liquidity_analysis: LiquidityAnalysisResponse
+    currency: str
+
+
+class REITQuoteResponse(BaseModel):
+    """REIT quote data."""
+    ticker: str
+    name: Optional[str] = None
+    price: float
+    dividend_yield: Optional[float] = None
+    rental_yield: Optional[float] = None
+    occupancy_rate: Optional[float] = None
+    price_change: Optional[float] = None
+    price_change_percent: Optional[float] = None
+    timestamp: Optional[int] = None
