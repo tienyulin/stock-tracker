@@ -4,7 +4,7 @@ API v1 router.
 
 from fastapi import APIRouter
 
-from app.api.v1 import alerts, auth, stocks, watchlists, users, portfolio, api_keys, simulation, tax_report, broker_sync, social, portfolio_health, signals, options, dividends, portfolio_overview, passive_income, agent, financial_coach, wealth_transfer, cash_flow
+from app.api.v1 import alerts, auth, stocks, watchlists, users, portfolio, api_keys, simulation, tax_report, broker_sync, social, portfolio_health, signals, options, dividends, portfolio_overview, passive_income, agent, financial_coach, wealth_transfer, cash_flow, tax_optimization
 
 router = APIRouter(prefix="/api/v1")
 
@@ -29,3 +29,4 @@ router.include_router(agent.router)
 router.include_router(financial_coach.router)
 router.include_router(wealth_transfer.router)
 router.include_router(cash_flow.router)
+router.include_router(tax_optimization.router)
