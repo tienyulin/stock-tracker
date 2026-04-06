@@ -25,6 +25,7 @@ const PassiveIncomeDashboard = lazy(() => import('./pages/PassiveIncomeDashboard
 const CryptoDashboard = lazy(() => import('./pages/CryptoDashboard'))
 const DividendTracker = lazy(() => import('./pages/DividendTracker'))
 const IPODashboard = lazy(() => import('./pages/IPODashboard'))
+const ReportingDashboard = lazy(() => import('./pages/ReportingDashboard'))
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', native: 'English' },
@@ -75,6 +76,7 @@ function NavBar() {
         <li><NavLink to="/commodities" className={({ isActive }) => isActive ? 'active' : ''}>Commodities</NavLink></li>
         <li><NavLink to="/esg" className={({ isActive }) => isActive ? 'active' : ''}>ESG</NavLink></li>
         <li><NavLink to="/ipos" className={({ isActive }) => isActive ? 'active' : ''}>IPO Tracker</NavLink></li>
+        <li><NavLink to="/reporting" className={({ isActive }) => isActive ? 'active' : ''}>📊 Reporting</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
         <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
@@ -133,6 +135,7 @@ function AppRoutes() {
         <Route path="/esg" element={<RequireAuth><EsgDashboard /></RequireAuth>} />
         <Route path="/ipos" element={<RequireAuth><IPODashboard /></RequireAuth>} />
         <Route path="/dividends" element={<RequireAuth><DividendTracker /></RequireAuth>} />
+        <Route path="/reporting" element={<RequireAuth><ReportingDashboard /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         <Route path="/agent-dashboard" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
       </Routes>
