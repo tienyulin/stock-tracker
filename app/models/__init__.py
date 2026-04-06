@@ -10,17 +10,20 @@ from app.models.passive_income import (
     PassiveIncomeSource,
 )
 from app.models.fixed_income import Bond, TermDeposit
+from app.models.commodities import CommodityPosition, FuturesContract
 
 __all__ = [
     "Alert",
     "AlertNotification",
     "Base",
     "Bond",
+    "CommodityPosition",
     "DividendHolding",
     "DividendPayment",
     "ExDividendCalendar",
     "FireGoal",
     "Follow",
+    "FuturesContract",
     "HealthScoreAlert",
     "LeaderboardEntry",
     "OptionContract",

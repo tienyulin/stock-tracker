@@ -178,7 +178,8 @@ def calculate_accrued_term_deposit(
     if days_elapsed < 0:
         return 0.0
     days_in_year = 365.0
-    n_per_year = {
+    # frequency mapping kept for future compound interest support
+    _n_per_year = {
         "monthly": 12,
         "quarterly": 4,
         "semi_annually": 2,

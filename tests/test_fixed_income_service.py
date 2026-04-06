@@ -112,7 +112,7 @@ class TestFixedIncomeService:
         db.refresh = MagicMock()
 
         svc = FixedIncomeService(db)
-        bond = svc.create_bond(
+        _bond = svc.create_bond(
             user_id=uuid.uuid4(),
             name="Test Corp 5Y",
             bond_type="corporate",
@@ -173,7 +173,7 @@ class TestTermDepositService:
         db.refresh = MagicMock()
 
         svc = TermDepositService(db)
-        td = svc.create_term_deposit(
+        _td = svc.create_term_deposit(
             user_id=uuid.uuid4(),
             name="HSBC 1-Year TD",
             bank_name="HSBC",

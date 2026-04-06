@@ -85,6 +85,12 @@ class User(Base):
     term_deposits: Mapped[list["TermDeposit"]] = relationship(
         "TermDeposit", back_populates="user", cascade="all, delete-orphan"
     )
+    commodity_positions: Mapped[list["CommodityPosition"]] = relationship(
+        "CommodityPosition", back_populates="user", cascade="all, delete-orphan"
+    )
+    futures_contracts: Mapped[list["FuturesContract"]] = relationship(
+        "FuturesContract", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Watchlist(Base):
