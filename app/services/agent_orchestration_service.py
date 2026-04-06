@@ -572,7 +572,7 @@ class AgentOrchestrationService:
         """
         ctx = self.get_or_create_context(user_id)
 
-        return self._goal_monitoring.calculate_retirement_gap(
+        return await self._goal_monitoring.calculate_retirement_gap(
             goal=retirement_goal,
             profile=ctx.profile or PersonalFinancialProfile(
                 user_id=ctx.profile.user_id if ctx.profile else uuid.uuid4(),
@@ -852,6 +852,7 @@ class AgentOrchestrationService:
                 rationale=f"Drift: {abs(drift.drift_score - 50):.1f}% from target",
                 metadata=trade,
                 confidence=0.75,
+                created_at=datetime.now(),
             )
             for trade in drift.rebalancing_trades
         ]
