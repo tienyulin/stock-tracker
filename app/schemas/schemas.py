@@ -313,3 +313,154 @@ class DividendGrowthResponse(BaseModel):
     yield_on_cost: float
     current_yield: float
     years_of_growth: int
+
+
+# ─── Passive Income Schemas ───────────────────────────────────────────────────
+
+
+class PassiveIncomeSourceCreate(BaseModel):
+    """Schema for creating a passive income source."""
+
+    name: str = Field(..., min_length=1, max_length=200)
+    source_type: str = Field(
+        ...,
+        pattern="^(dividend|rental|interest|royalty|pension|social_security|p2p|other)$",
+    )
+    description: Optional[str] = None
+    currency: str = Field(default="USD", max_length=3)
+    expected_monthly_income: float = Field(default=0, ge=0)
+    expected_annual_income: float = Field(default=0, ge=0)
+    yield_on_cost: Optional[float] = Field(None, ge=0)
+    start_date: Optional[datetime] = None
+    notes: Optional[str] = None
+
+
+class PassiveIncomeSourceUpdate(BaseModel):
+    """Schema for updating a passive income source."""
+
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    source_type: Optional[str] = None
+    description: Optional[str] = None
+    currency: Optional[str] = Field(None, max_length=3)
+    expected_monthly_income: Optional[float] = Field(None, ge=0)
+    expected_annual_income: Optional[float] = Field(None, ge=0)
+    yield_on_cost: Optional[float] = Field(None, ge=0)
+    is_active: Optional[bool] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    notes: Optional[str] = None
+
+
+class PassiveIncomeSourceResponse(BaseModel):
+    """Response schema for a passive income source."""
+
+    id: UUID
+    name: str
+    source_type: str
+    description: Optional[str]
+    currency: str
+    expected_monthly_income: float
+    expected_annual_income: float
+    yield_on_cost: Optional[float]
+    is_active: bool
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
+    notes: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class PassiveIncomeRecordCreate(BaseModel):
+    """Schema for creating a passive income record."""
+
+    source_id: UUID
+    amount: float = Field(..., ge=0)
+    currency: str = Field(default="USD", max_length=3)
+    record_date: datetime
+    record_type: str = Field(default="received", pattern="^(received|expected|missed)$")
+    notes: Optional[str] = None
+
+
+class PassiveIncomeRecordResponse(BaseModel):
+    """Response schema for a passive income record."""
+
+    id: UUID
+    source_id: UUID
+    amount: float
+    currency: str
+    record_date: datetime
+    record_type: str
+    notes: Optional[str]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class PassiveIncomeMonthlySummary(BaseModel):
+    """Monthly passive income summary."""
+
+    total: float
+    by_type: dict[str, float]
+    currency: str
+
+
+class PassiveIncomeAnnualSummary(BaseModel):
+    """Annual passive income summary."""
+
+    year: int
+    monthly: list[float]
+    total: float
+    currency: str
+
+
+class FireGoalUpsert(BaseModel):
+    """Schema for creating/updating a FIRE goal."""
+
+    target_annual_income: float = Field(..., gt=0)
+    monthly_expenses: float = Field(..., gt=0)
+    target_date: Optional[datetime] = None
+    currency: str = Field(default="USD", max_length=3)
+
+
+class FireGoalResponse(BaseModel):
+    """Response schema for a FIRE goal."""
+
+    id: UUID
+    target_annual_income: float
+    monthly_expenses: float
+    target_date: Optional[datetime]
+    current_passive_income: float
+    progress_percentage: float
+    currency: str
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class FireProgressResponse(BaseModel):
+    """FIRE progress dashboard data."""
+
+    target_annual_income: float
+    current_passive_income: float
+    progress_percentage: float
+    monthly_expenses: float
+    monthly_target: float
+    months_to_target: int
+    target_date: Optional[datetime]
+    currency: str
+
+
+class PassiveIncomeDashboardResponse(BaseModel):
+    """Full passive income dashboard response."""
+
+    sources: list[PassiveIncomeSourceResponse]
+    monthly_summary: PassiveIncomeMonthlySummary
+    annual_summary: PassiveIncomeAnnualSummary
+    fire_progress: Optional[FireProgressResponse]
