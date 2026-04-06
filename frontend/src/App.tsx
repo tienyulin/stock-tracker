@@ -18,6 +18,7 @@ const PortfolioSignals = lazy(() => import('./pages/PortfolioSignals'))
 const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
 const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'))
 const PortfolioOverview = lazy(() => import('./pages/PortfolioOverview'))
+const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'))
 const PassiveIncomeDashboard = lazy(() => import('./pages/PassiveIncomeDashboard'))
 const DividendTracker = lazy(() => import('./pages/DividendTracker'))
 
