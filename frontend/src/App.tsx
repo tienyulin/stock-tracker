@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
 import FixedIncomeDashboard from './pages/FixedIncomeDashboard'
+import CommodityDashboard from './pages/CommodityDashboard'
 import { useTranslation } from 'react-i18next'
 import { lazy, Suspense } from 'react'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -67,6 +68,7 @@ function NavBar() {
         <li><NavLink to="/dividends" className={({ isActive }) => isActive ? 'active' : ''}>Dividends</NavLink></li>
         <li><NavLink to="/passive-income" className={({ isActive }) => isActive ? 'active' : ''}>Passive Income</NavLink></li>
         <li><NavLink to="/fixed-income" className={({ isActive }) => isActive ? 'active' : ''}>Fixed Income</NavLink></li>
+        <li><NavLink to="/commodities" className={({ isActive }) => isActive ? 'active' : ''}>Commodities</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
         <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
@@ -120,6 +122,7 @@ function AppRoutes() {
         <Route path="/portfolio-overview" element={<RequireAuth><PortfolioOverview /></RequireAuth>} />
         <Route path="/passive-income" element={<RequireAuth><PassiveIncomeDashboard /></RequireAuth>} />
         <Route path="/fixed-income" element={<RequireAuth><FixedIncomeDashboard /></RequireAuth>} />
+        <Route path="/commodities" element={<RequireAuth><CommodityDashboard /></RequireAuth>} />
         <Route path="/dividends" element={<RequireAuth><DividendTracker /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         <Route path="/agent-dashboard" element={<RequireAuth><AgentDashboard /></RequireAuth>} />

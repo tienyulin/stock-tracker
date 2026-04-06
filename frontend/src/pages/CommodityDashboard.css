@@ -1,0 +1,267 @@
+.commodity-dashboard {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.commodity-dashboard .dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.commodity-dashboard .dashboard-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.commodity-dashboard .header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.commodity-dashboard .tab-bar {
+  display: flex;
+  gap: 4px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.commodity-dashboard .tab-bar button {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.15s;
+}
+
+.commodity-dashboard .tab-bar button.active {
+  background: #fff;
+  color: #1a1a2e;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.commodity-dashboard .overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.commodity-dashboard .summary-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.commodity-dashboard .summary-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e0e0e0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+}
+
+.commodity-dashboard .stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.commodity-dashboard .stat-row span:first-child {
+  color: #a0a0a0;
+}
+
+.commodity-dashboard .stat-row span:last-child {
+  font-weight: 600;
+  color: #fff;
+}
+
+.commodity-dashboard .metal-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+  color: #e0e0e0;
+}
+
+.commodity-dashboard .alert-card {
+  border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.commodity-dashboard .alert-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  color: #ffc107;
+}
+
+.commodity-dashboard .positive { color: #4caf50; }
+.commodity-dashboard .negative { color: #f44336; }
+.commodity-dashboard .badge {
+  background: rgba(255,255,255,0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.commodity-dashboard .form-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.commodity-dashboard .form-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+.commodity-dashboard .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.commodity-dashboard .form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+}
+
+.commodity-dashboard .form-grid label input,
+.commodity-dashboard .form-grid label select,
+.commodity-dashboard .form-grid label textarea {
+  padding: 8px 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1a1a2e;
+  background: #fafafa;
+}
+
+.commodity-dashboard .form-grid label textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.commodity-dashboard .form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.commodity-dashboard .empty-state {
+  text-align: center;
+  padding: 48px;
+  color: #888;
+  font-size: 15px;
+}
+
+.commodity-dashboard .data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.commodity-dashboard .data-table th {
+  background: #f5f5f5;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.commodity-dashboard .data-table td {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #333;
+  border-top: 1px solid #f0f0f0;
+}
+
+.commodity-dashboard .data-table tr:hover td {
+  background: #fafafa;
+}
+
+.commodity-dashboard .btn-primary {
+  background: #1a1a2e;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.commodity-dashboard .btn-primary:hover { background: #2a2a4e; }
+.commodity-dashboard .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.commodity-dashboard .btn-secondary {
+  background: #f0f2f5;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.commodity-dashboard .btn-secondary:hover { background: #e0e2e5; }
+
+.commodity-dashboard .btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  opacity: 0.6;
+}
+
+.commodity-dashboard .btn-icon:hover { opacity: 1; }
+
+.commodity-dashboard .loading {
+  text-align: center;
+  padding: 48px;
+  color: #888;
+  font-size: 16px;
+}
+
+.commodity-dashboard .error-banner {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
