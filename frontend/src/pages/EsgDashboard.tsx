@@ -5,7 +5,6 @@ import {
   PortfolioEsgSummary,
   ControversyAlert,
   ExclusionListEntry,
-  SustainableAlternative,
   PortfolioCarbon,
   PortfolioScreen,
 } from '../services/esgService'
@@ -28,11 +27,10 @@ function EsgDashboardPage() {
 
   const [summary, setSummary] = useState<PortfolioEsgSummary | null>(null)
   const [carbon, setCarbon] = useState<PortfolioCarbon | null>(null)
-  const [scores, setScores] = useState<EsgScore[]>([])
+  const [scores] = useState<EsgScore[]>([])
   const [alerts, setAlerts] = useState<ControversyAlert[]>([])
   const [exclusions, setExclusions] = useState<ExclusionListEntry[]>([])
   const [screenResult, setScreenResult] = useState<PortfolioScreen | null>(null)
-  const [alternatives, setAlternatives] = useState<Record<string, SustainableAlternative[]>>({})
 
   // Add score form
   const [showAddScore, setShowAddScore] = useState(false)
