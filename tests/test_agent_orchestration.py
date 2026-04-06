@@ -180,7 +180,8 @@ class TestContextManagement:
 
     def test_clear_context(self, service):
         """Should clear context for a user."""
-        ctx = service.get_or_create_context("user_to_clear")
+        # Create initial context
+        service.get_or_create_context("user_to_clear")
         assert service.get_or_create_context("user_to_clear").user_id == "user_to_clear"
 
         service.clear_context("user_to_clear")
