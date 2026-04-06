@@ -16,7 +16,7 @@ from app.models.family import AccountType, EntityType, FamilyMemberRole
 class FamilyMemberBase(BaseModel):
     name: str = Field(..., max_length=255)
     role: FamilyMemberRole = FamilyMemberRole.VIEWER
-    relationship: Optional[str] = Field(None, max_length=100)
+    relationship_type: Optional[str] = Field(None, max_length=100)
     date_of_birth: Optional[date] = None
 
 
@@ -27,7 +27,7 @@ class FamilyMemberCreate(FamilyMemberBase):
 class FamilyMemberUpdate(BaseModel):
     name: Optional[str] = Field(None, max_length=255)
     role: Optional[FamilyMemberRole] = None
-    relationship: Optional[str] = Field(None, max_length=100)
+    relationship_type: Optional[str] = Field(None, max_length=100)
     date_of_birth: Optional[date] = None
 
 
