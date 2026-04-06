@@ -8,11 +8,8 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field, model_validator
 
 from app.core.rate_limiter import limiter, DEFAULT_RATE_LIMIT
-from app.services.monte_carlo_service import (
-    MonteCarloService,
-    PortfolioAllocation,
-    RetirementParams,
-)
+from app.services.monte_carlo_service import MonteCarloService
+from app.schemas.schemas import RetirementSimulationRequest as SchemaRequest
 from app.api.v1.auth import get_current_user
 
 router = APIRouter(prefix="/simulation", tags=["Simulation"])
@@ -33,13 +30,17 @@ class RetirementSimulationRequest(BaseModel):
     life_expectancy: int = Field(default=95, ge=18, le=120)
     current_portfolio: float = Field(default=100000, ge=0)
     monthly_contribution: float = Field(default=1000, ge=0)
+    desired_monthly_income: float = Field(default=5000, ge=0)
     desired_annual_income: float = Field(default=60000, ge=0)
     social_security_monthly: float = Field(default=0, ge=0)
-    allocation: AllocationInput = Field(default_factory=AllocationInput)
+    num_simulations: int = Field(default=10000, ge=100, le=100000)
+    portfolio_allocation: dict[str, float] = Field(
+        default_factory=lambda: {"stocks": 0.6, "bonds": 0.3, "cash": 0.05, "real_estate": 0.05}
+    )
+    years_to_simulate: int = Field(default=10, ge=0)
 
     @model_validator(mode="after")
     def validate_ages(self):
-        """Validate that retirement_age > current_age and life_expectancy > retirement_age."""
         if self.retirement_age <= self.current_age:
             raise ValueError("retirement_age must be greater than current_age")
         if self.life_expectancy <= self.retirement_age:
@@ -57,16 +58,18 @@ class YearlyOutcome(BaseModel):
 
 class RetirementSimulationResponse(BaseModel):
     """Response model for retirement simulation."""
-    success_rate: float = Field(description="Percentage of simulations that didn't run out of money")
-    median_ending_balance: float
+    success_probability: float
+    median_outcome: float
     percentile_10: float
     percentile_25: float
     percentile_75: float
     percentile_90: float
-    yearly_outcomes: list[YearlyOutcome]
-    total_contributions: float
-    total_growth: float
-    simulation_count: int = Field(default=10000)
+    average_outcome: float
+    worst_outcome: float
+    best_outcome: float
+    total_simulations: int
+    years_until_retirement: int
+    assumptions: dict
 
 
 @router.post("/retirement", response_model=RetirementSimulationResponse)
@@ -79,47 +82,39 @@ async def run_retirement_simulation(
     """
     Run Monte Carlo simulation for retirement planning.
     
-    Simulates 10,000 scenarios with stochastic market returns
+    Simulates multiple scenarios with stochastic market returns
     based on historical volatility and return assumptions.
     
     Returns success rate and percentile outcomes for retirement outcomes.
     """
-    # Build allocation
-    alloc = body.allocation
-    portfolio_alloc = PortfolioAllocation(
-        stocks=alloc.stocks,
-        bonds=alloc.bonds,
-        cash=alloc.cash,
-        real_estate=alloc.real_estate
-    )
-    
-    # Build params
-    params = RetirementParams(
+    # Convert to schema request
+    schema_req = SchemaRequest(
         current_age=body.current_age,
         retirement_age=body.retirement_age,
         life_expectancy=body.life_expectancy,
-        current_portfolio=body.current_portfolio,
+        current_savings=body.current_portfolio,
         monthly_contribution=body.monthly_contribution,
-        desired_annual_income=body.desired_annual_income,
+        desired_monthly_income=body.desired_monthly_income,
         social_security_monthly=body.social_security_monthly,
-        allocation=portfolio_alloc
+        num_simulations=body.num_simulations,
+        portfolio_allocation=body.portfolio_allocation,
+        years_to_simulate=body.years_to_simulate,
     )
     
-    # Run simulation
     service = MonteCarloService()
-    result = await service.simulate(params)
+    result = service.run_retirement_simulation(schema_req)
     
     return RetirementSimulationResponse(
-        success_rate=result.success_rate,
-        median_ending_balance=result.median_ending_balance,
+        success_probability=result.success_probability,
+        median_outcome=result.median_outcome,
         percentile_10=result.percentile_10,
         percentile_25=result.percentile_25,
         percentile_75=result.percentile_75,
         percentile_90=result.percentile_90,
-        yearly_outcomes=[
-            YearlyOutcome(**y) for y in result.yearly_outcomes
-        ],
-        total_contributions=result.total_contributions,
-        total_growth=result.total_growth,
-        simulation_count=10000
+        average_outcome=result.average_outcome,
+        worst_outcome=result.worst_outcome,
+        best_outcome=result.best_outcome,
+        total_simulations=result.total_simulations,
+        years_until_retirement=result.years_until_retirement,
+        assumptions=result.assumptions,
     )
