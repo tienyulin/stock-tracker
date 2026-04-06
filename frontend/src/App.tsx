@@ -16,6 +16,7 @@ const Signup = lazy(() => import('./pages/Signup'))
 const Portfolio = lazy(() => import('./pages/Portfolio'))
 const PortfolioSignals = lazy(() => import('./pages/PortfolioSignals'))
 const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
+const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'))
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', native: 'English' },
@@ -57,6 +58,7 @@ function NavBar() {
         <li><NavLink to="/portfolio" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolio')}</NavLink></li>
         <li><NavLink to="/portfolio-signals" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioSignals')}</NavLink></li>
         <li><NavLink to="/portfolio-health" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioHealth')}</NavLink></li>
+        <li><NavLink to="/portfolio/agent" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
       </ul>
       <div className="nav-auth">
@@ -105,6 +107,7 @@ function AppRoutes() {
         <Route path="/portfolio" element={<RequireAuth><Portfolio /></RequireAuth>} />
         <Route path="/portfolio-signals" element={<RequireAuth><PortfolioSignals /></RequireAuth>} />
         <Route path="/portfolio-health" element={<RequireAuth><PortfolioHealth /></RequireAuth>} />
+        <Route path="/portfolio/agent" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
       </Routes>
     </Suspense>

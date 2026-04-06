@@ -6,7 +6,8 @@
     "portfolio": "投資組合",
     "retirement": "退休模擬",
     "settings": "設定",
-    "logout": "登出"
+    "logout": "登出",
+    "agentDashboard": "AI 智能代理"
   },
   "dashboard": {
     "title": "儀表板",
@@ -83,7 +84,11 @@
     "edit": "編輯",
     "add": "新增",
     "close": "關閉",
-    "search": "搜尋"
+    "search": "搜尋",
+    "refresh": "更新",
+    "saving": "儲存中...",
+    "yes": "是",
+    "no": "否"
   },
   "auth": {
     "login": "登入",
@@ -104,5 +109,79 @@
     "riskProfile": "風險偏好",
     "portfolioAllocation": "投資組合配置 (%)",
     "numSimulations": "模擬次數"
+  },
+  "agent": {
+    "dashboard": {
+      "subtitle": "您的智能投資助理",
+      "stopMonitoring": "停止監控",
+      "startMonitoring": "開始監控",
+      "goals": "目標",
+      "alerts": "警報",
+      "startedAt": "開始時間"
+    },
+    "goals": {
+      "title": "投資目標",
+      "add": "+ 新增目標",
+      "name": "目標名稱",
+      "namePlaceholder": "例如：退休儲蓄",
+      "targetValue": "目標金額",
+      "currentValue": "目前金額",
+      "threshold": "門檻 %",
+      "thresholdLabel": "門檻",
+      "save": "儲存目標",
+      "current": "目前",
+      "target": "目標",
+      "empty": "尚無設定目標，請新增第一個目標！"
+    },
+    "alerts": {
+      "title": "AI 代理警報",
+      "unacknowledged": "未確認",
+      "all": "全部",
+      "empty": "無警報",
+      "typePrice": "價格",
+      "typeAllocation": "配置",
+      "typeDiversification": "多元化",
+      "typeRebalance": "再平衡",
+      "typeTaxLoss": "稅務虧損",
+      "severity": "嚴重程度",
+      "type": "類型",
+      "message": "訊息",
+      "time": "時間",
+      "actions": "操作",
+      "acknowledge": "確認",
+      "acknowledged": "已確認",
+      "justNow": "剛剛",
+      "minsAgo": "{{n}}分鐘前",
+      "hoursAgo": "{{n}}小時前",
+      "daysAgo": "{{n}}天前"
+    },
+    "rebalance": {
+      "title": "再平衡操作",
+      "proposed": "提議交易",
+      "history": "歷史記錄",
+      "noProposed": "無待審核的交易提案",
+      "quantity": "數量",
+      "approve": "核准",
+      "reject": "駁回"
+    },
+    "tax": {
+      "title": "稅務影響分析",
+      "estimatedSavings": "預估節稅",
+      "harvestedLossesLabel": "已實現虧損",
+      "washSaleRisk": "洗售交易風險",
+      "savings": "估計節稅",
+      "harvestedLosses": "已收割虧損",
+      "calculatedAt": "計算時間"
+    },
+    "openFinance": {
+      "title": "開放金融連結",
+      "pilotBanks": "試點銀行",
+      "connectedAccounts": "已連結帳戶",
+      "connect": "連結",
+      "disconnect": "中斷連結",
+      "syncNow": "立即同步",
+      "lastSync": "上次同步",
+      "notSynced": "尚未同步"
+    }
   }
 }
