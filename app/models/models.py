@@ -91,6 +91,18 @@ class User(Base):
     futures_contracts: Mapped[list["FuturesContract"]] = relationship(
         "FuturesContract", back_populates="user", cascade="all, delete-orphan"
     )
+    esg_scores: Mapped[list["EsgScore"]] = relationship(
+        "EsgScore", back_populates="user", cascade="all, delete-orphan"
+    )
+    controversy_alerts: Mapped[list["ControversyAlert"]] = relationship(
+        "ControversyAlert", back_populates="user", cascade="all, delete-orphan"
+    )
+    exclusion_lists: Mapped[list["ExclusionList"]] = relationship(
+        "ExclusionList", back_populates="user", cascade="all, delete-orphan"
+    )
+    esg_trends: Mapped[list["EsgTrend"]] = relationship(
+        "EsgTrend", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Watchlist(Base):

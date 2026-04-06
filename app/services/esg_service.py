@@ -102,7 +102,7 @@ class EsgService:
 
         exclusions = (
             self.db.query(ExclusionList)
-            .filter(ExclusionList.user_id == user_id, ExclusionList.is_active == True)
+            .filter(ExclusionList.user_id == user_id, ExclusionList.is_active)
             .count()
         )
 
@@ -321,7 +321,7 @@ class ExclusionListService:
         return entry
 
     def get_exclusions(self, user_id: uuid.UUID, list_type: Optional[str] = None) -> list[ExclusionList]:
-        q = self.db.query(ExclusionList).filter(ExclusionList.user_id == user_id, ExclusionList.is_active == True)
+        q = self.db.query(ExclusionList).filter(ExclusionList.user_id == user_id, ExclusionList.is_active)
         if list_type:
             q = q.filter(ExclusionList.list_type == list_type)
         return q.all()
