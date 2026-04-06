@@ -316,10 +316,10 @@ class AutomatedTradingService:
         """Get summary statistics for automated trading."""
         logs = self.get_execution_logs(user_id, limit=1000)
         total = len(logs)
-        success = sum(1 for l in logs if l.status == "success")
-        failed = sum(1 for l in logs if l.status == "failed")
-        skipped = sum(1 for l in logs if l.status == "skipped")
-        total_value = sum(l.order_value or 0 for l in logs if l.status == "success")
+        success = sum(1 for log in logs if log.status == "success")
+        failed = sum(1 for log in logs if log.status == "failed")
+        skipped = sum(1 for log in logs if log.status == "skipped")
+        total_value = sum(log.order_value or 0 for log in logs if log.status == "success")
         return {
             "total_executions": total,
             "success": success,
