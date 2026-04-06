@@ -214,3 +214,9 @@ def get_metal_history(metal: str = "gold", days: int = 365, db: Session = Depend
 def get_inflation_hedge_metrics(db: Session = Depends(get_db)):
     service = PreciousMetalsService(db)
     return service.get_inflation_hedge_metrics()
+
+
+# Register nested routers
+router.include_router(positions_router)
+router.include_router(futures_router)
+router.include_router(metals_router)
