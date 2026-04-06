@@ -30,7 +30,7 @@ from app.services.open_finance_adapter import (
     OpenFinanceAdapterFactory,
     OpenFinanceProvider,
 )
-from app.services.tax_loss_harvesting_service import TaxLossHarvestingService
+from app.services.tax_loss_harvesting_service import TaxLossHarvestingService, TaxLossHarvestingResult
 
 
 # LangChain-style tool definition
@@ -245,7 +245,6 @@ class AgentOrchestrationService:
                 f"Invalid transition: {self._state.value} + {event.value} -> not allowed"
             )
 
-        old_state = self._state
         self._state = next_state
         return next_state
 
@@ -430,7 +429,7 @@ class AgentOrchestrationService:
             except ValueError:
                 pass
 
-        except Exception as e:
+        except Exception:
             try:
                 self.transition(AgentEvent.ERROR)
             except ValueError:
@@ -520,7 +519,7 @@ class AgentOrchestrationService:
         self,
         user_id: str,
         risk_tolerance: str = "MEDIUM",
-    ) -> Optional[TaxLossHarvestingService.TaxLossHarvestingResult]:
+    ) -> Optional[TaxLossHarvestingResult]:
         """Check for tax-loss harvesting opportunities.
 
         Args:
@@ -759,7 +758,7 @@ class AgentOrchestrationService:
         user_id: str,
         risk_tolerance: str = "MEDIUM",
         **kwargs,
-    ) -> TaxLossHarvestingService.TaxLossHarvestingResult:
+    ) -> TaxLossHarvestingResult:
         """Tool: check_tax_loss_harvesting."""
         return await self.check_tax_loss_harvesting(user_id, risk_tolerance)
 
@@ -871,7 +870,7 @@ class AgentOrchestrationService:
 
     def _tax_to_recommendations(
         self,
-        tax_result: TaxLossHarvestingService.TaxLossHarvestingResult,
+        tax_result: TaxLossHarvestingResult,
     ) -> list[AgentRecommendation]:
         """Convert tax-loss harvesting result to recommendations."""
         if not tax_result.harvesting_trades:

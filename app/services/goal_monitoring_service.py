@@ -248,7 +248,7 @@ class GoalMonitoringService:
                     title=f"Goal '{goal.name}' is at risk",
                     message=f"You're significantly behind with only {progress.progress_percent:.1f}% "
                     f"of target achieved.",
-                    recommendation=f"Urgently review and increase contributions or adjust the target.",
+                    recommendation="Urgently review and increase contributions or adjust the target.",
                     created_at=now,
                 )
             )
