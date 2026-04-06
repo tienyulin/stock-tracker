@@ -22,6 +22,7 @@ const PortfolioHealth = lazy(() => import('./pages/PortfolioHealth'))
 const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'))
 const PortfolioOverview = lazy(() => import('./pages/PortfolioOverview'))
 const PassiveIncomeDashboard = lazy(() => import('./pages/PassiveIncomeDashboard'))
+const CryptoDashboard = lazy(() => import('./pages/CryptoDashboard'))
 const DividendTracker = lazy(() => import('./pages/DividendTracker'))
 const IPODashboard = lazy(() => import('./pages/IPODashboard'))
 
@@ -69,6 +70,7 @@ function NavBar() {
         <li><NavLink to="/portfolio-overview" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.portfolioOverview', 'Overview')}</NavLink></li>
         <li><NavLink to="/dividends" className={({ isActive }) => isActive ? 'active' : ''}>Dividends</NavLink></li>
         <li><NavLink to="/passive-income" className={({ isActive }) => isActive ? 'active' : ''}>Passive Income</NavLink></li>
+        <li><NavLink to="/crypto" className={({ isActive }) => isActive ? 'active' : ''}>🦿 Crypto</NavLink></li>
         <li><NavLink to="/fixed-income" className={({ isActive }) => isActive ? 'active' : ''}>Fixed Income</NavLink></li>
         <li><NavLink to="/commodities" className={({ isActive }) => isActive ? 'active' : ''}>Commodities</NavLink></li>
         <li><NavLink to="/esg" className={({ isActive }) => isActive ? 'active' : ''}>ESG</NavLink></li>
@@ -125,6 +127,7 @@ function AppRoutes() {
         <Route path="/portfolio/agent" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
         <Route path="/portfolio-overview" element={<RequireAuth><PortfolioOverview /></RequireAuth>} />
         <Route path="/passive-income" element={<RequireAuth><PassiveIncomeDashboard /></RequireAuth>} />
+        <Route path="/crypto" element={<RequireAuth><CryptoDashboard /></RequireAuth>} />
         <Route path="/fixed-income" element={<RequireAuth><FixedIncomeDashboard /></RequireAuth>} />
         <Route path="/commodities" element={<RequireAuth><CommodityDashboard /></RequireAuth>} />
         <Route path="/esg" element={<RequireAuth><EsgDashboard /></RequireAuth>} />
