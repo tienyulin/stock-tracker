@@ -12,6 +12,7 @@ from app.models.passive_income import (
 from app.models.fixed_income import Bond, TermDeposit
 from app.models.commodities import CommodityPosition, FuturesContract
 from app.models.esg import ControversyAlert, EsgScore, EsgTrend, ExclusionList
+from app.models.family import Entity, EntityAccount, EntityMember, FamilyMember
 
 __all__ = [
     "Alert",
@@ -43,5 +44,9 @@ __all__ = [
     "ControversyAlert",
     "ExclusionList",
     "EsgTrend",
+    "Entity",
+    "EntityAccount",
+    "EntityMember",
+    "FamilyMember",
 ]
 
