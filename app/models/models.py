@@ -69,6 +69,16 @@ class User(Base):
         back_populates="follower_user",
         cascade="all, delete-orphan",
     )
+    trade_activities: Mapped[list["TradeActivity"]] = relationship(
+        "TradeActivity",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    leaderboard_entries: Mapped[list["LeaderboardEntry"]] = relationship(
+        "LeaderboardEntry",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
 
 class Watchlist(Base):
