@@ -9,11 +9,13 @@ from app.models.passive_income import (
     PassiveIncomeRecord,
     PassiveIncomeSource,
 )
+from app.models.fixed_income import Bond, TermDeposit
 
 __all__ = [
     "Alert",
     "AlertNotification",
     "Base",
+    "Bond",
     "DividendHolding",
     "DividendPayment",
     "ExDividendCalendar",
@@ -26,6 +28,7 @@ __all__ = [
     "PassiveIncomeRecord",
     "PassiveIncomeSource",
     "PortfolioHealthScore",
+    "TermDeposit",
     "TradeActivity",
     "User",
     "UserHolding",
