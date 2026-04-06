@@ -187,14 +187,16 @@ class TaxEfficientWithdrawalService:
         # Ordinary income tax
         ordinary_tax = 0.0
         remaining = taxable_ordinary
-        for threshold, rate in self.TAX_BRACKETS_SINGLE if self.filing_status == "single" else self.TAX_BRACKETS_MJ:
+        prev_threshold = 0
+        brackets = self.TAX_BRACKETS_SINGLE if self.filing_status == "single" else self.TAX_BRACKETS_MJ
+        for threshold, rate in brackets:
             if remaining <= 0:
                 break
-            bracket_size = threshold - prev_threshold if 'prev_threshold' in dir() else threshold
-            prev_threshold = threshold
+            bracket_size = threshold - prev_threshold
             taxable_in_bracket = min(remaining, bracket_size)
             ordinary_tax += taxable_in_bracket * rate
             remaining -= taxable_in_bracket
+            prev_threshold = threshold
 
         # Capital gains tax (0%, 15%, 20%)
         if taxable_ordinary < 47025:  # 0% LTCG bracket

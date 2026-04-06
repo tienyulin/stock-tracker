@@ -198,20 +198,17 @@ class AssetLocationService:
         """
         # Target allocations by account type
         if risk_profile == "conservative":
-            taxable_pct = 0.3
-            trad_ira_pct = 0.4
-            roth_pct = 0.1
-            k401k_pct = 0.2
+            # Percentages retained for future weighted allocation
+            # taxable_pct = 0.3, trad_ira_pct = 0.4, roth_pct = 0.1, k401k_pct = 0.2
+            pass
         elif risk_profile == "aggressive":
-            taxable_pct = 0.5
-            trad_ira_pct = 0.1
-            roth_pct = 0.2
-            k401k_pct = 0.2
+            # Percentages retained for future weighted allocation
+            # taxable_pct = 0.5, trad_ira_pct = 0.1, roth_pct = 0.2, k401k_pct = 0.2
+            pass
         else:  # moderate
-            taxable_pct = 0.4
-            trad_ira_pct = 0.25
-            roth_pct = 0.15
-            k401k_pct = 0.2
+            # Percentages retained for future weighted allocation
+            # taxable_pct = 0.4, trad_ira_pct = 0.25, roth_pct = 0.15, k401k_pct = 0.2
+            pass
 
         return {
             AccountType.TAXABLE: AccountAllocation(
