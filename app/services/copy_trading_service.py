@@ -141,9 +141,6 @@ class CopyTradingService:
         # Count positions
         num_positions = len(positions)
 
-        # Sector concentration (simplified)
-        sector_risk = "Normal"
-
         # Overall risk score
         risk_score = 50  # Base
         if concentration_risk == "High":

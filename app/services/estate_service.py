@@ -208,7 +208,6 @@ class EstatePlanningService:
         # Simple needs analysis
         debt_coverage = current_debts
         emergency_fund = annual_income * 0.5  # 6 months
-        education_fund = 0  # Would be customized per family
 
         recommended_coverage = net_needed
 
