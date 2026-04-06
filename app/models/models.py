@@ -63,6 +63,12 @@ class User(Base):
         back_populates="following_user",
         cascade="all, delete-orphan",
     )
+    following: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.follower_id",
+        back_populates="follower_user",
+        cascade="all, delete-orphan",
+    )
 
 
 class Watchlist(Base):
