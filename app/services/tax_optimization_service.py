@@ -145,7 +145,7 @@ class TaxOptimizationService:
                         type=OptimizationType.GAIN_DEFER,
                         symbol=symbol,
                         description=f"Large short-term gain of ${unrealized:.2f} — high tax impact",
-                        action=f"Consider holding until long-term, or tax-loss harvest other positions",
+                        action="Consider holding until long-term, or tax-loss harvest other positions",
                         estimated_tax_savings=unrealized * (self.short_term_rate - self.long_term_rate),
                         urgency="high",
                         details={
@@ -309,10 +309,10 @@ class TaxOptimizationService:
         # REITs = low efficiency (ordinary income)
         # Bonds = low efficiency (interest taxed as ordinary income)
         # Actively managed funds = medium-low (high turnover generates gains)
-
-        etf_keywords = ["ETF", "Index", "Growth", "Value"]
-        bond_keywords = ["Bond", "Income", "High Yield", "Muni"]
-        reit_keywords = ["REIT", "Real Estate"]
+        # Keywords retained for future symbol-based classification
+        # etf_keywords = ["ETF", "Index", "Growth", "Value"]
+        # bond_keywords = ["Bond", "Income", "High Yield", "Muni"]
+        # reit_keywords = ["REIT", "Real Estate"]
 
         if asset_type == "ETF":
             return AssetTaxEfficiency.HIGH

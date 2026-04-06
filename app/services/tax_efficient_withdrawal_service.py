@@ -290,7 +290,6 @@ class TaxEfficientWithdrawalService:
                 # Assume long-term gains portion
                 gains_pct = 0.7  # 70% of taxable account is gains
                 gains_amount = taxable_amount * gains_pct
-                ordinary_amount = taxable_amount - gains_amount
 
                 gains_tax = gains_amount * 0.15  # LTCG rate
                 tax_on_taxable = gains_tax
