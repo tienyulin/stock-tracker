@@ -104,10 +104,10 @@ class User(Base):
         "EsgTrend", back_populates="user", cascade="all, delete-orphan"
     )
     family_members: Mapped[list["FamilyMember"]] = relationship(
-        "FamilyMember", back_populates="user", cascade="all, delete-orphan"
+        "FamilyMember", cascade="all, delete-orphan"
     )
     entities: Mapped[list["Entity"]] = relationship(
-        "Entity", back_populates="user", cascade="all, delete-orphan"
+        "Entity", cascade="all, delete-orphan"
     )
 
 

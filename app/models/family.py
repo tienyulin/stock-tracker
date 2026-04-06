@@ -55,8 +55,8 @@ class FamilyMember(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    user = relationship("User", back_populates="family_members")
-    entity_memberships = relationship("EntityMember", back_populates="family_member", cascade="all, delete-orphan")
+    user = relationship("User")
+    entity_memberships = relationship("EntityMember", cascade="all, delete-orphan")
 
 
 class Entity(Base):
@@ -73,9 +73,9 @@ class Entity(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    user = relationship("User", back_populates="entities")
-    memberships = relationship("EntityMember", back_populates="entity", cascade="all, delete-orphan")
-    accounts = relationship("EntityAccount", back_populates="entity", cascade="all, delete-orphan")
+    user = relationship("User")
+    memberships = relationship("EntityMember", cascade="all, delete-orphan")
+    accounts = relationship("EntityAccount", cascade="all, delete-orphan")
 
 
 class EntityMember(Base):
@@ -89,8 +89,8 @@ class EntityMember(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     # Relationships
-    entity = relationship("Entity", back_populates="memberships")
-    family_member = relationship("FamilyMember", back_populates="entity_memberships")
+    entity = relationship("Entity")
+    family_member = relationship("FamilyMember")
 
 
 class EntityAccount(Base):
@@ -110,4 +110,4 @@ class EntityAccount(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    entity = relationship("Entity", back_populates="accounts")
+    entity = relationship("Entity")
