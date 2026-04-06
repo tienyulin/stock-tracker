@@ -29,7 +29,7 @@ class TestCashFlowService:
         db.refresh = MagicMock()
 
         service = CashFlowService(db)
-        entry = service.create_entry(
+        _entry = service.create_entry(
             user_id=uuid.uuid4(),
             entry_type="income",
             category="salary",
@@ -116,7 +116,7 @@ class TestEmergencyFundService:
         db.refresh = MagicMock()
 
         service = EmergencyFundService(db)
-        fund = service.upsert_fund(
+        _fund = service.upsert_fund(
             user_id=uuid.uuid4(),
             current_amount=10000.0,
             monthly_expenses_estimate=3000.0,
@@ -259,7 +259,7 @@ class TestLargeExpenseService:
         db.refresh = MagicMock()
 
         service = LargeExpenseService(db)
-        expense = service.create(
+        _expense = service.create(
             user_id=uuid.uuid4(),
             description="New car",
             estimated_amount=30000.0,
