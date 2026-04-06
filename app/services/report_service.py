@@ -4,15 +4,22 @@ PDF Report generation service for portfolio.
 
 import io
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    HRFlowable,
+    Image,
+    PageBreak,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
 )
-from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 
 
 def generate_portfolio_pdf(
@@ -238,19 +245,6 @@ def generate_portfolio_pdf(
     doc.build(elements)
     buffer.seek(0)
     return buffer.getvalue()
-
-import io
-from datetime import datetime
-from typing import Optional, Dict, Any, List
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, Image, HRFlowable
-)
-from reportlab.lib.enums import TA_RIGHT, TA_CENTER, TA_LEFT, TA_JUSTIFY
 
 
 def generate_professional_pdf(
@@ -578,7 +572,7 @@ def generate_excel_report(
         Excel file as bytes
     """
     from openpyxl import Workbook
-    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
     from openpyxl.utils import get_column_letter
     
     wb = Workbook()

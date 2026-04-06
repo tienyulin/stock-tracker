@@ -491,7 +491,7 @@ async def generate_pdf_report(
     
     # Generate PDF
     report_id = str(uuid.uuid4())
-    pdf_bytes = generate_professional_pdf(
+    _pdf_bytes = generate_professional_pdf(
         user_id=str(current_user.id),
         report_type=request.report_type,
         period_start=request.period_start,
