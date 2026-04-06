@@ -50,25 +50,6 @@ class FuturesPosition(Base):
             return -price_diff * float(self.contract_size) * self.quantity
 
 
-class FuturesContract(Base):
-    """Reference data for futures contracts."""
-
-    __tablename__ = "futures_contracts"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    symbol: Mapped[str] = mapped_column(String(20), nullable=False, unique=True, index=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
-    exchange: Mapped[str] = mapped_column(String(20), nullable=False)
-    contract_size: Mapped[float] = mapped_column(Numeric(10, 4), nullable=False)
-    tick_size: Mapped[float] = mapped_column(Numeric(10, 6), nullable=False)
-    month_codes: Mapped[str] = mapped_column(String(20), nullable=True)  # F,G,H,J,K,M,N,Q,U,V,X,Z
-    settlement: Mapped[str] = mapped_column(String(10), nullable=True)  # CASH or PHYSICAL
-    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default="now()")
-
-
 class FuturesPriceAlert(Base):
     """Price alerts for futures positions."""
 
