@@ -11,6 +11,7 @@ from app.models.passive_income import (
 )
 from app.models.fixed_income import Bond, TermDeposit
 from app.models.commodities import CommodityPosition, FuturesContract
+from app.models.futures import FuturesPosition, FuturesContract, FuturesPriceAlert
 from app.models.esg import ControversyAlert, EsgScore, EsgTrend, ExclusionList
 from app.models.family import Entity, EntityAccount, EntityMember, FamilyMember
 
@@ -26,6 +27,8 @@ __all__ = [
     "FireGoal",
     "Follow",
     "FuturesContract",
+    "FuturesPosition",
+    "FuturesPriceAlert",
     "HealthScoreAlert",
     "LeaderboardEntry",
     "OptionContract",
