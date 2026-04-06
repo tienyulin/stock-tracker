@@ -246,5 +246,41 @@ class MonitoringAlert(BaseModel):
     acknowledged_at: Optional[datetime] = None
 
 
+class CoachMessage(BaseModel):
+    """A message in the financial coach conversation."""
+
+    message_id: UUID = Field(default_factory=uuid4)
+    role: str  # "user" or "coach"
+    content: str
+    topic: Optional[str] = None  # retirement, investment, budgeting, emergency_fund, etc.
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class CoachConversation(BaseModel):
+    """Financial coach conversation context."""
+
+    user_id: str
+    messages: list[CoachMessage] = Field(default_factory=list)
+    current_focus: Optional[str] = None  # What the coach is currently addressing
+    context_summary: Optional[str] = None  # AI-generated summary of conversation
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class RetirementReadinessResult(BaseModel):
+    """Retirement readiness assessment result."""
+
+    readiness_score: float  # 0-100
+    readiness_level: str  # "on_track", "moderate_gap", "significant_gap", "off_track"
+    current_nest_egg: float
+    on_track_nest_egg: float
+    monthly_contribution_needed: float
+    years_to_retirement: int
+    key_factors: list[str] = Field(default_factory=list)  # e.g., "high_emergency_fund", "diversified_portfolio"
+    improvement_suggestions: list[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0)
+    assessed_at: datetime = Field(default_factory=datetime.utcnow)
+
+
 # Update forward references
 PersonalFinancialProfile.model_rebuild()
