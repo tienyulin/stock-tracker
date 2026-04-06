@@ -176,7 +176,7 @@ class SalaryDepositService:
         employer_verification = self._verify_employer(monthly_summaries, employer_name)
 
         # Budget recommendation (50/30/20 rule)
-        monthly_needs = avg_monthly * self.BUDGET_NEEDS_RATIO
+        _monthly_needs = avg_monthly * self.BUDGET_NEEDS_RATIO  # 50% for needs (reserved for future use)
         recommended_budget = round(avg_monthly, 2)
 
         return IncomeVerificationResult(
@@ -217,7 +217,7 @@ class SalaryDepositService:
             return False, None
 
         total = sum(d["amount"] for d in deposits)
-        count = len(deposits)
+        _count = len(deposits)  # reserved for future statistical use
 
         # Check if total is unusually high or low
         other_months = [m for m in all_months if m != current_month]

@@ -66,6 +66,7 @@ function NavBar() {
         <li><NavLink to="/dividends" className={({ isActive }) => isActive ? 'active' : ''}>Dividends</NavLink></li>
         <li><NavLink to="/passive-income" className={({ isActive }) => isActive ? 'active' : ''}>Passive Income</NavLink></li>
         <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.settings')}</NavLink></li>
+        <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
       <div className="nav-auth">
         <LanguageSwitcher />
@@ -118,6 +119,7 @@ function AppRoutes() {
         <Route path="/passive-income" element={<RequireAuth><PassiveIncomeDashboard /></RequireAuth>} />
         <Route path="/dividends" element={<RequireAuth><DividendTracker /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+        <Route path="/agent-dashboard" element={<RequireAuth><AgentDashboard /></RequireAuth>} />
       </Routes>
     </Suspense>
   )

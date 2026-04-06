@@ -1,0 +1,342 @@
+.agent-dashboard {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.agent-dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+  color: #9ca3af;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #374151;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.agent-dashboard-header {
+  margin-bottom: 24px;
+}
+
+.agent-dashboard-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.agent-dashboard-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.agent-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+
+.agent-dashboard-section {
+  min-width: 0; /* Prevent grid blowout */
+}
+
+.section-card {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 20px;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 100%;
+}
+
+.section-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.section-empty {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Grid layout for each section */
+.agent-section-status {
+  grid-column: span 4;
+}
+
+.agent-section-monitoring {
+  grid-column: span 8;
+}
+
+.agent-section-rebalance {
+  grid-column: span 6;
+}
+
+.agent-section-recommendations {
+  grid-column: span 6;
+}
+
+.agent-section-goals {
+  grid-column: span 6;
+}
+
+.agent-section-openfinance {
+  grid-column: span 6;
+}
+
+.agent-section-actions {
+  grid-column: span 12;
+}
+
+/* Monitoring items */
+.monitoring-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.monitoring-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: #262640;
+  border-radius: 8px;
+}
+
+.monitoring-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.monitoring-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.monitoring-type {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.monitoring-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.monitoring-details {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.monitoring-time {
+  font-size: 11px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+/* Recommendations */
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.recommendation-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #262640;
+  border-radius: 8px;
+}
+
+.rec-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.recommendation-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recommendation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.recommendation-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.recommendation-priority {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.recommendation-description {
+  margin: 0;
+  font-size: 13px;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+.recommendation-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recommendation-time {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.recommendation-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.rec-accept-btn,
+.rec-dismiss-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.rec-accept-btn {
+  background: #22c55e;
+  color: white;
+}
+
+.rec-accept-btn:hover {
+  background: #16a34a;
+}
+
+.rec-dismiss-btn {
+  background: #374151;
+  color: #d1d5db;
+}
+
+.rec-dismiss-btn:hover {
+  background: #4b5563;
+}
+
+.rec-status {
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Quick Actions */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 16px;
+  background: #262640;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  color: #e5e7eb;
+}
+
+.quick-action-btn:hover {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.quick-action-icon {
+  font-size: 24px;
+}
+
+.quick-action-btn span:last-child {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .agent-section-status,
+  .agent-section-monitoring {
+    grid-column: span 6;
+  }
+
+  .agent-section-rebalance,
+  .agent-section-recommendations,
+  .agent-section-goals,
+  .agent-section-openfinance {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 768px) {
+  .agent-dashboard {
+    padding: 16px;
+  }
+
+  .agent-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agent-section-status,
+  .agent-section-monitoring,
+  .agent-section-rebalance,
+  .agent-section-recommendations,
+  .agent-section-goals,
+  .agent-section-openfinance,
+  .agent-section-actions {
+    grid-column: span 1;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

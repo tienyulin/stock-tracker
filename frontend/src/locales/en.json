@@ -9,7 +9,8 @@
     "portfolioHealth": "Health",
     "retirement": "Retirement",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "agentDashboard": "AI Agent"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -124,5 +125,113 @@
     "noAlerts": "No recent alerts",
     "change": "Change %",
     "value": "Value"
+  },
+  "agent": {
+    "title": "AI Agent",
+    "loading": "Loading agent status...",
+    "error": "Unable to connect to agent",
+    "idle": "Agent is idle",
+    "lastActive": "Last active",
+    "activeTasks": "Active Tasks",
+    "states": {
+      "IDLE": "Idle",
+      "MONITORING": "Monitoring",
+      "ANALYZING": "Analyzing",
+      "RECOMMENDING": "Recommending",
+      "ACTING": "Acting"
+    },
+    "dashboard": {
+      "title": "AI Agent Dashboard",
+      "subtitle": "Your intelligent investment assistant"
+    },
+    "monitoring": {
+      "title": "Active Monitoring",
+      "empty": "No active monitoring items",
+      "types": {
+        "PORTFOLIODRIFT": "Portfolio Drift",
+        "GOALPROGRESS": "Goal Progress",
+        "SALARYDEPOSIT": "Salary Deposit"
+      }
+    },
+    "rebalance": {
+      "title": "Portfolio Rebalance",
+      "notAvailable": "Rebalance preview not available",
+      "totalDrift": "Total Drift",
+      "buy": "Buy",
+      "sell": "Sell",
+      "hold": "Hold",
+      "holding": "Holding",
+      "current": "Current",
+      "target": "Target",
+      "drift": "Drift",
+      "action": "Action",
+      "noDrift": "Your portfolio is well balanced. No rebalancing needed.",
+      "recommendation": "Based on your target allocation, rebalancing is recommended.",
+      "execute": "Execute Rebalance",
+      "showDetails": "Show Details",
+      "hideDetails": "Hide Details",
+      "actions": {
+        "BUY": "Buy",
+        "SELL": "Sell",
+        "HOLD": "Hold"
+      }
+    },
+    "rebalancing": "Rebalancing...",
+    "recommendations": {
+      "title": "Recent Recommendations",
+      "empty": "No recommendations yet",
+      "accept": "Accept",
+      "dismiss": "Dismiss",
+      "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High"
+      },
+      "status": {
+        "PENDING": "Pending",
+        "ACCEPTED": "Accepted",
+        "DISMISSED": "Dismissed"
+      }
+    },
+    "goals": {
+      "title": "Investment Goals",
+      "add": "Add Goal",
+      "empty": "No goals set. Add your first investment goal.",
+      "goalType": "Goal Type",
+      "targetAmount": "Target Amount",
+      "targetDate": "Target Date",
+      "currentProgress": "Current Progress",
+      "types": {
+        "RETIREMENT": "Retirement",
+        "HOUSE": "House Purchase",
+        "EDUCATION": "Education",
+        "OTHER": "Other"
+      },
+      "status": {
+        "ON_TRACK": "On Track",
+        "BEHIND": "Behind",
+        "AHEAD": "Ahead"
+      }
+    },
+    "openFinance": {
+      "title": "Open Finance Connections",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "connected": "Connected",
+      "accounts": "accounts",
+      "comingSoon": "Coming Soon",
+      "manualUpload": "Manual Upload",
+      "hideUpload": "Hide Upload",
+      "uploadDesc": "Upload bank statements manually if auto-import is not available.",
+      "dropzone": "Drop files here or click to upload",
+      "securityNote": "Your credentials are securely stored and never shared."
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "rebalance": "Rebalance",
+      "setGoal": "Set Goal",
+      "connectBank": "Connect Bank",
+      "viewReport": "View Report"
+    }
   }
 }
