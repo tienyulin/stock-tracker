@@ -103,6 +103,12 @@ class User(Base):
     esg_trends: Mapped[list["EsgTrend"]] = relationship(
         "EsgTrend", back_populates="user", cascade="all, delete-orphan"
     )
+    family_members: Mapped[list["FamilyMember"]] = relationship(
+        "FamilyMember", cascade="all, delete-orphan"
+    )
+    entities: Mapped[list["Entity"]] = relationship(
+        "Entity", cascade="all, delete-orphan"
+    )
 
 
 class Watchlist(Base):
