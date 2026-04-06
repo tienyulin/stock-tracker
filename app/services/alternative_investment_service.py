@@ -100,7 +100,7 @@ class AlternativeInvestmentService:
             AlternativeInvestment.user_id == user_id
         )
         if active_only:
-            q = q.filter(AlternativeInvestment.is_active == True)
+            q = q.filter(AlternativeInvestment.is_active)
         if investment_type:
             q = q.filter(AlternativeInvestment.investment_type == investment_type)
         if liquidity:

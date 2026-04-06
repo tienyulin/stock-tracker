@@ -69,7 +69,7 @@ class TestAlternativeInvestmentService:
         mock_inv.investment_type = "private_equity"
 
         db = MagicMock()
-        db.query.return_value.filter.return_value.order_by.return_value.all.return_value = [mock_inv]
+        db.query.return_value.filter.return_value.filter.return_value.order_by.return_value.all.return_value = [mock_inv]
 
         service = AlternativeInvestmentService(db)
         summary = service.get_summary(user_id="test-user-id")
