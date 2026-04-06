@@ -29,9 +29,6 @@ const STATUS_COLORS: Record<string, string> = {
 const fmt = (n: number | null | undefined) =>
   n == null ? '—' : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
 
-const fmtNum = (n: number | null | undefined) =>
-  n == null ? '—' : new Intl.NumberFormat('en-US').format(n)
-
 const fmtDate = (d: string | null | undefined) => {
   if (!d) return '—'
   try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }
