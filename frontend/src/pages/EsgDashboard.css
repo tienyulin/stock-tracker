@@ -1,0 +1,521 @@
+.esg-dashboard {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.esg-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 4px;
+}
+
+.esg-header p {
+  color: #666;
+  margin: 0 0 24px;
+}
+
+/* Tabs */
+.esg-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.esg-tab {
+  padding: 8px 16px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.esg-tab.active {
+  background: #2e7d32;
+  color: #fff;
+}
+
+.esg-tab:hover:not(.active) {
+  background: #e0e0e0;
+}
+
+/* Overview */
+.esg-score-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.esg-score-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.esg-score-card.main {
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: #fff;
+  border: none;
+}
+
+.esg-score-card.main .card-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.esg-score-card.main .card-sub {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.card-label {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-value {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.card-value.env { color: #2e7d32; }
+.card-value.social { color: #1565c0; }
+.card-value.gov { color: #6a1b9a; }
+
+.card-sub {
+  font-size: 13px;
+  color: #999;
+}
+
+/* Carbon Card */
+.esg-carbon-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.esg-carbon-card h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+.carbon-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.carbon-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-value.warn { color: #d32f2f; }
+
+/* Rating Distribution */
+.esg-distribution-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.esg-distribution-card h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+.rating-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rating-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: center;
+}
+
+.bar-track {
+  flex: 1;
+  height: 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+
+.bar-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  min-width: 20px;
+}
+
+/* Section Header */
+.esg-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.esg-section-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+/* Tables */
+.esg-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.esg-table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: #f5f5f5;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #888;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.esg-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #333;
+}
+
+.esg-table tr:hover {
+  background: #fafafa;
+}
+
+/* Alerts */
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.alert-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border-left: 4px solid #f44336;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.alert-ticker {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1a1a2e;
+}
+
+.alert-severity {
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.alert-headline {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.alert-desc {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.alert-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.alert-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Exclusion Badges */
+.excl-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.excl-type-badge.negative_screening {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.excl-type-badge.ethical_exclusion {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+/* Buttons */
+.btn-primary {
+  padding: 8px 16px;
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background: #1b5e20;
+}
+
+.btn-primary:disabled {
+  background: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.btn-dismiss {
+  padding: 4px 12px;
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-dismiss:hover {
+  background: #eeeeee;
+}
+
+.btn-danger-sm {
+  padding: 4px 10px;
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-danger-sm:hover {
+  background: #ffcdd2;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 480px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal h3 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: #1a1a2e;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-grid input,
+.form-grid select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+  outline: none;
+  border-color: #2e7d32;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* Screen Results */
+.screen-results {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.compliance-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+  width: 200px;
+}
+
+.flagged-list,
+.screened-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.flagged-section h4,
+.screened-section h4 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: #1a1a2e;
+}
+
+.flagged-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.flagged-item:last-child {
+  border-bottom: none;
+}
+
+.flagged-ticker {
+  font-weight: 700;
+  color: #1a1a2e;
+  min-width: 60px;
+}
+
+.flagged-name {
+  flex: 1;
+  color: #666;
+  font-size: 13px;
+}
+
+.flagged-reason {
+  font-size: 12px;
+  color: #c62828;
+  background: #ffebee;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Empty / Loading / Error */
+.esg-loading,
+.esg-empty {
+  text-align: center;
+  padding: 48px;
+  color: #888;
+  font-size: 16px;
+}
+
+.esg-error {
+  text-align: center;
+  padding: 48px;
+  color: #f44336;
+  font-size: 16px;
+}
