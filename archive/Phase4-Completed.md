@@ -19,7 +19,7 @@
 
 - Render API Key 設定完成
 - GitHub Actions → Render deploy 自動化
-- Backend API URL 改為 stock-stock-stock-api.tienyulin.com
+- Backend API URL 改為 stock-api.tienyulin.com
 - Discord Webhook 通知實作完成
 
 ## Notes
