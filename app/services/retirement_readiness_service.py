@@ -196,7 +196,7 @@ class RetirementReadinessService:
             factors.append("has_debt")
 
         # Investment allocation (assuming diversified if age-appropriate)
-        if profile.risk_tolerance in ("aggressive", "moderate"):
+        if profile.risk_tolerance.lower() in ("aggressive", "moderate"):
             factors.append("appropriate_risk_tolerance")
 
         # Time factor
@@ -235,7 +235,7 @@ class RetirementReadinessService:
         if not profile.has_emergency_fund:
             suggestions.append("先建立3-6個月緊急備用金再增加退休儲蓄。")
 
-        if profile.risk_tolerance == "conservative" and years_to_retirement > 15:
+        if profile.risk_tolerance.lower() == "conservative" and years_to_retirement > 15:
             suggestions.append("年輕時可考慮適度增加投資風險承受度，提高成長型資產比例。")
 
         if monthly_contribution_needed > profile.monthly_income * 0.3:
