@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.futures import FuturesPosition, FuturesContract, FuturesPriceAlert
+from app.models.futures import FuturesPosition, FuturesPriceAlert
 from app.models.user import User
 
 
