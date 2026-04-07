@@ -160,7 +160,7 @@ class TestImpliedVolatility:
         )
 
         assert iv is not None
-        assert 0.01 < iv < 1.0  # Reasonable IV range
+        assert 0.01 <= iv < 1.0  # Reasonable IV range
 
     def test_iv_zero_time(self):
         """Test IV with zero time to expiration."""
