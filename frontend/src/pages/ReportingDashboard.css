@@ -1,0 +1,396 @@
+.reporting-dashboard {
+  padding: 24px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.dashboard-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-tabs button {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashboard-tabs button:hover {
+  background: #f0f0f5;
+}
+
+.dashboard-tabs button.active {
+  background: #1a1a2e;
+  color: white;
+}
+
+.dashboard-content {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* Reports Section */
+.reports-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.report-generator {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.report-generator h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group select,
+.form-group input[type="date"] {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-group.checkbox {
+  flex-direction: row;
+  align-items: center;
+}
+
+.form-group.checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #16213e;
+}
+
+.btn-secondary {
+  padding: 12px 24px;
+  background: white;
+  color: #1a1a2e;
+  border: 1px solid #1a1a2e;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  background: #f0f0f5;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.templates-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.template-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.template-preview {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
+
+.template-info {
+  padding: 12px;
+}
+
+.template-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.template-type {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f0f0f5;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.default-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  background: #1a1a2e;
+  color: white;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+/* KYC Section */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.kyc-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kyc-table th {
+  text-align: left;
+  padding: 12px;
+  background: #f8f9fa;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.kyc-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Compliance Section */
+.compliance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.compliance-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.doc-icon {
+  width: 48px;
+  height: 48px;
+  background: #1a1a2e;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.doc-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.doc-info p {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+/* Reminders Section */
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reminder-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.reminder-date {
+  width: 56px;
+  height: 56px;
+  background: #1a1a2e;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.reminder-date .day {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.reminder-date .month {
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.reminder-info {
+  flex: 1;
+}
+
+.reminder-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.jurisdiction {
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.reminder-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 14px;
+}

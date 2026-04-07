@@ -40,7 +40,7 @@ class IPOService:
         sector: Optional[str] = None,
         upcoming_only: bool = False,
     ) -> list[IPORecord]:
-        q = self.db.query(IPORecord).filter(IPORecord.user_id == user_id, IPORecord.is_active == True)
+        q = self.db.query(IPORecord).filter(IPORecord.user_id == user_id, IPORecord.is_active)
         if status:
             q = q.filter(IPORecord.status == status)
         if sector:
@@ -73,7 +73,6 @@ class IPOService:
             self.db.query(IPORecord)
             .filter(
                 IPORecord.user_id == user_id,
-                IPORecord.is_active == True,
                 IPORecord.status.in_([IPOStatus.UPCOMING.value, IPOStatus.FILING.value]),
             )
             .order_by(IPORecord.listing_date.asc())
@@ -161,7 +160,7 @@ class IPOAlertService:
     def get_alerts(self, user_id: str, active_only: bool = True) -> list[IPOAlert]:
         q = self.db.query(IPOAlert).filter(IPOAlert.user_id == user_id)
         if active_only:
-            q = q.filter(IPOAlert.is_active == True)
+            q = q.filter(IPOAlert.is_active)
         return q.order_by(IPOAlert.created_at.desc()).all()
 
     def delete_alert(self, alert_id: str, user_id: str) -> bool:
