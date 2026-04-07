@@ -210,7 +210,7 @@ class FXService:
             "total_cost": round(hedged_amount * forward_cost, 2)
         }
 
-    async def get_currency_allocation(
+    def get_currency_allocation(
         self,
         positions: list,
         base_currency: str = "USD"
