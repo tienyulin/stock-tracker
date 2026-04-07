@@ -95,6 +95,7 @@ class RetirementReadinessService:
             monthly_contribution_needed=monthly_contribution_needed,
             years_to_retirement=years_to_retirement,
             readiness_score=readiness_score,
+            annual_expenses_needed=annual_expenses,
         )
 
         return RetirementReadinessResult(
@@ -215,6 +216,7 @@ class RetirementReadinessService:
         monthly_contribution_needed: float,
         years_to_retirement: int,
         readiness_score: float,
+        annual_expenses_needed: float,
     ) -> list[str]:
         """Generate actionable improvement suggestions."""
         suggestions = []
