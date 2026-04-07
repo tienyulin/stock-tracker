@@ -281,7 +281,7 @@ class StressTestService:
         metrics = []
 
         # Maximum Drawdown
-        max_drawdown = max(0, -loss_percent)
+        max_drawdown = abs(loss_percent)
         metrics.append(RiskMetricResult(
             metric_name="Maximum Drawdown",
             value=round(max_drawdown, 4),
@@ -381,9 +381,9 @@ class StressTestService:
             sensitivity_rating = "low"
             if abs(impact) > 0.15:
                 sensitivity_rating = "critical"
-            elif abs(impact) > 0.08:
+            elif abs(impact) > 0.05:
                 sensitivity_rating = "high"
-            elif abs(impact) > 0.03:
+            elif abs(impact) > 0.02:
                 sensitivity_rating = "medium"
 
             asset_sensitivities.append(SensitivityResult(
@@ -449,8 +449,8 @@ class StressTestService:
                 loss_percent=response.loss_percent,
             ))
 
-        worst_case = min(results, key=lambda x: x.loss_percent)
-        best_case = max(results, key=lambda x: x.loss_percent)
+        worst_case = max(results, key=lambda x: x.loss_percent)  # highest loss = worst
+        best_case = min(results, key=lambda x: x.loss_percent)  # lowest loss = best
 
         # Calculate diversification score
         loss_pcts = [r.loss_percent for r in results]
