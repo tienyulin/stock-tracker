@@ -6,41 +6,39 @@ import pytest
 from uuid import uuid4
 from datetime import datetime
 
-from app.schemas.agent_schemas import (
-    PersonalFinancialProfile,
-    HoldingAsset,
-    AccountBalance,
-)
-from app.services.financial_coach_agent import (
-    FinancialCoachAgent,
-    CoachTopic,
-    CoachSentiment,
-)
+from app.schemas.agent_schemas import PersonalFinancialProfile
+from app.services.financial_coach_agent import FinancialCoachAgent, CoachTopic
+
+
+@pytest.fixture
+def user_id():
+    """Return a test user ID."""
+    return str(uuid4())
 
 
 @pytest.fixture
 def sample_profile():
     """Create a sample personal financial profile for testing."""
     return PersonalFinancialProfile(
-        user_id=str(uuid4()),
-        age=35,
-        annual_income=1200000,
+        user_id=uuid4(),
+        total_net_worth=1000000,
+        total_assets=1200000,
+        total_liabilities=200000,
+        total_cash=100000,
+        total_investments=500000,
+        total_debt=200000,
+        monthly_income=100000,
         monthly_expenses=60000,
-        total_savings=500000,
-        risk_tolerance="moderate",
-        investment_experience="intermediate",
-        financial_goals=[
-            "retirement",
-            "emergency_fund",
-            "investment",
-        ],
+        risk_tolerance="MODERATE",
+        investment_experience="INTERMEDIATE",
+        last_updated=datetime.utcnow(),
     )
 
 
 @pytest.fixture
-def agent():
+def agent(user_id):
     """Create a FinancialCoachAgent instance for testing."""
-    return FinancialCoachAgent()
+    return FinancialCoachAgent(user_id=user_id)
 
 
 class TestCoachTopic:
@@ -48,195 +46,241 @@ class TestCoachTopic:
 
     def test_coach_topics_defined(self):
         """Verify all expected coach topics are defined."""
-        expected_topics = [
-            CoachTopic.RETIREMENT,
-            CoachTopic.INVESTMENT,
-            CoachTopic.BUDGETING,
-            CoachTopic.EMERGENCY_FUND,
-            CoachTopic.DEBT_MANAGEMENT,
-            CoachTopic.TAX_PLANNING,
-            CoachTopic.INSURANCE,
-            CoachTopic.ESTATE_PLANNING,
-            CoachTopic.GENERAL,
-        ]
-        assert all(topic in CoachTopic for topic in expected_topics)
+        assert CoachTopic.RETIREMENT == "retirement"
+        assert CoachTopic.INVESTMENT == "investment"
+        assert CoachTopic.BUDGETING == "budgeting"
+        assert CoachTopic.EMERGENCY_FUND == "emergency_fund"
+        assert CoachTopic.DEBT_MANAGEMENT == "debt_management"
+        assert CoachTopic.TAX_PLANNING == "tax_planning"
+        assert CoachTopic.INSURANCE == "insurance"
+        assert CoachTopic.ESTATE_PLANNING == "estate_planning"
+        assert CoachTopic.GENERAL == "general"
+
+    def test_coach_topics_are_strings(self):
+        """Verify coach topic values are strings."""
+        for topic in CoachTopic:
+            assert isinstance(topic.value, str)
 
 
 class TestFinancialCoachAgent:
     """Tests for FinancialCoachAgent core functionality."""
 
-    def test_agent_initialization(self, agent):
+    def test_agent_requires_user_id(self, user_id):
+        """Test that agent requires user_id parameter."""
+        agent = FinancialCoachAgent(user_id=user_id)
+        assert agent.user_id == user_id
+
+    def test_agent_initialization(self, agent, user_id):
         """Test that agent initializes with expected state."""
         assert agent is not None
-        assert hasattr(agent, "RETIREMENT_ADVICE")
-        assert hasattr(agent, "INVESTMENT_ADVICE")
-        assert hasattr(agent, "BUDGETING_ADVICE")
+        assert agent.user_id == user_id
+        assert agent.conversation is not None
+        assert agent.readiness_service is not None
 
-    def test_generate_retirement_advice_on_track(self, agent, sample_profile):
-        """Test retirement advice generation when user is on track."""
-        sample_profile.age = 30
-        advice = agent._generate_retirement_advice(
-            profile=sample_profile,
-            readiness_score=85,
-            monthly_contribution_needed=10000,
-        )
-        assert isinstance(advice, list)
-        assert len(advice) > 0
-        assert all(isinstance(a, str) for a in advice)
+    def test_agent_with_profile(self, user_id, sample_profile):
+        """Test agent initialization with profile."""
+        agent = FinancialCoachAgent(user_id=user_id, profile=sample_profile)
+        assert agent.profile == sample_profile
 
-    def test_generate_retirement_advice_moderate_gap(self, agent, sample_profile):
-        """Test retirement advice generation when user has moderate gap."""
-        advice = agent._generate_retirement_advice(
-            profile=sample_profile,
-            readiness_score=55,
-            monthly_contribution_needed=25000,
-        )
-        assert isinstance(advice, list)
-        assert len(advice) > 0
+    def test_add_user_message_auto_detects_retirement_topic(self, agent):
+        """Test that add_user_message auto-detects retirement topic."""
+        msg = agent.add_user_message("I want to plan for retirement")
+        assert msg.role == "user"
+        assert msg.content == "I want to plan for retirement"
+        assert msg.topic == CoachTopic.RETIREMENT
 
-    def test_generate_retirement_advice_significant_gap(self, agent, sample_profile):
-        """Test retirement advice generation when user has significant gap."""
-        sample_profile.age = 50
-        advice = agent._generate_retirement_advice(
-            profile=sample_profile,
-            readiness_score=25,
-            monthly_contribution_needed=80000,
-        )
-        assert isinstance(advice, list)
-        assert len(advice) > 0
+    def test_add_user_message_auto_detects_budgeting_topic(self, agent):
+        """Test that add_user_message auto-detects budgeting topic."""
+        msg = agent.add_user_message("How should I allocate my monthly budget")
+        assert msg.topic == CoachTopic.BUDGETING
 
-    def test_generate_investment_advice(self, agent, sample_profile):
-        """Test investment advice generation."""
-        advice = agent._generate_investment_advice(
-            profile=sample_profile,
-            topic=CoachTopic.INVESTMENT,
-        )
-        assert isinstance(advice, list)
-        assert len(advice) > 0
+    def test_add_user_message_auto_detects_investment_topic(self, agent):
+        """Test that add_user_message auto-detects investment topic."""
+        msg = agent.add_user_message("How should I invest my portfolio")
+        assert msg.topic == CoachTopic.INVESTMENT
 
-    def test_generate_budgeting_advice(self, agent, sample_profile):
-        """Test budgeting advice generation."""
-        advice = agent._generate_budgeting_advice(profile=sample_profile)
-        assert isinstance(advice, list)
-        assert len(advice) > 0
+    def test_add_user_message_auto_detects_emergency_topic(self, agent):
+        """Test that add_user_message auto-detects emergency fund topic."""
+        msg = agent.add_user_message("I need an emergency fund")
+        assert msg.topic == CoachTopic.EMERGENCY_FUND
 
-    def test_generate_emergency_fund_advice(self, agent, sample_profile):
-        """Test emergency fund advice generation."""
-        advice = agent._generate_emergency_fund_advice(profile=sample_profile)
-        assert isinstance(advice, list)
-        assert len(advice) > 0
+    def test_add_user_message_auto_detects_debt_topic(self, agent):
+        """Test that add_user_message auto-detects debt topic."""
+        msg = agent.add_user_message("How to pay off credit card debt")
+        assert msg.topic == CoachTopic.DEBT_MANAGEMENT
 
-    def test_generate_debt_advice(self, agent, sample_profile):
-        """Test debt management advice generation."""
-        advice = agent._generate_debt_advice(profile=sample_profile)
-        assert isinstance(advice, list)
-        assert len(advice) > 0
+    def test_add_user_message_with_explicit_topic(self, agent):
+        """Test add_user_message with explicitly specified topic."""
+        msg = agent.add_user_message("Some content", topic=CoachTopic.RETIREMENT)
+        assert msg.topic == CoachTopic.RETIREMENT
 
-    def test_suggest_topic_from_message_retirement(self, agent):
-        """Test topic suggestion for retirement-related messages."""
-        topics = agent._suggest_topic("我想要規劃退休")
-        assert CoachTopic.RETIREMENT in topics
+    def test_add_user_message_general_fallback(self, agent):
+        """Test that unknown content falls back to GENERAL topic."""
+        msg = agent.add_user_message("What is the weather today")
+        assert msg.topic == CoachTopic.GENERAL
 
-    def test_suggest_topic_from_message_investment(self, agent):
-        """Test topic suggestion for investment-related messages."""
-        topics = agent._suggest_topic("應該如何配置我的投資組合")
-        assert CoachTopic.INVESTMENT in topics
+    def test_generate_coach_response_no_messages(self, agent):
+        """Test coach response when there are no user messages."""
+        response = agent.generate_coach_response()
+        assert response.role == "coach"
+        assert "你好" in response.content or "AI財務教練" in response.content
+        assert response.topic == CoachTopic.GENERAL
 
-    def test_suggest_topic_from_message_budget(self, agent):
-        """Test topic suggestion for budgeting-related messages."""
-        topics = agent._suggest_topic("每個月的支出應該怎麼分配")
-        assert CoachTopic.BUDGETING in topics
+    def test_generate_coach_response_retirement_topic(self, agent):
+        """Test coach response for retirement topic."""
+        agent.add_user_message("I want to plan for retirement")
+        response = agent.generate_coach_response()
+        assert response.role == "coach"
+        assert response.topic == CoachTopic.RETIREMENT
 
-    def test_suggest_topic_from_message_emergency(self, agent):
-        """Test topic suggestion for emergency fund-related messages."""
-        topics = agent._suggest_topic("我需要建立緊急備用金")
-        assert CoachTopic.EMERGENCY_FUND in topics
+    def test_generate_coach_response_with_retirement_readiness(
+        self, agent, sample_profile
+    ):
+        """Test coach response includes retirement readiness data."""
+        from app.schemas.agent_schemas import RetirementReadinessResult
 
-    def test_suggest_topic_from_message_general(self, agent):
-        """Test topic suggestion for general messages."""
-        topics = agent._suggest_topic("今天天氣怎麼樣")
-        # General is always included as fallback
-        assert CoachTopic.GENERAL in topics
-
-    def test_analyze_sentiment_positive(self, agent):
-        """Test sentiment analysis for positive messages."""
-        sentiment = agent._analyze_sentiment("太好了！非常感謝你的建議")
-        assert sentiment == CoachSentiment.POSITIVE
-
-    def test_analyze_sentiment_negative(self, agent):
-        """Test sentiment analysis for negative messages."""
-        sentiment = agent._analyze_sentiment("這讓我感到很焦慮")
-        assert sentiment == CoachSentiment.NEGATIVE
-
-    def test_analyze_sentiment_neutral(self, agent):
-        """Test sentiment analysis for neutral messages."""
-        sentiment = agent._analyze_sentiment("請告訴我關於投資的基本概念")
-        assert sentiment == CoachSentiment.NEUTRAL
-
-    def test_analyze_sentiment_worried(self, agent):
-        """Test sentiment analysis for worried messages."""
-        sentiment = agent._analyze_sentiment("我擔心我的退休金不夠")
-        assert sentiment == CoachSentiment.WORRIED
-
-    def test_build_context_from_profile(self, agent, sample_profile):
-        """Test context building from user profile."""
-        context = agent._build_context_from_profile(sample_profile)
-        assert isinstance(context, str)
-        assert str(sample_profile.age) in context
-        assert "中" in context  # moderate risk tolerance in Chinese
-
-    def test_get_retirement_readiness_context(self, agent):
-        """Test getting retirement readiness context."""
-        context = agent._get_retirement_readiness_context(
-            score=75,
+        agent_with_profile = FinancialCoachAgent(user_id=agent.user_id, profile=sample_profile)
+        agent_with_profile.add_user_message("I want to plan for retirement")
+        readiness = RetirementReadinessResult(
+            readiness_score=75,
+            readiness_level="moderate_gap",
+            current_nest_egg=500000,
+            on_track_nest_egg=800000,
             monthly_contribution_needed=15000,
-            current_savings=500000,
+            years_to_retirement=30,
+            confidence=0.85,
         )
-        assert isinstance(context, str)
-        assert "75" in context
+        response = agent_with_profile.generate_coach_response(readiness_result=readiness)
+        assert response.role == "coach"
+        assert "75" in response.content or "評分" in response.content
 
-    def test_format_response_with_suggestions(self, agent):
-        """Test response formatting with suggestions."""
-        response = agent._format_response(
-            message="這是回覆訊息",
-            suggestions=["建議一", "建議二"],
-            topic=CoachTopic.RETIREMENT,
+    def test_generate_coach_response_budgeting(self, agent):
+        """Test coach response for budgeting topic."""
+        agent.add_user_message("How to manage my monthly expenses")
+        response = agent.generate_coach_response()
+        assert response.role == "coach"
+        assert response.topic == CoachTopic.BUDGETING
+
+    def test_generate_coach_response_investment(self, agent):
+        """Test coach response for investment topic without profile."""
+        agent.add_user_message("How should I invest")
+        response = agent.generate_coach_response()
+        assert response.role == "coach"
+        assert response.topic == CoachTopic.INVESTMENT
+
+    def test_generate_coach_response_investment_with_profile(
+        self, agent, sample_profile
+    ):
+        """Test coach response for investment topic with profile."""
+        agent_with_profile = FinancialCoachAgent(
+            user_id=agent.user_id, profile=sample_profile
         )
-        assert "這是回覆訊息" in response
-        assert "建議一" in response
-        assert "建議二" in response
+        agent_with_profile.add_user_message("How should I invest")
+        response = agent_with_profile.generate_coach_response()
+        assert response.role == "coach"
+        assert "MODERATE" in response.content or "適中型" in response.content
 
-    def test_format_response_emergency_fund(self, agent):
-        """Test emergency fund response formatting."""
-        response = agent._format_response(
-            message="緊急備用金建議",
-            suggestions=["建立3-6個月支出儲蓄"],
-            topic=CoachTopic.EMERGENCY_FUND,
-        )
-        assert "緊急備用金建議" in response
+    def test_generate_coach_response_emergency_fund(self, agent):
+        """Test coach response for emergency fund topic."""
+        agent.add_user_message("I need emergency savings")
+        response = agent.generate_coach_response()
+        assert response.role == "coach"
+        assert "緊急" in response.content or "emergency" in response.content.lower()
 
-    def test_get_retirement_roadmap(self, agent, sample_profile):
-        """Test retirement roadmap generation."""
-        roadmap = agent._get_retirement_roadmap(profile=sample_profile)
-        assert isinstance(roadmap, str)
-        assert len(roadmap) > 0
+    def test_generate_coach_response_debt(self, agent):
+        """Test coach response for debt topic."""
+        agent.add_user_message("Credit card debt repayment")
+        response = agent.generate_coach_response()
+        assert response.role == "coach"
+        assert "債務" in response.content or "卡" in response.content
 
-    def test_get_investment_suggestions(self, agent, sample_profile):
-        """Test investment suggestions generation."""
-        suggestions = agent._get_investment_suggestions(profile=sample_profile)
-        assert isinstance(suggestions, dict)
-        assert "股票" in suggestions or "股票型" in str(suggestions.values())
-        assert "債券" in suggestions or "債券型" in str(suggestions.values())
+    def test_conversation_tracks_messages(self, agent):
+        """Test that conversation correctly tracks messages."""
+        assert len(agent.conversation.messages) == 0
+        agent.add_user_message("I want retirement")
+        assert len(agent.conversation.messages) == 1
+        agent.generate_coach_response()
+        assert len(agent.conversation.messages) == 2
 
+    def test_get_conversation(self, agent):
+        """Test get_conversation returns full conversation."""
+        agent.add_user_message("test")
+        agent.generate_coach_response()
+        conv = agent.get_conversation()
+        assert len(conv.messages) == 2
 
-class TestCoachSentiment:
-    """Tests for CoachSentiment enum."""
+    def test_clear_conversation(self, agent):
+        """Test clear_conversation removes all messages."""
+        agent.add_user_message("test")
+        agent.generate_coach_response()
+        assert len(agent.conversation.messages) == 2
+        agent.clear_conversation()
+        assert len(agent.conversation.messages) == 0
 
-    def test_sentiment_values(self):
-        """Verify all sentiment values exist."""
-        from app.services.financial_coach_agent import CoachSentiment
+    def test_detect_topic_retirement(self, agent):
+        """Test _detect_topic for retirement keywords."""
+        assert agent._detect_topic("retire") == CoachTopic.RETIREMENT
+        assert agent._detect_topic("retirement") == CoachTopic.RETIREMENT
+        assert agent._detect_topic("退休金") == CoachTopic.RETIREMENT
 
-        assert hasattr(CoachSentiment, "POSITIVE")
-        assert hasattr(CoachSentiment, "NEGATIVE")
-        assert hasattr(CoachSentiment, "NEUTRAL")
-        assert hasattr(CoachSentiment, "WORRIED")
+    def test_detect_topic_budgeting(self, agent):
+        """Test _detect_topic for budgeting keywords."""
+        assert agent._detect_topic("budget") == CoachTopic.BUDGETING
+        assert agent._detect_topic("expense") == CoachTopic.BUDGETING
+
+    def test_detect_topic_investment(self, agent):
+        """Test _detect_topic for investment keywords."""
+        assert agent._detect_topic("invest") == CoachTopic.INVESTMENT
+        assert agent._detect_topic("stock") == CoachTopic.INVESTMENT
+        assert agent._detect_topic("ETF") == CoachTopic.INVESTMENT
+
+    def test_detect_topic_emergency(self, agent):
+        """Test _detect_topic for emergency fund keywords."""
+        assert agent._detect_topic("emergency") == CoachTopic.EMERGENCY_FUND
+        assert agent._detect_topic("savings") == CoachTopic.EMERGENCY_FUND
+
+    def test_detect_topic_debt(self, agent):
+        """Test _detect_topic for debt keywords."""
+        assert agent._detect_topic("debt") == CoachTopic.DEBT_MANAGEMENT
+        assert agent._detect_topic("loan") == CoachTopic.DEBT_MANAGEMENT
+
+    def test_detect_topic_general_fallback(self, agent):
+        """Test _detect_topic fallback to general."""
+        assert agent._detect_topic("what is the weather") == CoachTopic.GENERAL
+
+    def test_level_display_on_track(self, agent):
+        """Test _level_display for on_track level."""
+        display = agent._level_display("on_track")
+        assert "良好" in display or "✅" in display
+
+    def test_level_display_moderate_gap(self, agent):
+        """Test _level_display for moderate_gap level."""
+        display = agent._level_display("moderate_gap")
+        assert "缺口" in display or "⚠️" in display
+
+    def test_level_display_significant_gap(self, agent):
+        """Test _level_display for significant_gap level."""
+        display = agent._level_display("significant_gap")
+        assert "缺口" in display or "⚠️" in display
+
+    def test_level_display_off_track(self, agent):
+        """Test _level_display for off_track level."""
+        display = agent._level_display("off_track")
+        assert "偏離" in display or "🚨" in display
+
+    def test_retirement_advice_templates_exist(self, agent):
+        """Test that retirement advice templates are defined."""
+        assert "on_track" in agent.RETIREMENT_ADVICE
+        assert "moderate_gap" in agent.RETIREMENT_ADVICE
+        assert "significant_gap" in agent.RETIREMENT_ADVICE
+        assert "off_track" in agent.RETIREMENT_ADVICE
+
+    def test_budgeting_advice_templates_exist(self, agent):
+        """Test that budgeting advice templates are defined."""
+        assert len(agent.BUDGETING_ADVICE) > 0
+
+    def test_message_id_is_uuid(self, agent):
+        """Test that message IDs are valid UUIDs."""
+        msg = agent.add_user_message("test")
+        assert msg.message_id is not None
+        str(msg.message_id)
