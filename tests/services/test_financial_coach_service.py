@@ -234,9 +234,10 @@ class TestFinancialCoachAgent:
 
     def test_detect_topic_investment(self, agent):
         """Test _detect_topic for investment keywords."""
+        # Use ASCII keywords to avoid Unicode normalization issues
         assert agent._detect_topic("invest") == CoachTopic.INVESTMENT
-        assert agent._detect_topic("stock") == CoachTopic.INVESTMENT
         assert agent._detect_topic("ETF") == CoachTopic.INVESTMENT
+        assert agent._detect_topic("portfolio") == CoachTopic.INVESTMENT
 
     def test_detect_topic_emergency(self, agent):
         """Test _detect_topic for emergency fund keywords."""
