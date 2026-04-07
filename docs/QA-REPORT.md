@@ -2,7 +2,7 @@
 
 **日期：** 2026-03-31
 **測試環境：** https://stock.tienyulin.com
-**Backend API：** https://stock-api.tienyulin.com
+**Backend API：** https://stock-stock-api.tienyulin.com
 **驗證人：** Hermes (PM)
 
 ---
