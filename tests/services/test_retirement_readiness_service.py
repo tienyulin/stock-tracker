@@ -4,10 +4,9 @@ Tests for Retirement Readiness Service
 
 import pytest
 from uuid import uuid4
+from datetime import datetime
 
-from app.schemas.agent_schemas import (
-    PersonalFinancialProfile,
-)
+from app.schemas.agent_schemas import PersonalFinancialProfile
 from app.services.retirement_readiness_service import RetirementReadinessService
 
 
@@ -15,14 +14,18 @@ from app.services.retirement_readiness_service import RetirementReadinessService
 def profile_young():
     """Create a young profile for testing."""
     return PersonalFinancialProfile(
-        user_id=str(uuid4()),
-        age=25,
-        annual_income=800000,
+        user_id=uuid4(),
+        total_net_worth=500000,
+        total_assets=600000,
+        total_liabilities=100000,
+        total_cash=100000,
+        total_investments=300000,
+        total_debt=100000,
+        monthly_income=66667,
         monthly_expenses=40000,
-        total_savings=200000,
-        risk_tolerance="aggressive",
-        investment_experience="beginner",
-        financial_goals=["retirement", "emergency_fund"],
+        risk_tolerance="AGGRESSIVE",
+        investment_experience="BEGINNER",
+        last_updated=datetime.utcnow(),
     )
 
 
@@ -30,14 +33,18 @@ def profile_young():
 def profile_mid_career():
     """Create a mid-career profile for testing."""
     return PersonalFinancialProfile(
-        user_id=str(uuid4()),
-        age=40,
-        annual_income=1500000,
+        user_id=uuid4(),
+        total_net_worth=3000000,
+        total_assets=3500000,
+        total_liabilities=500000,
+        total_cash=300000,
+        total_investments=1500000,
+        total_debt=500000,
+        monthly_income=125000,
         monthly_expenses=75000,
-        total_savings=1500000,
-        risk_tolerance="moderate",
-        investment_experience="intermediate",
-        financial_goals=["retirement", "investment", "education"],
+        risk_tolerance="MODERATE",
+        investment_experience="INTERMEDIATE",
+        last_updated=datetime.utcnow(),
     )
 
 
@@ -45,14 +52,18 @@ def profile_mid_career():
 def profile_near_retirement():
     """Create a near-retirement profile for testing."""
     return PersonalFinancialProfile(
-        user_id=str(uuid4()),
-        age=58,
-        annual_income=2000000,
+        user_id=uuid4(),
+        total_net_worth=12000000,
+        total_assets=13000000,
+        total_liabilities=1000000,
+        total_cash=500000,
+        total_investments=8000000,
+        total_debt=1000000,
+        monthly_income=166667,
         monthly_expenses=100000,
-        total_savings=8000000,
-        risk_tolerance="conservative",
-        investment_experience="advanced",
-        financial_goals=["retirement"],
+        risk_tolerance="CONSERVATIVE",
+        investment_experience="ADVANCED",
+        last_updated=datetime.utcnow(),
     )
 
 
@@ -205,7 +216,6 @@ class TestRetirementReadinessService:
     @pytest.mark.asyncio
     async def test_score_boundaries(self, service, profile_mid_career):
         """Test score boundaries at threshold values."""
-        # Test at exactly retirement age boundary
         profile_at_boundary = profile_mid_career.model_copy()
         profile_at_boundary.age = 65
         result = await service.assess_retirement_readiness(
@@ -250,7 +260,7 @@ class TestEdgeCases:
     @pytest.mark.asyncio
     async def test_very_high_income(self, service, profile_mid_career):
         """Test with very high income user."""
-        profile_mid_career.annual_income = 50000000
+        profile_mid_career.monthly_income = 5000000
         result = await service.assess_retirement_readiness(
             profile=profile_mid_career,
             current_savings=10000000,
@@ -262,7 +272,7 @@ class TestEdgeCases:
     @pytest.mark.asyncio
     async def test_very_low_income(self, service, profile_young):
         """Test with very low income user."""
-        profile_young.annual_income = 300000
+        profile_young.monthly_income = 25000
         result = await service.assess_retirement_readiness(
             profile=profile_young,
             current_savings=50000,
@@ -274,7 +284,7 @@ class TestEdgeCases:
     @pytest.mark.asyncio
     async def test_extreme_risk_tolerance(self, service, profile_mid_career):
         """Test with extreme risk tolerance values."""
-        profile_mid_career.risk_tolerance = "very_aggressive"
+        profile_mid_career.risk_tolerance = "VERY_AGGRESSIVE"
         result = await service.assess_retirement_readiness(
             profile=profile_mid_career,
             current_savings=2000000,
