@@ -21,6 +21,7 @@ def sample_profile():
     """Create a sample personal financial profile for testing."""
     return PersonalFinancialProfile(
         user_id=uuid4(),
+        age=35,
         total_net_worth=1000000,
         total_assets=1200000,
         total_liabilities=200000,

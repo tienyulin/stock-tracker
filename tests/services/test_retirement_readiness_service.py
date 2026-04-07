@@ -15,6 +15,7 @@ def profile_young():
     """Create a young profile for testing."""
     return PersonalFinancialProfile(
         user_id=uuid4(),
+        age=25,
         total_net_worth=500000,
         total_assets=600000,
         total_liabilities=100000,
@@ -34,6 +35,7 @@ def profile_mid_career():
     """Create a mid-career profile for testing."""
     return PersonalFinancialProfile(
         user_id=uuid4(),
+        age=40,
         total_net_worth=3000000,
         total_assets=3500000,
         total_liabilities=500000,
@@ -53,6 +55,7 @@ def profile_near_retirement():
     """Create a near-retirement profile for testing."""
     return PersonalFinancialProfile(
         user_id=uuid4(),
+        age=58,
         total_net_worth=12000000,
         total_assets=13000000,
         total_liabilities=1000000,

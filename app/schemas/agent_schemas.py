@@ -133,6 +133,7 @@ class PersonalFinancialProfile(BaseModel):
     """Comprehensive personal financial profile aggregated from Open Finance."""
 
     user_id: UUID
+    age: int = 30
     total_net_worth: float = 0
     total_assets: float = 0
     total_liabilities: float = 0
