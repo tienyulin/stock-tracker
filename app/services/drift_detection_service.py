@@ -4,6 +4,7 @@ Drift Detection Service
 Detects when portfolio holdings drift away from AI Signal recommendations
 and provides auto-rebalancing suggestions.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 

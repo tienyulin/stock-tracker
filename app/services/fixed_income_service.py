@@ -6,6 +6,7 @@ Handles:
 - Term deposit management
 - Bond analytics (duration, interest rate sensitivity)
 """
+from __future__ import annotations
 
 import logging
 import math

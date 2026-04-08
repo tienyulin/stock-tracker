@@ -5,6 +5,7 @@ Provides a unified interface for aggregating financial data from multiple
 Open Finance providers (E.Sun Bank, Yodlee, Plaid) and normalizing it
 into a PersonalFinancialProfile.
 """
+from __future__ import annotations
 
 import os
 from abc import ABC, abstractmethod

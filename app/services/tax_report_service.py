@@ -7,6 +7,7 @@ Provides comprehensive tax reporting including:
 - Wash sale tracking and adjustments
 - IRS Form 8949 data export
 """
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta

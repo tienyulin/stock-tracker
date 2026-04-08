@@ -3,6 +3,7 @@ Yahoo Finance API Service
 
 Provides stock data retrieval from Yahoo Finance API.
 """
+from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass

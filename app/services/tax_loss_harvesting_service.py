@@ -4,6 +4,7 @@ Tax-Loss Harvesting Service
 Identifies opportunities to harvest tax losses by selling positions
 with unrealized losses, while avoiding wash sale rule violations.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime

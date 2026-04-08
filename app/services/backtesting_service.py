@@ -3,6 +3,7 @@ Portfolio Backtesting Service
 
 Backtests trading strategies against historical data to evaluate performance.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
