@@ -133,6 +133,7 @@ class PersonalFinancialProfile(BaseModel):
     """Comprehensive personal financial profile aggregated from Open Finance."""
 
     user_id: UUID
+    age: int = 30
     total_net_worth: float = 0
     total_assets: float = 0
     total_liabilities: float = 0
@@ -141,6 +142,9 @@ class PersonalFinancialProfile(BaseModel):
     total_debt: float = 0
     monthly_income: float = 0
     monthly_expenses: float = 0
+    monthly_savings: Optional[float] = None
+    passive_income_monthly: Optional[float] = None
+    has_emergency_fund: bool = False
     holdings: list[HoldingAsset] = Field(default_factory=list)
     accounts: list[AccountBalance] = Field(default_factory=list)
     credit_score: Optional[int] = None
