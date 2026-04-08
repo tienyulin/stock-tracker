@@ -4,6 +4,7 @@ Signal Scoring Service
 AI-powered scoring engine that combines multiple technical indicators
 into a unified score (1-100) with key drivers analysis.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional

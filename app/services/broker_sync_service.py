@@ -4,6 +4,7 @@ Broker Sync Service
 Provides automated portfolio import from brokerage accounts using OAuth.
 Supports SnapTrade API for unified brokerage connections.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime

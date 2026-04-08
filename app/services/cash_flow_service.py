@@ -7,6 +7,7 @@ Provides:
 - LiquidityPlanningService: liquidity tier analysis
 - EmergencyFundService: emergency fund tracking & gap calculation
 """
+from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta

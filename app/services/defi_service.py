@@ -3,6 +3,7 @@ DeFi Position Service.
 
 Handles DeFi positions: LP tokens, staking, lending, yield farming.
 """
+from __future__ import annotations
 
 import logging
 from typing import Optional

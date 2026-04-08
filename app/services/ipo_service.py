@@ -1,6 +1,7 @@
 """
 IPO Service — IPO CRUD and analytics.
 """
+from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta

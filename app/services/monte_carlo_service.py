@@ -3,6 +3,7 @@ Monte Carlo Retirement Simulation Service
 
 Runs Monte Carlo simulations for retirement planning.
 """
+from __future__ import annotations
 
 import math
 from dataclasses import dataclass
