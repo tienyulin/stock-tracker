@@ -3,6 +3,7 @@ Stock Service - Basic Stock Price Query
 
 Provides stock information and price data retrieval with caching.
 """
+from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass

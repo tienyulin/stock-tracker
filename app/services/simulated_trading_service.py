@@ -3,6 +3,7 @@ Simulated Trading Service
 
 Provides paper trading simulation based on signals.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime

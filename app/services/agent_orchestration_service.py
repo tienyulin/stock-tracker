@@ -4,6 +4,7 @@ AI Agent Orchestration Service
 FSM-based orchestration for portfolio management AI agent with
 LangChain-style tool calling and goal-based monitoring.
 """
+from __future__ import annotations
 
 import asyncio
 import uuid

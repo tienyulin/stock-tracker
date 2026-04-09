@@ -4,6 +4,7 @@ Stress Testing Service
 Provides portfolio stress testing, scenario analysis, and risk metrics
 including VaR, CVaR, and sensitivity analysis.
 """
+from __future__ import annotations
 
 import math
 from dataclasses import dataclass

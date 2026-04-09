@@ -4,6 +4,7 @@ Retirement Readiness Service
 Provides retirement readiness assessment by integrating with
 GoalMonitoringService and analyzing user's financial profile.
 """
+from __future__ import annotations
 
 from datetime import datetime
 from typing import Optional

@@ -4,6 +4,7 @@ Salary Deposit Service
 Integrates with 玉山銀行 (E.Sun Bank) Open API to fetch and analyze
 salary deposit records for income verification and pattern analysis.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta

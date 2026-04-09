@@ -5,6 +5,7 @@ Tracks user financial goals (retirement, house, education) and monitors
 progress against targets. Integrates with Monte Carlo simulations for
 retirement gap calculation and triggers alerts when goals are at risk.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, datetime

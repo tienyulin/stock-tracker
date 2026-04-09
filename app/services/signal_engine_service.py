@@ -4,6 +4,7 @@ Signal Engine Service
 Provides automated stock evaluation based on technical indicators.
 Determines buy/sell/hold signals with confidence levels and reasoning.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional

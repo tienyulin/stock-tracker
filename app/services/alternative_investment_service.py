@@ -4,6 +4,7 @@ Alternative Investment Service.
 Handles CRUD for private equity, REITs, hedge funds, and other
 alternative investment tracking.
 """
+from __future__ import annotations
 
 import logging
 from datetime import datetime

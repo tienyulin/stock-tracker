@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { lazy, Suspense } from 'react'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { ThemeProvider, useTheme } from './contexts/ThemeContext'
 import './App.css'
 
 // Lazy load all page components for better performance
@@ -52,6 +53,29 @@ function LanguageSwitcher() {
   )
 }
 
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  return (
+    <button
+      onClick={toggleTheme}
+      className="btn-theme-toggle"
+      title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+      style={{
+        background: 'transparent',
+        border: '1px solid var(--border-color)',
+        color: 'var(--text-primary)',
+        padding: '0.3rem 0.6rem',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '1rem',
+        marginRight: '0.5rem',
+      }}
+    >
+      {theme === 'light' ? '🌙' : '☀️'}
+    </button>
+  )
+}
+
 function NavBar() {
   const { t } = useTranslation()
   const { user, isAuthenticated, logout } = useAuth()
@@ -81,6 +105,7 @@ function NavBar() {
         <li><NavLink to="/agent-dashboard" className={({ isActive }) => isActive ? 'active' : ''}>{t('nav.agentDashboard', 'AI Agent')}</NavLink></li>
       </ul>
       <div className="nav-auth">
+        <ThemeToggle />
         <LanguageSwitcher />
         {isAuthenticated ? (
           <>
@@ -145,18 +170,20 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <div className="app">
-          <NavBar />
-          <main className="main-content">
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </main>
-        </div>
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <div className="app">
+            <NavBar />
+            <main className="main-content">
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+            </main>
+          </div>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
 

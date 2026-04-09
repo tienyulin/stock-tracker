@@ -1,6 +1,7 @@
 """
 API Key service for management.
 """
+from __future__ import annotations
 
 import hashlib
 import secrets

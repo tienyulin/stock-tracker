@@ -7,6 +7,7 @@ Handles:
 - Precious metals price fetching
 - Inflation hedge metrics
 """
+from __future__ import annotations
 
 import logging
 from datetime import date, datetime, timedelta

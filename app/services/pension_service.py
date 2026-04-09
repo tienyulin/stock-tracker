@@ -6,6 +6,7 @@ Estimates retirement gap and provides projections based on:
 - 月退俸 (Monthly pension) estimates
 - Monte Carlo simulation (reused from Phase 20)
 """
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime

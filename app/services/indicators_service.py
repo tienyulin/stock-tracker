@@ -3,6 +3,7 @@ Technical Indicators Service.
 
 Calculates RSI, MACD, and Moving Averages for stock analysis.
 """
+from __future__ import annotations
 from typing import Optional
 import pandas as pd
 

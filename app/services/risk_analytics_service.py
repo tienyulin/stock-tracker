@@ -7,6 +7,7 @@ Provides portfolio risk metrics calculation including:
 - Maximum Drawdown
 - vs S&P 500 comparison
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
