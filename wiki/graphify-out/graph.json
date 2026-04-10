@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "generated": "2026-04-09T14:27:26.854325",
+    "source": "wiki",
+    "files": 5
+  },
+  "nodes": [
+    {
+      "id": "node_0",
+      "label": "competitive-landscape",
+      "type": "file",
+      "path": "pages/synthesis/competitive-landscape.md",
+      "tags": [
+        "synthesis",
+        "competitive-analysis",
+        "product-strategy"
+      ]
+    },
+    {
+      "id": "node_1",
+      "label": "beginner-friendly-ai",
+      "type": "file",
+      "path": "pages/concepts/beginner-friendly-ai.md",
+      "tags": [
+        "product-strategy",
+        "differentiation",
+        "ai",
+        "beginner"
+      ]
+    },
+    {
+      "id": "node_2",
+      "label": "2026-04-02-dividend-ai-signals-research",
+      "type": "file",
+      "path": "pages/sources/2026-04-02-dividend-ai-signals-research.md",
+      "tags": [
+        "market-research",
+        "dividend-tracker",
+        "ai-signals",
+        "competitive-analysis"
+      ]
+    },
+    {
+      "id": "node_3",
+      "label": "sharesight",
+      "type": "file",
+      "path": "pages/entities/sharesight.md",
+      "tags": [
+        "competitor",
+        "dividend-tracker",
+        "international"
+      ]
+    },
+    {
+      "id": "node_4",
+      "label": "2026-04-02-dividend-ai-signals-research",
+      "type": "file",
+      "path": "raw/2026-04-02-dividend-ai-signals-research.md",
+      "tags": []
+    }
+  ],
+  "links": [
+    {
+      "source": "node_1",
+      "target": "node_0",
+      "relation": "links_to",
+      "label": "synthesis/competitive-landscape.md"
+    },
+    {
+      "source": "node_2",
+      "target": "node_0",
+      "relation": "links_to",
+      "label": "synthesis/competitive-landscape.md"
+    },
+    {
+      "source": "node_2",
+      "target": "node_1",
+      "relation": "links_to",
+      "label": "concepts/beginner-friendly-ai.md"
+    },
+    {
+      "source": "node_0",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "Date:"
+    },
+    {
+      "source": "node_1",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "Dividend Tracker"
+    },
+    {
+      "source": "node_4",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "Dividend Tracker"
+    },
+    {
+      "source": "node_4",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "Multi-currency Support"
+    },
+    {
+      "source": "node_4",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "Discord Webhook Notification"
+    },
+    {
+      "source": "node_4",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "Portfolio Overview Dashboard"
+    },
+    {
+      "source": "node_4",
+      "target": "node_4",
+      "relation": "shares_entity",
+      "label": "PDF Weekly Report"
+    }
+  ]
+}

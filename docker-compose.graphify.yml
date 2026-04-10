@@ -1,0 +1,13 @@
+services:
+  graphify:
+    build:
+      context: .
+      dockerfile: Dockerfile.graphify
+    container_name: graphify-wiki
+    working_dir: /app/graphify-out
+    ports:
+      - "8765:8765"
+    volumes:
+      - ./wiki/graphify-out:/app/graphify-out:ro
+    command: ["python", "-m", "graphify.serve", "graph.json"]
+    restart: unless-stopped
